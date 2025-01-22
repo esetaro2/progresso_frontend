@@ -1,0 +1,170 @@
+.full-height {
+  min-height: 100vh;
+}
+
+.card.form-container {
+  width: 100%;
+  max-width: 800px;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+h2.text-center {
+  font-weight: 600;
+  color: #30ff56;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.form-control {
+  border-radius: 4px;
+  border: 2px solid #ccc;
+}
+
+.form-control:hover {
+  border-color: #6dff87;
+}
+
+.form-control:focus {
+  border-color: #55ff74;
+  box-shadow: 0 0 5px rgba(83, 150, 69, 0.5);
+}
+
+.btn-outline-secondary {
+  border-radius: 4px;
+  font-size: 1rem;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: #6dff87;
+  border: 2px solid #6dff87;
+}
+
+small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  color: #6c757d;
+}
+
+small .fa {
+  margin-right: 0.25rem;
+}
+
+small .fa-times {
+  color: #f44336;
+}
+
+small .fa-check {
+  color: #539645;
+}
+
+.message-container {
+  height: 50px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: red;
+}
+
+.error-message.show {
+  visibility: visible;
+  color: #f44336;
+}
+
+.custom-dropdown-menu {
+  max-height: 200px;
+  max-width: 18px;
+  overflow-y: auto;
+}
+
+.btn-primary {
+  background-color: #30ff56;
+  border: 2px solid #30ff56;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  border: 2px solid #30ff56;
+  color: #6c757d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:disabled {
+  background-color: #ebebeb;
+  border-color: #ccc;
+  color: rgb(180, 180, 180);
+}
+
+a {
+  color: #539645;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #417a36;
+}
+
+.input-group {
+  display: flex;
+}
+
+#phonePrefix {
+  transition: all 0.3s ease;
+}
+
+#phonePrefix:hover,
+#phonePrefix:focus {
+  background-color: #6dff87;
+  border: 2px solid #6dff87;
+  color: rgb(255, 255, 255);
+}
+
+#phonePrefix::placeholder {
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+#phonePrefix:hover::placeholder {
+  color: white;
+}
+
+.btn-block {
+  width: auto;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.fixed-width-dropdown {
+  width: 80px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
