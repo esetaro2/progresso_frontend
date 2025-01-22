@@ -1,0 +1,165 @@
+.full-height {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+h2 {
+  font-weight: 600;
+  color: #30ff56;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  border: none;
+}
+
+.card-body {
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+label {
+  color: #4c4c4c;
+}
+
+a {
+  color: #539645;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #417a36;
+}
+
+.btn-primary {
+  background-color: #539645;
+  border-color: #539645;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #6fb361;
+  border-color: #6fb361;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  color: #6c757d;
+}
+
+small .fa {
+  margin-right: 0.25rem;
+}
+
+small .fa-times {
+  color: #f44336;
+}
+
+small .fa-check {
+  color: #539645;
+}
+
+.form-control {
+  padding-right: 40px;
+  border: 2px solid #ccc;
+}
+
+.form-control:hover {
+  border-color: #6dff87;
+}
+
+.form-control:focus {
+  border-color: #55ff74;
+  box-shadow: 0 0 5px rgba(83, 150, 69, 0.5);
+}
+
+.no-border {
+  border: none;
+  background: none;
+  box-shadow: none;
+  outline: none;
+  padding: 0;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5fd647;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.toggle-visibility:hover {
+  color: #64bc53;
+}
+
+.btn-link-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.error-message {
+  height: 1.5em;
+  margin-top: 0.5em;
+  visibility: hidden;
+  color: #f44336;
+}
+
+.error-message.show {
+  visibility: visible;
+}
+
+.btn-outline-secondary {
+  border-radius: 4px;
+  font-size: 1rem;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: #6dff87;
+  border: 2px solid #6dff87;
+}
+
+.btn-primary {
+  background-color: #30ff56;
+  border: 2px solid #30ff56;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  border: 2px solid #30ff56;
+  color: #6c757d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:disabled {
+  background-color: #ebebeb;
+  border-color: #ccc;
+  color: rgb(180, 180, 180);
+}
