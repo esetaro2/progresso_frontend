@@ -1,18 +1,15 @@
 .full-height {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
 }
 
 h2 {
   font-weight: 600;
-  color: #30ff56;
+  color: #343a40;
 }
 
 .form-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
   border: none;
 }
 
@@ -29,23 +26,13 @@ label {
 }
 
 a {
-  color: #539645;
+  color: #007bff;
   text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 a:hover {
-  color: #417a36;
-}
-
-.btn-primary {
-  background-color: #539645;
-  border-color: #539645;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #6fb361;
-  border-color: #6fb361;
+  color: #0056b3;
 }
 
 .mt-4 {
@@ -76,17 +63,26 @@ small .fa-check {
 }
 
 .form-control {
-  padding-right: 40px;
-  border: 2px solid #ccc;
+  border-radius: 4px;
+  border: 2px solid #ced4da;
+  background-color: #ffffff;
 }
 
 .form-control:hover {
-  border-color: #6dff87;
+  border-color: #007bff;
 }
 
 .form-control:focus {
-  border-color: #55ff74;
-  box-shadow: 0 0 5px rgba(83, 150, 69, 0.5);
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.fa-times {
+  color: #f44336;
+}
+
+.fa-check {
+  color: #539645;
 }
 
 .no-border {
@@ -102,13 +98,13 @@ small .fa-check {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #5fd647;
+  color: #2790ff;
   cursor: pointer;
   z-index: 10;
 }
 
 .toggle-visibility:hover {
-  color: #64bc53;
+  color: #007bff;
 }
 
 .btn-link-container {
@@ -129,37 +125,4 @@ small .fa-check {
 
 .error-message.show {
   visibility: visible;
-}
-
-.btn-outline-secondary {
-  border-radius: 4px;
-  font-size: 1rem;
-  padding: 0.75rem;
-  text-align: left;
-}
-
-.btn-outline-secondary:hover,
-.btn-outline-secondary:focus {
-  background-color: #6dff87;
-  border: 2px solid #6dff87;
-}
-
-.btn-primary {
-  background-color: #30ff56;
-  border: 2px solid #30ff56;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:hover {
-  background-color: transparent;
-  border: 2px solid #30ff56;
-  color: #6c757d;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.btn-primary:disabled {
-  background-color: #ebebeb;
-  border-color: #ccc;
-  color: rgb(180, 180, 180);
 }
