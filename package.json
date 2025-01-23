@@ -32,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
     "bootstrap": "^5.3.3",
+    "d3": "^7.9.0",
     "glob": "^11.0.1",
     "google-libphonenumber": "^3.2.40",
     "jwt-decode": "^4.0.0",
