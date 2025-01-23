@@ -29,13 +29,8 @@ export class AuthService {
       );
   }
 
-  register(
-    userRegistrationDto: UserRegistrationDto
-  ): Observable<UserResponseDto> {
-    return this.http.post<UserResponseDto>(
-      `${this.apiUrl}/register`,
-      userRegistrationDto
-    );
+  register(userRegistrationDto: UserRegistrationDto): Observable<UserResponseDto> {
+    return this.http.post<UserResponseDto>(`${this.apiUrl}/register`, userRegistrationDto);
   }
 
   logout(): Observable<void> {
@@ -49,14 +44,23 @@ export class AuthService {
   }
 
   deactivateUser(userId: number): Observable<UserResponseDto> {
-    return this.http.put<UserResponseDto>(
-      `${this.apiUrl}/${userId}/deactivate`,
-      {}
-    );
+    return this.http.put<UserResponseDto>(`${this.apiUrl}/${userId}/deactivate`, {});
   }
 
   getToken(): string | null {
-    return this.token || localStorage.getItem('token');
+    const token = this.token || localStorage.getItem('token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = payload.exp * 1000;
+      const currentTime = new Date().getTime();
+
+      if (currentTime > expirationTime) {
+        this.logout().subscribe();
+        return null;
+      }
+      return token;
+    }
+    return null;
   }
 
   isAuthenticated(): boolean {

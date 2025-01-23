@@ -14,12 +14,12 @@ export class AuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     const isAuthenticated = this.authService.isAuthenticated();
     const userRole = this.authService.getUserRole();
-    const requiredRole = next.data['role'] as string;
+    const requiredRoles = next.data['roles'] as string[];
 
-    if (isAuthenticated && userRole === requiredRole) {
+    if (isAuthenticated && (!requiredRoles || (userRole && requiredRoles.includes(userRole)))) {
       return true;
     } else {
-      this.router.navigate(['/']);
+      this.router.navigate(['/login']);
       return false;
     }
   }
