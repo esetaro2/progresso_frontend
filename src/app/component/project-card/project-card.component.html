@@ -1,0 +1,24 @@
+<mat-card style="width: 250px; margin-bottom: 3em;">
+  <mat-card-header class="d-flex justify-content-between">
+    <mat-card-title>
+      {{ project.name }}
+    </mat-card-title>
+    <mat-icon [ngClass]="getStatusClass()" class="animated-circle"
+      >circle</mat-icon
+    >
+  </mat-card-header>
+
+  <mat-card-content class="d-flex mt-4 justify-content-between">
+    <div class="d-flex align-self-center">
+      <span class="">Priority:</span>
+      <p [ngClass]="getPriorityClass()">{{ project.priority }}</p>
+    </div>
+
+    <ngx-charts-pie-chart
+      [results]="chartData"
+      [view]="[60, 60]"
+      [margins]="[0, 0, 0, 0]"
+    >
+    </ngx-charts-pie-chart>
+  </mat-card-content>
+</mat-card>
