@@ -15,7 +15,6 @@
               formControlName="firstName"
               required
               (input)="onInput('firstName')"
-              autocomplete="off"
             />
             <small>
               <span
@@ -70,7 +69,6 @@
               formControlName="lastName"
               required
               (input)="onInput('lastName')"
-              autocomplete="off"
             />
             <small>
               <span
@@ -122,7 +120,7 @@
               <!-- Dropdown per Birth Month -->
               <div ngbDropdown class="me-2">
                 <button
-                  class="btn btn-outline-secondary form-control fixed-width-dropdown"
+                  class="btn btn-outline-primary fixed-width-dropdown"
                   style="font-size: smaller"
                   id="birthMonthDropdown"
                   ngbDropdownToggle
@@ -147,7 +145,7 @@
               <!-- Dropdown per Birth Day -->
               <div ngbDropdown class="me-2">
                 <button
-                  class="btn btn-outline-secondary form-control fixed-width-dropdown"
+                  class="btn btn-outline-primary fixed-width-dropdown"
                   id="birthDayDropdown"
                   ngbDropdownToggle
                   style="font-size: smaller"
@@ -172,7 +170,7 @@
               <!-- Dropdown per Birth Year -->
               <div ngbDropdown>
                 <button
-                  class="btn btn-outline-secondary form-control fixed-width-dropdown"
+                  class="btn btn-outline-primary fixed-width-dropdown"
                   id="birthYearDropdown"
                   ngbDropdownToggle
                   style="font-size: smaller"
@@ -225,11 +223,11 @@
 
         <!-- Phone Number, Role  -->
         <div class="row mb-5 d-flex justify-content-center">
-          <div class="col-md-5 col-12">
+          <div class="col">
             <label for="phonePrefix">Phone Number</label>
             <div class="d-flex">
               <!-- Prefix Dropdown -->
-              <div class="col-5">
+              <div class="col-md-4">
                 <div>
                   <input
                     id="phonePrefix"
@@ -254,7 +252,7 @@
               </div>
 
               <!-- Phone Number Input-->
-              <div class="col-6">
+              <div class="col">
                 <input
                   id="phoneNumber"
                   type="tel"
@@ -301,14 +299,14 @@
           </div>
 
           <!-- Role -->
-          <div class="col-md-3 col-12 mt-md-0 mt-3">
+          <div class="col-md-5">
             <label for="roleDropdown">Role</label>
             <div ngbDropdown class="d-inline-block w-100">
               <button
-                class="btn btn-outline-secondary dropdown-toggle form-control w-100"
+                class="btn btn-outline-primary dropdown-toggle w-100"
                 id="roleDropdown"
                 ngbDropdownToggle
-                style="text-align: center; cursor: pointer"
+                style="text-align: center; cursor: pointer;"
               >
                 {{ selectedRoleLabel }}
               </button>
@@ -353,7 +351,7 @@
         <!-- Street Address, Country, State/Province/Region, City -->
         <div class="row mb-3">
           <!-- Street Address -->
-          <div class="col-md-4">
+          <div class="col-md-5">
             <label for="streetAddress">Street Address</label>
             <input
               id="streetAddress"
@@ -361,7 +359,6 @@
               class="form-control"
               formControlName="streetAddress"
               required
-              autocomplete="off"
               (input)="onInput('streetAddress')"
             />
             <small>
@@ -450,7 +447,7 @@
           </div>
 
           <!-- State/Province/Region -->
-          <div class="col-md-5">
+          <div class="col-md-4">
             <label for="stateProvinceRegion">State/Province/Region</label>
             <input
               id="stateProvinceRegion"
