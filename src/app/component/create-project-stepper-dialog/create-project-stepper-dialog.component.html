@@ -1,0 +1,336 @@
+<mat-horizontal-stepper [linear]="true">
+  <mat-step [stepControl]="projectForm">
+    <ng-template matStepLabel>Project Information</ng-template>
+    <h2 class="text-center mb-4" mat-dialog-title>Create Project</h2>
+    <div mat-dialog-content>
+      <form [formGroup]="projectForm">
+        <!-- Name Field -->
+        <div class="mb-3">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            required
+            (input)="onInput('name')"
+          />
+          <small>
+            <span
+              *ngIf="
+                projectForm.get('name')?.touched &&
+                projectForm.get('name')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span *ngIf="projectForm.get('name')?.errors?.['required']">
+                Project name is required.
+              </span>
+              <span *ngIf="projectForm.get('name')?.errors?.['minlength']">
+                Project name is too short.
+              </span>
+              <span *ngIf="projectForm.get('name')?.errors?.['maxlength']">
+                Project name is too long.
+              </span>
+            </span>
+            <span
+              *ngIf="
+                projectForm.get('name')?.touched &&
+                projectForm.get('name')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Project name is valid.
+            </span>
+            <span *ngIf="!projectForm.get('name')?.touched">
+              Please enter the project name.
+            </span>
+          </small>
+        </div>
+
+        <!-- Description Field -->
+        <div class="mb-5 d-flex flex-column">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            class="form-control"
+            formControlName="description"
+            required
+            (input)="onInput('description')"
+            style="resize: none; height: 100px"
+          ></textarea>
+          <small>
+            <span
+              *ngIf="
+                projectForm.get('description')?.touched &&
+                projectForm.get('description')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span
+                *ngIf="projectForm.get('description')?.errors?.['required']"
+              >
+                Description is required.
+              </span>
+              <span
+                *ngIf="projectForm.get('description')?.errors?.['minlength']"
+              >
+                Description is too short.
+              </span>
+              <span
+                *ngIf="projectForm.get('description')?.errors?.['maxlength']"
+              >
+                Description is too long (max 255 characters).
+              </span>
+            </span>
+            <span
+              *ngIf="
+                projectForm.get('description')?.touched &&
+                projectForm.get('description')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Description is valid.
+            </span>
+            <span *ngIf="!projectForm.get('description')?.touched">
+              Please enter the project description.
+            </span>
+          </small>
+        </div>
+
+        <!-- Start Date -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="startDateDropdown">Start Date</label>
+            <div class="d-flex">
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="startMonthDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                >
+                  {{ selectedStartMonthLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="startMonthDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let month of months"
+                    (click)="onStartMonthSelected(month)"
+                  >
+                    {{ month }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="startDayDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                >
+                  {{ selectedStartDayLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="startDayDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let day of daysInStartMonth"
+                    (click)="onStartDaySelected(day)"
+                  >
+                    {{ day }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown>
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="startYearDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                >
+                  {{ selectedStartYearLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="startYearDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let year of yearsList"
+                    (click)="onStartYearSelected(year)"
+                  >
+                    {{ year }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <small>
+              <span
+                *ngIf="
+                  !projectForm.get('startMonth')?.touched ||
+                  !projectForm.get('startDay')?.touched ||
+                  !projectForm.get('startYear')?.touched
+                "
+              >
+                Please select a start date.
+              </span>
+              <span
+                *ngIf="
+                  projectForm.get('startMonth')?.valid &&
+                  projectForm.get('startDay')?.valid &&
+                  projectForm.get('startYear')?.valid &&
+                  !projectForm.hasError('startBeforeToday')
+                "
+              >
+                <i class="fa fa-check"></i>Start date is valid.
+              </span>
+              <span *ngIf="projectForm.hasError('startBeforeToday')">
+                <i class="fa fa-times"></i>Start date must not be in the past.
+              </span>
+            </small>
+          </div>
+
+          <!-- Due Date -->
+          <div class="col-md-6 mb-3">
+            <label for="dueDateDropdown">Due Date</label>
+            <div class="d-flex">
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="dueMonthDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                  [disabled]="
+                    projectForm.hasError('startBeforeToday') ||
+                    !isStartDateValid()
+                  "
+                >
+                  {{ selectedDueMonthLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="dueMonthDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let month of months"
+                    (click)="onDueMonthSelected(month)"
+                  >
+                    {{ month }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="dueDayDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                  [disabled]="
+                    projectForm.hasError('startBeforeToday') ||
+                    !isStartDateValid()
+                  "
+                >
+                  {{ selectedDueDayLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="dueDayDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let day of daysInDueMonth"
+                    (click)="onDueDaySelected(day)"
+                  >
+                    {{ day }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown>
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
+                  id="dueYearDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                  [disabled]="
+                    projectForm.hasError('startBeforeToday') ||
+                    !isStartDateValid()
+                  "
+                >
+                  {{ selectedDueYearLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="dueYearDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let year of yearsList"
+                    (click)="onDueYearSelected(year)"
+                  >
+                    {{ year }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <small>
+              <span
+                *ngIf="
+                  !projectForm.get('dueMonth')?.touched ||
+                  !projectForm.get('dueDay')?.touched ||
+                  !projectForm.get('dueYear')?.touched
+                "
+              >
+                Please select a due date.
+              </span>
+
+              <span
+                *ngIf="
+                  projectForm.get('dueMonth')?.valid &&
+                  projectForm.get('dueDay')?.valid &&
+                  projectForm.get('dueYear')?.valid &&
+                  !projectForm.hasError('dueBeforeStart')
+                "
+              >
+                <i class="fa fa-check"></i>Due date is valid.
+              </span>
+              <span *ngIf="projectForm.hasError('dueBeforeStart')">
+                <i class="fa fa-times"></i>Due date must be after the start
+                date.
+              </span>
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button matStepperNext [disabled]="!projectForm.valid">
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Assign Project Manager</ng-template>
+    <div mat-dialog-content>CREARE TABELLA AVAILABLE PM DIOCAN</div>
+    <div mat-dialog-actions>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button matStepperNext>Next</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
