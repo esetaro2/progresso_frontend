@@ -5,14 +5,18 @@ import { ProjectDto } from '../dto/project.dto';
 import { Page } from '../dto/page.dto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectService {
   private apiUrl = 'http://localhost:8080/api/projects';
 
   constructor(private http: HttpClient) {}
 
-  private createPageableParams(page: number, size: number, sort?: string): HttpParams {
+  private createPageableParams(
+    page: number,
+    size: number,
+    sort?: string
+  ): HttpParams {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -22,110 +26,184 @@ export class ProjectService {
     return params;
   }
 
-  getAllProjects(page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(this.apiUrl, { params });
+  getProjectCompletionPercentage(projectId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${projectId}/completion`)
   }
 
   getProjectById(id: number): Observable<ProjectDto> {
     return this.http.get<ProjectDto>(`${this.apiUrl}/${id}`);
   }
 
-  getProjectsByStatus(status: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/status/${status}`, { params });
+  getAllProjectsWithFilters(
+    page: number,
+    size: number,
+    status?: string,
+    priority?: string,
+    name?: string,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
+    let params = this.createPageableParams(page, size, sort);
+
+    if (status != null && status.length != 0)
+      params = params.set('status', status);
+    if (priority != null && priority.length != 0)
+      params = params.set('priority', priority);
+    if (name != null && name.length != 0) params = params.set('name', name);
+
+    return this.http.get<Page<ProjectDto>>(this.apiUrl, { params });
   }
 
-  getProjectsByManager(managerId: number, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/manager/${managerId}`, { params });
+  getProjectsByManagerAndFilters(
+    managerUsername: string,
+    page: number,
+    size: number,
+    status?: string,
+    priority?: string,
+    name?: string,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
+    let params = this.createPageableParams(page, size, sort);
+
+    if (status != null && status.length != 0)
+      params = params.set('status', status);
+    if (priority != null && priority.length != 0)
+      params = params.set('priority', priority);
+    if (name != null && name.length != 0) params = params.set('name', name);
+
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/manager/${managerUsername}`,
+      { params }
+    );
   }
 
-  getProjectsByPriority(priority: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/priority/${priority}`, { params });
+  getProjectsByTeamMemberAndFilters(
+    teamMemberUsername: string,
+    page: number,
+    size: number,
+    status?: string,
+    priority?: string,
+    name?: string,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
+    let params = this.createPageableParams(page, size, sort);
+
+    if (status != null && status.length != 0)
+      params = params.set('status', status);
+    if (priority != null && priority.length != 0)
+      params = params.set('priority', priority);
+    if (name != null && name.length != 0) params = params.set('name', name);
+
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/teamMember/${teamMemberUsername}`,
+      { params }
+    );
   }
 
-  getProjectsDueBefore(date: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
+  findByTeamId(
+    teamId: number,
+    page: number,
+    size: number,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
     const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/due-before/${date}`, { params });
+    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}`, {
+      params,
+    });
   }
 
-  getProjectsCompletionAfter(date: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
+  findByTeamIdAndStatus(
+    teamId: number,
+    status: string,
+    page: number,
+    size: number,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
     const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/completion-after/${date}`, { params });
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/team/${teamId}/status/${status}`,
+      { params }
+    );
   }
 
-  getActiveProjectsByManager(managerId: number, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
+  findByTeamIdAndDueDateBefore(
+    teamId: number,
+    dueDate: string,
+    page: number,
+    size: number,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
     const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/manager/${managerId}/active`, { params });
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/team/${teamId}/due-date-before/${dueDate}`,
+      { params }
+    );
   }
 
-  getProjectsByTaskStatus(taskStatus: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
+  findActiveByTeamId(
+    teamId: number,
+    page: number,
+    size: number,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
     const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/task-status/${taskStatus}`, { params });
-  }
-
-  findByTeamId(teamId: number, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}`, { params });
-  }
-
-  findByTeamIdAndStatus(teamId: number, status: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}/status/${status}`, { params });
-  }
-
-  findByTeamIdAndDueDateBefore(teamId: number, dueDate: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}/due-date-before/${dueDate}`, { params });
-  }
-
-  findActiveByTeamId(teamId: number, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}/active`, { params });
-  }
-
-  getProjectsByStatusAndPriority(status: string, priority: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/status/${status}/priority/${priority}`, { params });
-  }
-
-  getProjectsByStartDateBetween(startDate: string, endDate: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/start-date-between/${startDate}/${endDate}`, { params });
-  }
-
-  getProjectsByCompletionDateBefore(completionDate: string, page: number, size: number, sort?: string): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/completion-date-before/${completionDate}`, { params });
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/team/${teamId}/active`,
+      { params }
+    );
   }
 
   createProject(projectDto: ProjectDto): Observable<ProjectDto> {
     return this.http.post<ProjectDto>(this.apiUrl, projectDto);
   }
 
-  updateProject(projectId: number, projectDto: ProjectDto): Observable<ProjectDto> {
+  updateProject(
+    projectId: number,
+    projectDto: ProjectDto
+  ): Observable<ProjectDto> {
     return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}`, projectDto);
   }
 
   removeProject(projectId: number): Observable<ProjectDto> {
-    return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}/remove`, null);
+    return this.http.put<ProjectDto>(
+      `${this.apiUrl}/${projectId}/remove`,
+      null
+    );
   }
 
-  updateProjectManager(projectId: number, projectManagerId: number): Observable<ProjectDto> {
-    return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}/update-manager/${projectManagerId}`, null);
+  updateProjectManager(
+    projectId: number,
+    projectManagerId: number
+  ): Observable<ProjectDto> {
+    return this.http.put<ProjectDto>(
+      `${this.apiUrl}/${projectId}/update-manager/${projectManagerId}`,
+      null
+    );
   }
 
-  assignTeamToProject(projectId: number, teamId: number): Observable<ProjectDto> {
-    return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}/assign-team/${teamId}`, null);
+  assignTeamToProject(
+    projectId: number,
+    teamId: number
+  ): Observable<ProjectDto> {
+    return this.http.put<ProjectDto>(
+      `${this.apiUrl}/${projectId}/assign-team/${teamId}`,
+      null
+    );
   }
 
-  reassignTeamToProject(projectId: number, teamId: number): Observable<ProjectDto> {
-    return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}/reassign-team/${teamId}`, null);
+  reassignTeamToProject(
+    projectId: number,
+    teamId: number
+  ): Observable<ProjectDto> {
+    return this.http.put<ProjectDto>(
+      `${this.apiUrl}/${projectId}/reassign-team/${teamId}`,
+      null
+    );
   }
 
   completeProject(projectId: number): Observable<ProjectDto> {
-    return this.http.put<ProjectDto>(`${this.apiUrl}/${projectId}/complete`, null);
+    return this.http.put<ProjectDto>(
+      `${this.apiUrl}/${projectId}/complete`,
+      null
+    );
   }
 }
