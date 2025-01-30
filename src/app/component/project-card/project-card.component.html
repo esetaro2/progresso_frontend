@@ -1,24 +1,38 @@
-<mat-card style="width: 250px; margin-bottom: 3em;">
-  <mat-card-header class="d-flex justify-content-between">
-    <mat-card-title>
+<div class="card">
+  <div
+    class="card-header d-flex justify-content-between"
+    style="background: none; border: none"
+  >
+    <h4 class="card-title">
       {{ project.name }}
-    </mat-card-title>
-    <mat-icon [ngClass]="getStatusClass()" class="animated-circle"
-      >circle</mat-icon
+    </h4>
+    <button
+      type="button"
+      class="btn no-border"
+      placement="top"
+      [ngbTooltip]="getTooltipText()"
     >
-  </mat-card-header>
+      <mat-icon [ngClass]="getStatusClass()" class="animated-circle"
+        >circle</mat-icon
+      >
+    </button>
+  </div>
 
-  <mat-card-content class="d-flex mt-4 justify-content-between">
+  <div class="card-body d-flex align-content-center justify-content-between">
     <div class="d-flex align-self-center">
-      <span class="">Priority:</span>
-      <p [ngClass]="getPriorityClass()">{{ project.priority }}</p>
+      <p>
+        Priority:
+        <span [ngClass]="getPriorityClass()">{{ project.priority }}</span>
+      </p>
     </div>
 
     <ngx-charts-pie-chart
       [results]="chartData"
-      [view]="[60, 60]"
+      [view]="[100, 100]"
+      [doughnut]="true"
+      [scheme]="'cool'"
       [margins]="[0, 0, 0, 0]"
     >
     </ngx-charts-pie-chart>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>

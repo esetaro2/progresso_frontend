@@ -1,30 +1,37 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MaterialModule } from '../../material.module';
 import { ProjectDto } from '../../dto/project.dto';
 import { CommonModule } from '@angular/common';
-import { NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-project-card',
-  imports: [MaterialModule, CommonModule, NgxChartsModule],
+  imports: [MaterialModule, CommonModule, NgxChartsModule, NgbModule],
   templateUrl: './project-card.component.html',
   styleUrls: ['./project-card.component.css'],
 })
-export class ProjectCardComponent {
+export class ProjectCardComponent implements OnInit {
   @Input() project!: ProjectDto;
+  chartData: { name: string; value: number }[] = [];
 
-  chartData = [
-    {
-      name: 'Completed',
-      value: 70,
-    },
-    {
-      name: 'Remaining',
-      value: 30,
-    },
-  ];
+  constructor(private projectService: ProjectService) {}
 
-  scaleType = ScaleType.Ordinal;
+  completed = false;
+
+  ngOnInit(): void {
+    this.projectService
+      .getProjectCompletionPercentage(this.project.id!)
+      .subscribe({
+        next: (percentage: number) => {
+          this.chartData = [
+            { name: 'Completed', value: percentage },
+            { name: 'Remaining', value: 100 - percentage },
+          ];
+        },
+      });
+  }
 
   getPriorityClass(): string {
     switch (this.project.priority) {
@@ -51,6 +58,22 @@ export class ProjectCardComponent {
         return 'cancelled-circle';
       default:
         return '';
+    }
+  }
+
+  getTooltipText(): string {
+    const statusClass = this.getStatusClass();
+    switch (statusClass) {
+      case 'in-progress-circle':
+        return 'In Progress';
+      case 'completed-circle':
+        return 'Completed';
+      case 'not-started-circle':
+        return 'Not Started';
+      case 'cancelled-circle':
+        return 'Cancelled';
+      default:
+        return 'Unknown Status';
     }
   }
 }

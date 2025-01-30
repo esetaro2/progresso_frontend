@@ -1,10 +1,34 @@
-<div class="container-fluid">
-  <div class="row">
-    <div
-      class="col-md-4 d-flex align-items-center justify-content-center"
-      *ngFor="let project of projects"
-    >
+<div class="container-fluid p-4 d-flex flex-column min-vh-100">
+  <h2 class="text-center mb-5">Projects</h2>
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <app-filter-section
+    [selectedStatus]="selectedStatus"
+    [selectedPriority]="selectedPriority"
+    [searchQuery]="searchQuery"
+    [statuses]="statuses"
+    [priorities]="priorities"
+    [statusLabels]="statusLabels"
+    [priorityLabels]="priorityLabels"
+    (statusChange)="selectStatus($event)"
+    (priorityChange)="selectPriority($event)"
+    (searchQueryChange)="searchByQuery($event)"
+    (resetFilters)="resetAllFilters()"
+    (createProjectEmitter)="createProject()"
+  ></app-filter-section>
+
+  <div
+    class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 justify-content-center flex-wrap mb-5 flex-grow-1"
+  >
+    <div class="mb-3 justify-content-center" *ngFor="let project of projects">
       <app-project-card [project]="project"></app-project-card>
     </div>
   </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    (pageChange)="goToPage($event)"
+  ></app-pagination>
 </div>
