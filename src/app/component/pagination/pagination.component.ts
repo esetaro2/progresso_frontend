@@ -30,20 +30,52 @@ export class PaginationComponent {
     }
   }
 
-  visiblePageNumbers(): number[] {
-    const maxVisiblePages = 5;
-    const startPage = Math.max(
-      this.currentPage - Math.floor(maxVisiblePages / 2),
-      0
-    );
-    const endPage = Math.min(
-      startPage + maxVisiblePages - 1,
-      this.totalPages - 1
-    );
-    const pages: number[] = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+  visiblePageNumbers(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    const total = this.totalPages;
+    const current = this.currentPage;
+
+    if (total <= 7) {
+      for (let i = 0; i < total; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(0);
+
+      if (current > 3) {
+        pages.push('...');
+      }
+
+      let startPage = Math.max(current - 1, 1);
+      let endPage = Math.min(current + 1, total - 2);
+
+      if (current <= 3) {
+        startPage = 1;
+        endPage = 3;
+      }
+
+      if (current >= total - 4) {
+        startPage = total - 4;
+        endPage = total - 2;
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (current < total - 4) {
+        pages.push('...');
+      }
+
+      pages.push(total - 1);
     }
+
     return pages;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isNumber(value: any): value is number {
+    return typeof value === 'number';
+  }
+  
 }

@@ -1,38 +1,50 @@
 <nav aria-label="Page navigation" class="w-100">
-    <ul class="pagination justify-content-center mb-0">
-      <li class="page-item" [class.disabled]="currentPage === 0">
-        <button class="page-link" (click)="goToPage(0)" aria-label="First">
-          <span aria-hidden="true">&laquo;&laquo;</span>
-        </button>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === 0">
-        <button class="page-link" (click)="previousPage()" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </button>
-      </li>
-      <li
-        class="page-item"
-        *ngFor="let pageIndex of visiblePageNumbers()"
-        [class.active]="pageIndex === currentPage"
+  <ul class="pagination justify-content-center mb-0">
+    <!-- Prima Pagina -->
+    <li class="page-item" [class.disabled]="currentPage === 0">
+      <button class="page-link" (click)="goToPage(0)" aria-label="First">
+        <span aria-hidden="true">&laquo;&laquo;</span>
+      </button>
+    </li>
+
+    <!-- Pagina Precedente -->
+    <li class="page-item" [class.disabled]="currentPage === 0">
+      <button class="page-link" (click)="previousPage()" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </button>
+    </li>
+
+    <!-- Numeri di Pagina ed Ellissi -->
+    <li
+      class="page-item"
+      *ngFor="let page of visiblePageNumbers()"
+      [class.active]="page === currentPage"
+      [class.disabled]="!isNumber(page)"
+    >
+      <!-- Se page è un numero -->
+      <button class="page-link" *ngIf="isNumber(page)" (click)="goToPage(page)">
+        {{ page + 1 }}
+      </button>
+      <!-- Se page è un ellissi -->
+      <span *ngIf="!isNumber(page)" class="page-link"> &hellip; </span>
+    </li>
+
+    <!-- Pagina Successiva -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <button class="page-link" (click)="nextPage()" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </button>
+    </li>
+
+    <!-- Ultima Pagina -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <button
+        class="page-link"
+        (click)="goToPage(totalPages - 1)"
+        aria-label="Last"
       >
-        <button *ngIf="pageIndex !== currentPage" class="page-link" (click)="goToPage(pageIndex)">
-          {{ pageIndex + 1 }}
-        </button>
-        <span *ngIf="pageIndex === currentPage" class="page-link">
-          {{ pageIndex + 1 }}
-          <span class="sr-only">(current)</span>
-        </span>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-        <button class="page-link" (click)="nextPage()" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </button>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-        <button class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Last">
-          <span aria-hidden="true">&raquo;&raquo;</span>
-        </button>
-      </li>
-    </ul>
-  </nav>
-  
+        <span aria-hidden="true">&raquo;&raquo;</span>
+      </button>
+    </li>
+  </ul>
+</nav>
