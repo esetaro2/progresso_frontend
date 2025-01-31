@@ -1,4 +1,6 @@
-<div class="d-flex justify-content-center align-items-center full-height align-self-center">
+<div
+  class="d-flex justify-content-center align-items-center full-height align-self-center"
+>
   <div class="card form-container">
     <div class="card-body">
       <h2 class="text-center mb-4">Login</h2>
@@ -52,7 +54,10 @@
               formControlName="password"
               required
               (input)="onInput('password')"
-              style="border-top-right-radius: 4px; border-bottom-right-radius: 4px;"
+              style="
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+              "
             />
             <div class="input-group-append">
               <button
@@ -99,10 +104,7 @@
           </small>
         </div>
         <div class="btn-link-container">
-          <div
-            [ngClass]="{ show: errorMessage }"
-            class="error-message"
-          >
+          <div [ngClass]="{ show: errorMessage }" class="error-message">
             {{ errorMessage }}
           </div>
           <button

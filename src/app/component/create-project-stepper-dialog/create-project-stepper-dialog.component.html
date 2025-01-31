@@ -99,7 +99,7 @@
         <!-- Start Date -->
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="startDateDropdown">Start Date</label>
+            <label for="startMonthDropdown">Start Date</label>
             <div class="d-flex">
               <div ngbDropdown class="me-2">
                 <button
@@ -201,7 +201,7 @@
 
           <!-- Due Date -->
           <div class="col-md-6 mb-3">
-            <label for="dueDateDropdown">Due Date</label>
+            <label for="dueMonthDropdown">Due Date</label>
             <div class="d-flex">
               <div ngbDropdown class="me-2">
                 <button
@@ -319,7 +319,13 @@
       </form>
     </div>
     <div mat-dialog-actions>
-      <button mat-button matStepperNext [disabled]="!projectForm.valid">
+      <button mat-button matDialogClose>Close</button>
+      <button
+        mat-button
+        matStepperNext
+        [disabled]="!projectForm.valid"
+        (click)="onCreateFirstPartProject()"
+      >
         Next
       </button>
     </div>
@@ -327,10 +333,14 @@
 
   <mat-step>
     <ng-template matStepLabel>Assign Project Manager</ng-template>
-    <div mat-dialog-content>CREARE TABELLA AVAILABLE PM DIOCAN</div>
+    <div mat-dialog-content>
+      <app-available-pm-table (pmSelected)="onPmSelected($event)"></app-available-pm-table>
+    </div>
+
     <div mat-dialog-actions>
+      <button mat-button matDialogClose>Close</button>
       <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matStepperNext>Next</button>
+      <button mat-button matDialogClose [disabled]="!selectedPmId" (click)="onSubmit()">Create</button>
     </div>
   </mat-step>
 </mat-horizontal-stepper>

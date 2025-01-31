@@ -17,7 +17,8 @@ import { UserResponseDto } from '../../dto/user-response.dto';
 export class LoginComponent {
   loginForm: FormGroup;
   passwordFieldType = 'password';
-  private usernameRegex = '^[a-zA-Z]\\.[a-zA-Z]+\\.(am|pm|tm)[0-9]+@progresso\\.com$';
+  private usernameRegex =
+    '^[a-zA-Z]\\.[a-zA-Z]+\\.(am|pm|tm)[0-9]+@progresso\\.com$';
   errorMessage = '';
 
   constructor(
@@ -26,7 +27,10 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.pattern(this.usernameRegex)]],
+      username: [
+        '',
+        [Validators.required, Validators.pattern(this.usernameRegex)],
+      ],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }

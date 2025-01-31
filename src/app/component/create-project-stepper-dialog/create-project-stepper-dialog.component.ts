@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MaterialModule } from '../../material.module';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   AbstractControl,
   FormBuilder,
@@ -13,6 +13,9 @@ import { ProjectDto } from '../../dto/project.dto';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AvailablePmTableComponent } from '../available-pm-table/available-pm-table.component';
+import { ProjectService } from '../../service/project.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-project-stepper-dialog',
@@ -22,12 +25,16 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     ReactiveFormsModule,
     NgbModule,
     MatAutocompleteModule,
+    AvailablePmTableComponent,
   ],
   templateUrl: './create-project-stepper-dialog.component.html',
   styleUrls: ['./create-project-stepper-dialog.component.css'],
 })
 export class CreateProjectStepperDialogComponent implements OnInit {
+  @Output() projectCreated = new EventEmitter<void>();
+
   projectForm: FormGroup;
+  projectDto!: ProjectDto;
 
   today = new Date();
   currentYear = this.today.getFullYear();
@@ -56,11 +63,13 @@ export class CreateProjectStepperDialogComponent implements OnInit {
   daysInDueMonth: number[] = [];
   yearsList: number[] = [];
 
+  selectedPmId: number | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<CreateProjectStepperDialogComponent>,
     private fb: FormBuilder,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private projectService: ProjectService,
+    private snackBar: MatSnackBar
   ) {
     this.projectForm = this.fb.group(
       {
@@ -101,7 +110,6 @@ export class CreateProjectStepperDialogComponent implements OnInit {
   ngOnInit(): void {
     this.updateStartDateDays();
     this.updateDueDateDays();
-    console.log(this.currentYear);
   }
 
   todayDateBeforeStartValidator(
@@ -144,19 +152,68 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     return null;
   }
 
+  onCreateFirstPartProject(): void {
+    const formValues = this.projectForm.value;
+
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const startMonthIndex = monthNames.indexOf(formValues.startMonth) + 1;
+    const startDate = `${formValues.startYear}-${String(
+      startMonthIndex
+    ).padStart(2, '0')}-${String(formValues.startDay).padStart(2, '0')}`;
+
+    const dueMonthIndex = monthNames.indexOf(formValues.dueMonth) + 1;
+    const dueDate = `${formValues.dueYear}-${String(dueMonthIndex).padStart(
+      2,
+      '0'
+    )}-${String(formValues.dueDay).padStart(2, '0')}`;
+
+    this.projectDto = {
+      name: formValues.name,
+      description: formValues.description,
+      startDate: startDate,
+      dueDate: dueDate,
+      projectManagerId: 0,
+    };
+
+    console.log('Dati Iniziali Del Progetto Con Manager 0', this.projectDto);
+  }
+
+  onPmSelected(pmId: number) {
+    this.selectedPmId = pmId;
+    console.log('PM SELEZIONATO DAL FIGLIO', this.selectedPmId);
+
+    this.projectDto.projectManagerId = this.selectedPmId;
+    console.log('Progetto con pm settato', this.projectDto);
+  }
+
   onSubmit(): void {
-    if (this.projectForm.valid) {
-      const formValues = this.projectForm.value;
-
-      const projectDto: ProjectDto = {
-        name: formValues.name,
-        description: formValues.description,
-        startDate: formValues.startDate,
-        dueDate: formValues.dueDate,
-      };
-
-      console.log('Project Data', projectDto);
-    }
+    this.projectService.createProject(this.projectDto).subscribe({
+      next: (project) => {
+        console.log('Progetto creato con PM', project);
+        this.projectCreated.emit();
+        this.dialogRef.close();
+        this.snackBar.open('Project created successfully!', 'Close', {
+          duration: 5000,
+        });
+      },
+      error: (error) => {
+        console.error('Error creating project', error);
+      },
+    });
   }
 
   onInput(controlName: string) {
