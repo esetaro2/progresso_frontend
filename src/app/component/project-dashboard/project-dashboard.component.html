@@ -26,7 +26,13 @@
     </div>
   </div>
 
-  <app-pagination
+  <div
+    class="d-flex justify-content-center flex-wrap flex-grow-1"
+  >
+  <h3 style="color: #3080f7;" *ngIf="projects.length === 0">{{ errorMessage }}</h3>
+  </div>
+
+  <app-pagination *ngIf="projects.length !== 0"
     [currentPage]="currentPage"
     [totalPages]="totalPages"
     (pageChange)="goToPage($event)"

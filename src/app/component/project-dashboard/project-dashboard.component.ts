@@ -64,6 +64,8 @@ export class ProjectDashboardComponent implements OnInit {
   totalElements = 0;
   totalPages = 0;
 
+  errorMessage = '';
+
   constructor(
     private projectService: ProjectService,
     private userService: UserService,
@@ -106,6 +108,9 @@ export class ProjectDashboardComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching all projects with filters', error);
           this.loading = false;
+          this.projects = [];
+          this.errorMessage = error.message;
+          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
@@ -135,6 +140,9 @@ export class ProjectDashboardComponent implements OnInit {
             error
           );
           this.loading = false;
+          this.projects = [];
+          this.errorMessage = error.message;
+          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
@@ -164,6 +172,9 @@ export class ProjectDashboardComponent implements OnInit {
             error
           );
           this.loading = false;
+          this.projects = [];
+          this.errorMessage = error.message;
+          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
@@ -221,6 +232,14 @@ export class ProjectDashboardComponent implements OnInit {
       width: '100%',
       maxWidth: '750px',
     });
+
+    dialogRef.componentInstance.projectCreated.subscribe(
+      (newProject: ProjectDto) => {
+        console.log('New project created', newProject);
+        this.currentPage = 0;
+        this.applyFilters();
+      }
+    );
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
