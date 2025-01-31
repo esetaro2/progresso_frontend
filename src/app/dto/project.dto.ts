@@ -7,7 +7,7 @@ export interface ProjectDto {
     dueDate: string;
     completionDate?: string;
     status?: string;
-    projectManagerId?: number;
+    projectManagerId: number;
     taskIds?: number[];
     teamId?: number;
     commentIds?: number[];
