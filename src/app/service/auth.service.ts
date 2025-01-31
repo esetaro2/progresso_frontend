@@ -39,9 +39,14 @@ export class AuthService {
 
   logout(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
-        this.token = null;
-        localStorage.removeItem('token');
+      tap({
+        next: () => {
+          localStorage.removeItem('token');
+          this.token = null;
+        },
+        error: (err) => {
+          console.error('Logout failed', err);
+        },
       })
     );
   }
