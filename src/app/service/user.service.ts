@@ -56,9 +56,14 @@ export class UserService {
   getAvailablePms(
     page: number,
     size: number,
+    searchTerm?: string,
     sort?: string
   ): Observable<Page<UserResponseDto>> {
-    const params = this.createPageableParams(page, size, sort);
+    let params = this.createPageableParams(page, size, sort);
+
+    if (searchTerm != null && searchTerm.length != 0)
+      params = params.set('searchTerm', searchTerm);
+
     return this.http.get<Page<UserResponseDto>>(`${this.apiUrl}/availablePms`, {
       params,
     });

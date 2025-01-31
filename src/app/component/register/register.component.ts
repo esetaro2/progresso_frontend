@@ -174,12 +174,28 @@ export class RegisterComponent implements OnInit {
     if (this.registrationForm.invalid) {
       return;
     }
-  
+
     const formValues = this.registrationForm.value;
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     const monthIndex = monthNames.indexOf(formValues.birthMonth) + 1;
-    const birthDate = `${formValues.birthYear}-${String(monthIndex).padStart(2, '0')}-${String(formValues.birthDay).padStart(2, '0')}`;
-  
+    const birthDate = `${formValues.birthYear}-${String(monthIndex).padStart(
+      2,
+      '0'
+    )}-${String(formValues.birthDay).padStart(2, '0')}`;
+
     const registrationDto: UserRegistrationDto = {
       firstName: formValues.firstName,
       lastName: formValues.lastName,
@@ -193,7 +209,7 @@ export class RegisterComponent implements OnInit {
       email: formValues.email,
       role: formValues.role,
     };
-  
+
     this.authService.register(registrationDto).subscribe({
       next: (response: UserResponseDto) => {
         console.log('Registration successful', response);
