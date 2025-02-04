@@ -49,7 +49,7 @@ export class LoginComponent {
     this.authService.login(userLoginDto).subscribe({
       next: (response: { userResponseDto: UserResponseDto }) => {
         console.log(response.userResponseDto);
-        this.router.navigate(['/']);
+        this.router.navigate(['']);
       },
       error: () => {
         this.errorMessage = 'Username or password is incorrect.';
