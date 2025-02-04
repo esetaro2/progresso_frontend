@@ -27,7 +27,7 @@
 }
 
 .tableRow:hover {
-  background-color: rgba(0, 0, 255, 0.1);
+  background-color: rgba(104, 104, 255, 0.1);
 }
 
 tr.selected {

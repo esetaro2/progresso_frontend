@@ -49,16 +49,23 @@ export class AvailablePmTableComponent implements OnInit {
   selectedRow: ProjectManager | null = null;
   selectedPmId: number | null = null;
 
+  errorMessage = '';
+
+  isSearchQueryPresent = false;
+
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
     this.getAvailablePms();
   }
 
-  getAvailablePms(showLoading = true): void {
-    if (showLoading) {
-      this.loading = true;
+  getAvailablePms(): void {
+    this.loading = true;
+
+    if (this.searchQuery !== '') {
+      this.isSearchQueryPresent = true;
     }
+
     this.userService
       .getAvailablePms(this.currentPage, this.pageSize, this.searchQuery)
       .subscribe({
@@ -67,20 +74,28 @@ export class AvailablePmTableComponent implements OnInit {
           console.log('Available PMs', this.dataSource.data);
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
-          this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
           this.loading = false;
         },
         error: (error) => {
           console.error('Error fetching available Project Managers', error);
           this.loading = false;
+          this.errorMessage = error.message;
+          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
+          this.dataSource.data = [];
         },
       });
   }
 
   applyFilter(): void {
     this.currentPage = 0;
-    this.getAvailablePms(false);
+    this.getAvailablePms();
+  }
+
+  resetAllFilters(): void {
+    this.isSearchQueryPresent = false;
+    this.searchQuery = '';
+    this.applyFilter();
   }
 
   onPageChange(event: PageEvent): void {

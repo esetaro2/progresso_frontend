@@ -1,29 +1,45 @@
 <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 <div class="table-container">
-  <div class="input-group position-relative">
-    <input
-      name="searchInput"
-      placeholder="Search..."
-      [(ngModel)]="searchQuery"
-      class="form-control"
-      style="border-top-right-radius: 4px; border-bottom-right-radius: 4px"
-      (keyup)="applyFilter()"
-    />
-    <mat-icon
-      class="position-absolute top-0 end-0 search-icon"
-      style="
-        height: 100%;
-        margin-right: 10px;
-        display: flex;
-        align-items: center;
-        z-index: 12;
-      "
+  <div class="d-flex align-items-center">
+    <div class="input-group position-relative">
+      <input
+        name="searchInput"
+        placeholder="Search..."
+        [(ngModel)]="searchQuery"
+        class="form-control"
+        style="border-top-right-radius: 4px; border-bottom-right-radius: 4px"
+        (keydown.enter)="applyFilter()"
+      />
+      <mat-icon
+        class="position-absolute top-0 end-0 search-icon"
+        style="
+          height: 100%;
+          margin-right: 10px;
+          display: flex;
+          align-items: center;
+          z-index: 12;
+        "
+      >
+        search
+      </mat-icon>
+    </div>
+    <button
+      mat-button
+      [ngClass]="{
+        invisible: !isSearchQueryPresent,
+      }"
+      (click)="resetAllFilters()"
     >
-      search
-    </mat-icon>
+      <i class="fa fa-times"></i>
+    </button>
   </div>
 
-  <table mat-table [dataSource]="dataSource" matSort>
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    *ngIf="dataSource.data.length !== 0"
+  >
     <!-- Definizione delle colonne -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -55,11 +71,12 @@
       class="tableRow"
     ></tr>
   </table>
-
   <mat-paginator
+    *ngIf="dataSource.data.length !== 0"
     [length]="totalElements"
     [hidePageSize]="true"
     [pageSize]="pageSize"
     (page)="onPageChange($event)"
   ></mat-paginator>
 </div>
+<h5 style="color: #3080f7;" *ngIf="dataSource.data.length === 0" class="text-center mt-5">{{ errorMessage }}</h5>
