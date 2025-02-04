@@ -11,6 +11,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./filter-section.component.css'],
 })
 export class FilterSectionComponent {
+  @Input() role?: string | null;
   @Input() selectedStatus?: string;
   @Input() selectedPriority?: string;
   @Input() searchQuery?: string;

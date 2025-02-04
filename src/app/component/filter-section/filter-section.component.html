@@ -103,7 +103,7 @@
         <i class="fa fa-times"></i> Reset filters
       </button>
   
-      <button
+      <button *ngIf="role === 'ADMIN'"
         class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-1" (click)="createProject()"
       >
         <i class="fa fa-plus"></i>Create
