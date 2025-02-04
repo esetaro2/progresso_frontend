@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { Page } from '../dto/page.dto';
 
@@ -9,22 +9,8 @@ import { Page } from '../dto/page.dto';
 })
 export class UserService {
   private apiUrl = 'http://localhost:8080/api/users';
-  private currentUserSubject = new BehaviorSubject<UserResponseDto | null>(
-    null
-  );
-  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
-
-  initializeUser(userId: number): void {
-    this.getUserById(userId).subscribe((user) => {
-      this.currentUserSubject.next(user);
-    });
-  }
-
-  getCurrentUser(): Observable<UserResponseDto | null> {
-    return this.currentUser$;
-  }
 
   private createPageableParams(
     page: number,
@@ -64,9 +50,29 @@ export class UserService {
     if (searchTerm != null && searchTerm.length != 0)
       params = params.set('searchTerm', searchTerm);
 
-    return this.http.get<Page<UserResponseDto>>(`${this.apiUrl}/availablePms`, {
-      params,
-    });
+    return this.http.get<Page<UserResponseDto>>(
+      `${this.apiUrl}/available-project-managers`,
+      {
+        params,
+      }
+    );
+  }
+
+  getAvailableTms(
+    page: number,
+    size: number,
+    searchTerm?: string,
+    sort?: string
+  ): Observable<Page<UserResponseDto>> {
+    let params = this.createPageableParams(page, size, sort);
+
+    if (searchTerm != null && searchTerm.length != 0)
+      params = params.set('searchTerm', searchTerm);
+
+    return this.http.get<Page<UserResponseDto>>(
+      `${this.apiUrl}/available-team-members`,
+      { params }
+    );
   }
 
   getUsersByRole(
