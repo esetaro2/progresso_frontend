@@ -4,6 +4,7 @@
   <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 
   <app-filter-section
+    [role]="role"
     [selectedStatus]="selectedStatus"
     [selectedPriority]="selectedPriority"
     [searchQuery]="searchQuery"
@@ -26,13 +27,14 @@
     </div>
   </div>
 
-  <div
-    class="d-flex justify-content-center flex-wrap flex-grow-1"
-  >
-  <h3 style="color: #3080f7;" *ngIf="projects.length === 0">{{ errorMessage }}</h3>
+  <div class="d-flex justify-content-center flex-wrap flex-grow-1">
+    <h3 style="color: #3080f7" *ngIf="projects.length === 0">
+      {{ errorMessage }}
+    </h3>
   </div>
 
-  <app-pagination *ngIf="projects.length !== 0"
+  <app-pagination
+    *ngIf="projects.length !== 0"
     [currentPage]="currentPage"
     [totalPages]="totalPages"
     (pageChange)="goToPage($event)"

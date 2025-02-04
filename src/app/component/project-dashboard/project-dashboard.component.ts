@@ -7,13 +7,12 @@ import { MaterialModule } from '../../material.module';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Page } from '../../dto/page.dto';
-import { UserResponseDto } from '../../dto/user-response.dto';
-import { UserService } from '../../service/user.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { FilterSectionComponent } from '../filter-section/filter-section.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectStepperDialogComponent } from '../create-project-stepper-dialog/create-project-stepper-dialog.component';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-project-dashboard',
@@ -31,9 +30,9 @@ import { CreateProjectStepperDialogComponent } from '../create-project-stepper-d
   styleUrls: ['./project-dashboard.component.css'],
 })
 export class ProjectDashboardComponent implements OnInit {
-  currentUser: UserResponseDto | null = null;
-  username = '';
-  role = '';
+
+  username: string | null = null;
+  role: string | null = null;
 
   projects: ProjectDto[] = [];
 
@@ -68,23 +67,14 @@ export class ProjectDashboardComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private userService: UserService,
+    private authService: AuthService,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.userService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-
-      if (this.currentUser) {
-        console.log(this.currentUser);
-
-        this.role = this.currentUser.role;
-        this.username = this.currentUser.username;
-
-        this.applyFilters();
-      }
-    });
+    this.username = this.authService.getUserUsername();
+    this.role = this.authService.getUserRole();
+    this.applyFilters();
   }
 
   loadAllProjectsWithFilters(): void {
@@ -119,7 +109,7 @@ export class ProjectDashboardComponent implements OnInit {
     this.loading = true;
     this.projectService
       .getProjectsByManagerAndFilters(
-        this.username,
+        this.username!,
         this.currentPage,
         this.pageSize,
         this.selectedStatus,
@@ -151,7 +141,7 @@ export class ProjectDashboardComponent implements OnInit {
     this.loading = true;
     this.projectService
       .getProjectsByTeamMemberAndFilters(
-        this.username,
+        this.username!,
         this.currentPage,
         this.pageSize,
         this.selectedStatus,
@@ -233,54 +223,14 @@ export class ProjectDashboardComponent implements OnInit {
       maxWidth: '750px',
     });
 
-    dialogRef.componentInstance.projectCreated.subscribe(
-      (newProject: ProjectDto) => {
-        console.log('New project created', newProject);
-        this.currentPage = 0;
-        this.applyFilters();
-      }
-    );
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('New project created', result);
-        this.applyFilters();
-      }
+    dialogRef.componentInstance.projectCreated.subscribe(() => {
+      this.currentPage = 0;
+      this.applyFilters();
     });
   }
 
   goToPage(pageIndex: number): void {
     this.currentPage = pageIndex;
     this.applyFilters();
-  }
-
-  previousPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.applyFilters();
-    }
-  }
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.applyFilters();
-    }
-  }
-
-  visiblePageNumbers(): number[] {
-    const maxVisiblePages = 5;
-    const startPage = Math.max(
-      this.currentPage - Math.floor(maxVisiblePages / 2),
-      0
-    );
-    const endPage = Math.min(
-      startPage + maxVisiblePages - 1,
-      this.totalPages - 1
-    );
-    const pages: number[] = [];
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    return pages;
   }
 }
