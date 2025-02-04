@@ -334,13 +334,54 @@
   <mat-step>
     <ng-template matStepLabel>Assign Project Manager</ng-template>
     <div mat-dialog-content>
-      <app-available-pm-table (pmSelected)="onPmSelected($event)"></app-available-pm-table>
+      <app-available-pm-table
+        (pmSelected)="onPmSelected($event)"
+      ></app-available-pm-table>
     </div>
 
     <div mat-dialog-actions>
       <button mat-button matDialogClose>Close</button>
       <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matDialogClose [disabled]="!selectedPmId" (click)="onSubmit()">Create</button>
+      <button
+        mat-button
+        matStepperNext
+        [disabled]="!selectedPmId"
+      >
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Assign Team</ng-template>
+    <div
+      mat-dialog-content
+      class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+      *ngIf="!existingTeam"
+    >
+      <button mat-raised-button (click)="existingTeam = true">
+        Assign Existing Team
+      </button>
+      <span class="mx-2">or</span>
+      <button mat-raised-button (click)="openCreateTeamDialog()">Create New Team</button>
+      <span class="mx-2">or</span>
+      <button mat-raised-button matDialogClose (click)="onSubmit()">Assign Team Later</button>
+    </div>
+
+    <div
+      mat-dialog-content
+      class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+      *ngIf="existingTeam"
+    >
+      <h3>Select a Team</h3>
+      <app-available-team-table (teamSelected)="onTeamSelected($event)"></app-available-team-table>
+      <button mat-raised-button (click)="existingTeam = false; selectedTeamId = null;" class="align-self-center">Cancel</button>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button matDialogClose>Close</button>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button matDialogClose *ngIf="existingTeam" [disabled]="!selectedTeamId" (click)="onSubmit()">Create</button>
     </div>
   </mat-step>
 </mat-horizontal-stepper>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MaterialModule } from '../../material.module';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   AbstractControl,
   FormBuilder,
@@ -16,6 +16,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AvailablePmTableComponent } from '../available-pm-table/available-pm-table.component';
 import { ProjectService } from '../../service/project.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AvailableTeamTableComponent } from '../available-team-table/available-team-table.component';
+import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
 
 @Component({
   selector: 'app-create-project-stepper-dialog',
@@ -26,6 +28,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     NgbModule,
     MatAutocompleteModule,
     AvailablePmTableComponent,
+    AvailableTeamTableComponent,
   ],
   templateUrl: './create-project-stepper-dialog.component.html',
   styleUrls: ['./create-project-stepper-dialog.component.css'],
@@ -65,11 +68,15 @@ export class CreateProjectStepperDialogComponent implements OnInit {
 
   selectedPmId: number | null = null;
 
+  existingTeam = false;
+  selectedTeamId: number | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<CreateProjectStepperDialogComponent>,
     private fb: FormBuilder,
     private projectService: ProjectService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.projectForm = this.fb.group(
       {
@@ -200,19 +207,54 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     console.log('Progetto con pm settato', this.projectDto);
   }
 
+  onTeamSelected(teamId: number): void {
+    this.selectedTeamId = teamId;
+    console.log('ID del team selezionato:', this.selectedTeamId);
+  }
+
+  openCreateTeamDialog(): void {
+    const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
+      width: '100%',
+      maxWidth: '750px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Team creato: ', result);
+        this.selectedTeamId = result.id;
+        console.log('SELECTED TEAM ID PASSATO DAL DIALOG', this.selectedTeamId);
+        this.onSubmit();
+      }
+    });
+  }
+
   onSubmit(): void {
     this.projectService.createProject(this.projectDto).subscribe({
       next: (project) => {
         console.log('Progetto creato con PM', project);
-        this.projectCreated.emit();
-        this.dialogRef.close();
-        this.snackBar.open('Project created successfully!', 'Close', {
-          duration: 5000,
-        });
+
+        if (this.selectedTeamId) {
+          this.projectService
+            .assignTeamToProject(project.id!, this.selectedTeamId!)
+            .subscribe({
+              next: (updatedProject) => {
+                console.log('Project con PM e Team', updatedProject);
+              },
+              error: (error) => {
+                console.error('Error assigning team', error);
+              },
+            });
+        }
       },
       error: (error) => {
         console.error('Error creating project', error);
       },
+    });
+
+    this.projectCreated.emit();
+    this.dialogRef.close();
+    this.snackBar.open('Project created successfully!', 'Close', {
+      duration: 5000,
     });
   }
 
