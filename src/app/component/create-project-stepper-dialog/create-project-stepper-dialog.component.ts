@@ -15,9 +15,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AvailablePmTableComponent } from '../available-pm-table/available-pm-table.component';
 import { ProjectService } from '../../service/project.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AvailableTeamTableComponent } from '../available-team-table/available-team-table.component';
 import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
+import { ToastService } from '../../service/toast.service';
 
 @Component({
   selector: 'app-create-project-stepper-dialog',
@@ -66,7 +66,7 @@ export class CreateProjectStepperDialogComponent implements OnInit {
   daysInDueMonth: number[] = [];
   yearsList: number[] = [];
 
-  selectedPmId: number | null = null;
+  selectedPmId = 0;
 
   existingTeam = false;
   selectedTeamId: number | null = null;
@@ -75,8 +75,8 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateProjectStepperDialogComponent>,
     private fb: FormBuilder,
     private projectService: ProjectService,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastService: ToastService
   ) {
     this.projectForm = this.fb.group(
       {
@@ -193,10 +193,14 @@ export class CreateProjectStepperDialogComponent implements OnInit {
       description: formValues.description,
       startDate: startDate,
       dueDate: dueDate,
-      projectManagerId: 0,
+      projectManagerId: this.selectedPmId,
     };
 
     console.log('Dati Iniziali Del Progetto Con Manager 0', this.projectDto);
+  }
+
+  checkProject() {
+    console.log('Test project', this.projectDto);
   }
 
   onPmSelected(pmId: number) {
@@ -253,8 +257,9 @@ export class CreateProjectStepperDialogComponent implements OnInit {
 
     this.projectCreated.emit();
     this.dialogRef.close();
-    this.snackBar.open('Project created successfully!', 'Close', {
-      duration: 5000,
+    this.toastService.show('Project created successfully!', {
+      classname: 'bg-success text-light',
+      delay: 5000,
     });
   }
 

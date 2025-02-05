@@ -14,6 +14,7 @@
             formControlName="name"
             required
             (input)="onInput('name')"
+            autocomplete="on"
           />
           <small>
             <span
@@ -341,14 +342,10 @@
 
     <div mat-dialog-actions>
       <button mat-button matDialogClose>Close</button>
-      <button mat-button matStepperPrevious>Back</button>
-      <button
-        mat-button
-        matStepperNext
-        [disabled]="!selectedPmId"
-      >
-        Next
+      <button mat-button matStepperPrevious (click)="checkProject()">
+        Back
       </button>
+      <button mat-button matStepperNext [disabled]="!selectedPmId">Next</button>
     </div>
   </mat-step>
 
@@ -363,9 +360,13 @@
         Assign Existing Team
       </button>
       <span class="mx-2">or</span>
-      <button mat-raised-button (click)="openCreateTeamDialog()">Create New Team</button>
+      <button mat-raised-button (click)="openCreateTeamDialog()">
+        Create New Team
+      </button>
       <span class="mx-2">or</span>
-      <button mat-raised-button matDialogClose (click)="onSubmit()">Assign Team Later</button>
+      <button mat-raised-button matDialogClose (click)="onSubmit()">
+        Assign Team Later
+      </button>
     </div>
 
     <div
@@ -374,14 +375,30 @@
       *ngIf="existingTeam"
     >
       <h3>Select a Team</h3>
-      <app-available-team-table (teamSelected)="onTeamSelected($event)"></app-available-team-table>
-      <button mat-raised-button (click)="existingTeam = false; selectedTeamId = null;" class="align-self-center">Cancel</button>
+      <app-available-team-table
+        (teamSelected)="onTeamSelected($event)"
+      ></app-available-team-table>
+      <button
+        mat-raised-button
+        (click)="existingTeam = false; selectedTeamId = null"
+        class="align-self-center"
+      >
+        Cancel
+      </button>
     </div>
 
     <div mat-dialog-actions>
       <button mat-button matDialogClose>Close</button>
       <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matDialogClose *ngIf="existingTeam" [disabled]="!selectedTeamId" (click)="onSubmit()">Create</button>
+      <button
+        mat-button
+        matDialogClose
+        *ngIf="existingTeam"
+        [disabled]="!selectedTeamId"
+        (click)="onSubmit()"
+      >
+        Create
+      </button>
     </div>
   </mat-step>
 </mat-horizontal-stepper>
