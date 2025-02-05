@@ -67,7 +67,7 @@
       mat-row
       *matRowDef="let row; columns: displayedColumns"
       (click)="onRowClicked(row)"
-      [class.selected]="selectedRow === row"
+      [class.selected]="selectedRow?.id === row.id"
       class="tableRow"
     ></tr>
   </table>

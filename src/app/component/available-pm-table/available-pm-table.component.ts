@@ -76,6 +76,15 @@ export class AvailablePmTableComponent implements OnInit {
           this.totalPages = pageData.page.totalPages;
           this.dataSource.sort = this.sort;
           this.loading = false;
+
+          const selectedRow = this.dataSource.data.find(
+            (pm) => pm.id === this.selectedPmId
+          );
+          if (selectedRow) {
+            this.selectedRow = selectedRow;
+          } else {
+            this.selectedRow = null;
+          }
         },
         error: (error) => {
           console.error('Error fetching available Project Managers', error);
