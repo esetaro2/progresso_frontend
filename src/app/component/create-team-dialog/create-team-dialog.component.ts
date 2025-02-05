@@ -61,7 +61,7 @@ export class CreateTeamDialogComponent implements OnInit {
   totalElements = 0;
   totalPages = 0;
 
-  selectedTeamMemberIds: number | null = null;
+  selectedTeamMemberIds: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -114,9 +114,7 @@ export class CreateTeamDialogComponent implements OnInit {
 
   createTeam(): void {
     const teamName = this.teamForm.get('name')?.value;
-    const selectedUserIds = this.selection.selected.map(
-      (user: TeamMember) => user.id
-    );
+    const selectedUserIds = this.selectedTeamMemberIds;
 
     this.teamService.createTeam(teamName).subscribe({
       next: (team: TeamDto) => {
@@ -140,8 +138,16 @@ export class CreateTeamDialogComponent implements OnInit {
   }
 
   onRowClicked(row: TeamMember): void {
-    this.selection.toggle(row);
-    console.log('Team Members selezionati: ', this.selection.selected);
+    if (this.selectedTeamMemberIds.includes(row.id)) {
+      this.selection.deselect(row);
+      this.selectedTeamMemberIds = this.selectedTeamMemberIds.filter(
+        (id) => id !== row.id
+      );
+    } else {
+      this.selection.select(row);
+      this.selectedTeamMemberIds.push(row.id);
+    }
+    console.log('Team Members selezionati: ', this.selectedTeamMemberIds);
   }
 
   applyFilter(): void {

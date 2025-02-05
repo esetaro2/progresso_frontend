@@ -107,7 +107,7 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"
         (click)="onRowClicked(row)"
-        [class.selected]="selection.isSelected(row)"
+        [class.selected]="selectedTeamMemberIds.includes(row.id)"
         class="tableRow"
       ></tr>
     </table>

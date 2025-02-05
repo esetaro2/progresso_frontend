@@ -18,6 +18,11 @@ h2.text-center {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
+.form-control:hover + .search-icon,
+.form-control:focus + .search-icon {
+  color: #007bff;
+}
+
 small {
   display: block;
   margin-top: 0.25rem;
