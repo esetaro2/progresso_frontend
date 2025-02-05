@@ -67,6 +67,15 @@ export class AvailableTeamTableComponent implements OnInit {
           this.totalPages = pageData.page.totalPages;
           this.dataSource.sort = this.sort;
           this.loading = false;
+
+          const selectedRow = this.dataSource.data.find(
+            (team) => team.id === this.selectedTeamId
+          );
+          if (selectedRow) {
+            this.selectedRow = selectedRow;
+          } else {
+            this.selectedRow = null;
+          }
         },
         error: (error) => {
           console.error('Error fetching available teams', error);
