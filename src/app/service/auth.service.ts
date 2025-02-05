@@ -65,13 +65,7 @@ export class AuthService {
       const currentTime = new Date().getTime();
 
       if (currentTime > expirationTime) {
-        this.logout().subscribe({
-          next: (response) => {
-            console.log(response);
-          }, error: (error) => {
-            console.error(error);
-          }
-        });
+        localStorage.removeItem('token');
         return null;
       }
       return token;
