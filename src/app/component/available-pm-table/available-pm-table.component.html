@@ -38,6 +38,7 @@
     mat-table
     [dataSource]="dataSource"
     matSort
+    (matSortChange)="sortData($event)"
     *ngIf="dataSource.data.length !== 0"
   >
     <!-- Definizione delle colonne -->
@@ -79,4 +80,10 @@
     (page)="onPageChange($event)"
   ></mat-paginator>
 </div>
-<h5 style="color: #3080f7;" *ngIf="dataSource.data.length === 0" class="text-center mt-5">{{ errorMessage }}</h5>
+<h5
+  style="color: #3080f7"
+  *ngIf="dataSource.data.length === 0"
+  class="text-center mt-5"
+>
+  {{ errorMessage }}
+</h5>

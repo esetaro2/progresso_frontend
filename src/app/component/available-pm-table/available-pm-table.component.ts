@@ -11,7 +11,7 @@ import { Page } from '../../dto/page.dto';
 import { MaterialModule } from '../../material.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
@@ -21,6 +21,14 @@ interface ProjectManager {
   firstName: string;
   lastName: string;
   username: string;
+}
+
+function compare(
+  a: string | number,
+  b: string | number,
+  isAsc: boolean
+): number {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
 @Component({
@@ -118,5 +126,27 @@ export class AvailablePmTableComponent implements OnInit {
     this.selectedPmId = row.id;
     console.log('PM selezionato:', this.selectedRow);
     this.pmSelected.emit(this.selectedPmId);
+  }
+
+  sortData(sort: Sort): void {
+    const data = this.dataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+      this.dataSource.data = data;
+      return;
+    }
+
+    this.dataSource.data = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'firstName':
+          return compare(a.firstName, b.firstName, isAsc);
+        case 'lastName':
+          return compare(a.lastName, b.lastName, isAsc);
+        case 'username':
+          return compare(a.username, b.username, isAsc);
+        default:
+          return 0;
+      }
+    });
   }
 }
