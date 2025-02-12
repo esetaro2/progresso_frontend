@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectService } from '../../service/project.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-card',
@@ -13,16 +14,14 @@ import { ProjectService } from '../../service/project.service';
   styleUrls: ['./project-card.component.css'],
 })
 export class ProjectCardComponent implements OnInit {
-  @Input() project!: ProjectDto;
+  @Input() project?: ProjectDto;
   chartData: { name: string; value: number }[] = [];
 
-  constructor(private projectService: ProjectService) {}
-
-  completed = false;
+  constructor(private projectService: ProjectService, private router: Router) {}
 
   ngOnInit(): void {
     this.projectService
-      .getProjectCompletionPercentage(this.project.id!)
+      .getProjectCompletionPercentage(this.project!.id!)
       .subscribe({
         next: (percentage: number) => {
           this.chartData = [
@@ -30,11 +29,22 @@ export class ProjectCardComponent implements OnInit {
             { name: 'Remaining', value: 100 - percentage },
           ];
         },
+        error: (error) => {
+          console.error(
+            'Errore durante il recupero della percenrtuale di completamento del progetto',
+            error,
+            error
+          );
+        },
       });
   }
 
+  goToProjectDetails(): void {
+    this.router.navigate(['project', this.project!.id, this.project!.name]);
+  }
+
   getPriorityClass(): string {
-    switch (this.project.priority) {
+    switch (this.project!.priority) {
       case 'LOW':
         return 'low-priority';
       case 'MEDIUM':
@@ -47,7 +57,7 @@ export class ProjectCardComponent implements OnInit {
   }
 
   getStatusClass() {
-    switch (this.project.status) {
+    switch (this.project!.status) {
       case 'NOT_STARTED':
         return 'not-started-circle';
       case 'IN_PROGRESS':
