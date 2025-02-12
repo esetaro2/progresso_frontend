@@ -13,7 +13,7 @@ import { TeamDto } from '../../dto/team.dto';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TeamService } from '../../service/team.service';
 import { UserService } from '../../service/user.service';
@@ -26,6 +26,14 @@ interface TeamMember {
   firstName: string;
   lastName: string;
   username: string;
+}
+
+function compare(
+  a: string | number,
+  b: string | number,
+  isAsc: boolean
+): number {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
 @Component({
@@ -173,5 +181,27 @@ export class CreateTeamDialogComponent implements OnInit {
       control.markAsTouched();
       control.updateValueAndValidity();
     }
+  }
+
+  sortData(sort: Sort): void {
+    const data = this.dataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+      this.dataSource.data = data;
+      return;
+    }
+
+    this.dataSource.data = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'firstName':
+          return compare(a.firstName, b.firstName, isAsc);
+        case 'lastName':
+          return compare(a.lastName, b.lastName, isAsc);
+        case 'username':
+          return compare(a.username, b.username, isAsc);
+        default:
+          return 0;
+      }
+    });
   }
 }

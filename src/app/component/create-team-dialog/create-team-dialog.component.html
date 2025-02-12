@@ -78,6 +78,7 @@
       mat-table
       [dataSource]="dataSource"
       matSort
+      (matSortChange)="sortData($event)"
       *ngIf="dataSource.data.length !== 0"
     >
       <!-- Definizione delle colonne -->
