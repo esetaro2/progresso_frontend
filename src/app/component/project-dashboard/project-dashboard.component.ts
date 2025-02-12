@@ -30,13 +30,29 @@ import { AuthService } from '../../service/auth.service';
   styleUrls: ['./project-dashboard.component.css'],
 })
 export class ProjectDashboardComponent implements OnInit {
+  loadingStates = {
+    projects: false,
+  };
+
+  errorStates = {
+    projects: null as string | null,
+  };
+
+  setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
+    this.loadingStates[key] = state;
+  }
+
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
 
   username: string | null = null;
   role: string | null = null;
 
   projects: ProjectDto[] = [];
-
-  loading = false;
 
   isSearchQueryPresent = false;
   searchQuery?: string;
@@ -63,8 +79,6 @@ export class ProjectDashboardComponent implements OnInit {
   totalElements = 0;
   totalPages = 0;
 
-  errorMessage = '';
-
   constructor(
     private projectService: ProjectService,
     private authService: AuthService,
@@ -78,14 +92,15 @@ export class ProjectDashboardComponent implements OnInit {
   }
 
   loadAllProjectsWithFilters(): void {
-    this.loading = true;
+    this.setLoadingState('projects', true);
+
     this.projectService
       .getAllProjectsWithFilters(
         this.currentPage,
         this.pageSize,
         this.selectedStatus,
         this.selectedPriority,
-        this.searchQuery
+        this.searchQuery?.trim()
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
@@ -93,20 +108,20 @@ export class ProjectDashboardComponent implements OnInit {
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
-          this.loading = false;
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', null);
         },
-        error: (error) => {
-          console.error('Error fetching all projects with filters', error);
-          this.loading = false;
+        error: () => {
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', 'No projects found.');
           this.projects = [];
-          this.errorMessage = error.message;
-          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
 
   loadManagerProjectsWithFilters(): void {
-    this.loading = true;
+    this.setLoadingState('projects', true);
+
     this.projectService
       .getProjectsByManagerAndFilters(
         this.username!,
@@ -114,7 +129,7 @@ export class ProjectDashboardComponent implements OnInit {
         this.pageSize,
         this.selectedStatus,
         this.selectedPriority,
-        this.searchQuery
+        this.searchQuery?.trim()
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
@@ -122,23 +137,20 @@ export class ProjectDashboardComponent implements OnInit {
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
-          this.loading = false;
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', null);
         },
-        error: (error) => {
-          console.error(
-            'Error fetching projects by manager and filters',
-            error
-          );
-          this.loading = false;
+        error: () => {
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', 'No projects found.');
           this.projects = [];
-          this.errorMessage = error.message;
-          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
 
   loadTeamMemberProjectsWithFilters(): void {
-    this.loading = true;
+    this.setLoadingState('projects', true);
+
     this.projectService
       .getProjectsByTeamMemberAndFilters(
         this.username!,
@@ -146,7 +158,7 @@ export class ProjectDashboardComponent implements OnInit {
         this.pageSize,
         this.selectedStatus,
         this.selectedPriority,
-        this.searchQuery
+        this.searchQuery?.trim()
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
@@ -154,17 +166,13 @@ export class ProjectDashboardComponent implements OnInit {
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
-          this.loading = false;
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', null);
         },
-        error: (error) => {
-          console.error(
-            'Error fetching projects by team member and filters',
-            error
-          );
-          this.loading = false;
+        error: () => {
+          this.setLoadingState('projects', false);
+          this.setErrorState('projects', 'No projects found.');
           this.projects = [];
-          this.errorMessage = error.message;
-          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
         },
       });
   }
