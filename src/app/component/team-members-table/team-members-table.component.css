@@ -1,0 +1,30 @@
+.form-control {
+  border-radius: 4px;
+  border: 2px solid #ced4da;
+  background-color: #ffffff;
+}
+
+.form-control:hover {
+  border-color: #007bff;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.tableRow {
+  cursor: pointer;
+}
+
+.tableRow:hover {
+  background-color: rgba(104, 104, 255, 0.1);
+}
+
+tr.selected {
+  background-color: rgba(0, 0, 255, 0.1);
+}
+
+tr.mat-row {
+  cursor: pointer;
+}
