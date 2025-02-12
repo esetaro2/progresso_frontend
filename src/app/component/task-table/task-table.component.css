@@ -1,0 +1,46 @@
+.complete-button:hover {
+  background-color: rgb(0, 255, 0);
+  color: white;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  display: block;
+}
+
+.high-priority {
+  color: #f44336;
+}
+
+.medium-priority {
+  color: #ff9800;
+}
+
+.low-priority {
+  color: #8bc34a;
+}
+
+.high-priority,
+.medium-priority,
+.low-priority {
+  font-weight: bold;
+}
+
+.in-progress-circle {
+  font-size: 25px;
+  color: #ffc107;
+}
+
+.completed-circle {
+  font-size: 25px;
+  color: #4caf50;
+}
+
+.task-description {
+  display: block;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
