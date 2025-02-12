@@ -119,15 +119,25 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     this.updateDueDateDays();
   }
 
-  todayDateBeforeStartValidator(
+  todayDateBeforeStartValidator = (
     control: AbstractControl
-  ): ValidationErrors | null {
+  ): ValidationErrors | null => {
     const startMonth = control.get('startMonth')?.value;
     const startDay = control.get('startDay')?.value;
     const startYear = control.get('startYear')?.value;
 
     if (startMonth && startDay && startYear) {
-      const startDate = new Date(`${startMonth} ${startDay}, ${startYear}`);
+      const startMonthIndex = this.months.indexOf(startMonth);
+
+      const startDate = new Date(
+        startYear,
+        startMonthIndex,
+        startDay,
+        0,
+        0,
+        0,
+        0
+      );
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -137,9 +147,11 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     }
 
     return null;
-  }
+  };
 
-  startBeforeDueValidator(control: AbstractControl): ValidationErrors | null {
+  startBeforeDueValidator = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
     const startMonth = control.get('startMonth')?.value;
     const startDay = control.get('startDay')?.value;
     const startYear = control.get('startYear')?.value;
@@ -149,40 +161,37 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     const dueYear = control.get('dueYear')?.value;
 
     if (startMonth && startDay && startYear && dueMonth && dueDay && dueYear) {
-      const startDate = new Date(`${startMonth} ${startDay}, ${startYear}`);
-      const dueDate = new Date(`${dueMonth} ${dueDay}, ${dueYear}`);
+      const startMonthIndex = this.months.indexOf(startMonth);
+      const dueMonthIndex = this.months.indexOf(dueMonth);
+
+      const startDate = new Date(
+        startYear,
+        startMonthIndex,
+        startDay,
+        0,
+        0,
+        0,
+        0
+      );
+      const dueDate = new Date(dueYear, dueMonthIndex, dueDay, 0, 0, 0, 0);
+
       if (dueDate < startDate) {
         return { dueBeforeStart: true };
       }
     }
 
     return null;
-  }
+  };
 
   onCreateFirstPartProject(): void {
     const formValues = this.projectForm.value;
 
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    const startMonthIndex = monthNames.indexOf(formValues.startMonth) + 1;
+    const startMonthIndex = this.months.indexOf(formValues.startMonth) + 1;
     const startDate = `${formValues.startYear}-${String(
       startMonthIndex
     ).padStart(2, '0')}-${String(formValues.startDay).padStart(2, '0')}`;
 
-    const dueMonthIndex = monthNames.indexOf(formValues.dueMonth) + 1;
+    const dueMonthIndex = this.months.indexOf(formValues.dueMonth) + 1;
     const dueDate = `${formValues.dueYear}-${String(dueMonthIndex).padStart(
       2,
       '0'
@@ -197,10 +206,6 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     };
 
     console.log('Dati Iniziali Del Progetto Con Manager 0', this.projectDto);
-  }
-
-  checkProject() {
-    console.log('Test project', this.projectDto);
   }
 
   onPmSelected(pmId: number) {
@@ -248,18 +253,25 @@ export class CreateProjectStepperDialogComponent implements OnInit {
                 console.error('Error assigning team', error);
               },
             });
+
+          this.projectCreated.emit();
+          this.dialogRef.close();
+          this.toastService.show('Project created successfully!', {
+            classname: 'bg-success text-light',
+            delay: 5000,
+          });
+        } else {
+          this.projectCreated.emit();
+          this.dialogRef.close();
+          this.toastService.show('Project created successfully!', {
+            classname: 'bg-success text-light',
+            delay: 5000,
+          });
         }
       },
       error: (error) => {
         console.error('Error creating project', error);
       },
-    });
-
-    this.projectCreated.emit();
-    this.dialogRef.close();
-    this.toastService.show('Project created successfully!', {
-      classname: 'bg-success text-light',
-      delay: 5000,
     });
   }
 
