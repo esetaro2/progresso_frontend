@@ -5,6 +5,7 @@ import { AuthGuard } from './guard/auth.guard';
 import { ProjectDashboardComponent } from './component/project-dashboard/project-dashboard.component';
 import { NotAuthorizedComponent } from './component/not-authorized/not-authorized.component';
 import { LoginGuard } from './guard/login.guard';
+import { ProjectPageComponent } from './component/project-page/project-page.component';
 
 export const routes: Routes = [
   {
@@ -16,13 +17,19 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [LoginGuard]
+    canActivate: [LoginGuard],
   },
   {
     path: 'register',
     component: RegisterComponent,
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN'] },
+  },
+  {
+    path: 'project/:id/:name',
+    component: ProjectPageComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN', 'TEAMMEMBER', 'PROJECTMANAGER'] },
   },
   {
     path: 'not-authorized',
