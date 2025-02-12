@@ -1,0 +1,44 @@
+<h2 matDialogTitle class="text-center mb-3">Assign Team</h2>
+<div class="d-flex flex-column align-items-center justify-content-center">
+  <div
+    *ngIf="!existingTeam"
+    class="d-flex flex-column align-items-center justify-content-center"
+  >
+    <button mat-raised-button (click)="existingTeam = true">
+      Assign Existing Team
+    </button>
+    <span>or</span>
+    <button mat-raised-button (click)="openCreateTeamDialog()">
+      Create New Team
+    </button>
+  </div>
+  <div
+    mat-dialog-content
+    class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+    *ngIf="existingTeam"
+  >
+    <h3>Select a Team</h3>
+    <app-available-team-table
+      (teamSelected)="onTeamSelected($event)"
+    ></app-available-team-table>
+    <button
+      mat-raised-button
+      (click)="existingTeam = false; selectedTeamId = null"
+      class="align-self-center"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
+<div matDialogActions>
+  <button mat-button matDialogClose>Close</button>
+  <button
+    mat-button
+    matDialogClose
+    (click)="assignTeamToProject()"
+    *ngIf="existingTeam"
+    [disabled]="!selectedTeamId"
+  >
+    Complete
+  </button>
+</div>
