@@ -1,0 +1,119 @@
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+<div *ngIf="errorStates.project" class="alert alert-danger text-center">
+  {{ errorStates.project }}
+</div>
+
+<div
+  *ngIf="!loadingStates.project && !errorStates.project"
+  class="container-fluid p-4 d-flex flex-column min-vh-100"
+>
+  <h2 class="text-center mb-2">{{ project?.name }}</h2>
+  <h5 class="text-center mb-5" style="color: gray">
+    <i>{{ project?.description }}</i>
+  </h5>
+
+  <div class="row mb-5 p-5 align-items-center">
+    <div class="col me-2 mb-5 d-flex flex-column">
+      <div class="d-flex gap-5 mb-2">
+        <h5>Start Date: {{ project?.startDate }}</h5>
+        <h5>Due Date: {{ project?.dueDate }}</h5>
+        <h5>
+          Priority:
+          <span [ngClass]="getPriorityClass()">{{ project?.priority }}</span>
+        </h5>
+      </div>
+      <div class="d-flex mb-4 flex-column">
+        <div *ngIf="errorStates.manager" class="alert alert-danger">
+          {{ errorStates.manager }}
+        </div>
+        <h5 *ngIf="!loadingStates.manager && !errorStates.manager">
+          Project Manager: {{ projectManager?.firstName }}
+          {{ projectManager?.lastName }} ({{ projectManager?.username }})
+        </h5>
+
+        <div *ngIf="errorStates.team" class="alert alert-danger">
+          {{ errorStates.team }}
+        </div>
+        <div *ngIf="!loadingStates.team && !errorStates.team">
+          <h5 *ngIf="team">Team: {{ team!.name }}</h5>
+          <h5 *ngIf="!team">
+            No team has been assigned to this project. Click
+            <a
+              role="button"
+              tabindex="0"
+              class="span-link"
+              (click)="onAssignTeam()"
+              (keyup.enter)="onAssignTeam()"
+              (keyup.space)="onAssignTeam()"
+              aria-label="Assign team"
+            >
+              here
+            </a>
+            to assign a team.
+          </h5>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col d-flex flex-column align-items-center justify-content-center"
+    >
+      <div
+        *ngIf="errorStates.percentage"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.percentage }}
+      </div>
+      <div
+        class="d-flex mb-3"
+        *ngIf="!loadingStates.percentage && !errorStates.percentage"
+      >
+        <ngx-charts-pie-chart
+          [results]="chartData"
+          [view]="[270, 270]"
+          [doughnut]="false"
+          [scheme]="'cool'"
+          [margins]="[0, 0, 0, 0]"
+        >
+        </ngx-charts-pie-chart>
+
+        <mat-icon
+          style="cursor: pointer; overflow: visible"
+          [ngbTooltip]="getTooltipText()"
+          [ngClass]="getStatusClass()"
+          >circle</mat-icon
+        >
+      </div>
+      <div
+        class="d-flex"
+        *ngIf="!loadingStates.percentage && !errorStates.percentage"
+      >
+        <h5>{{ completedPercentage }}% complete</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-3 align-items-center justify-content-center">
+    <h4 class="text-center">Task List</h4>
+
+    <div
+      [ngbTooltip]="!team ? 'Please assign a team to this project first.' : ''"
+      class="d-flex align-items-center justify-content-center"
+    >
+      <button
+        (click)="onAddTask()"
+        [disabled]="!team"
+        class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-1 mb-2"
+      >
+        <i class="fa fa-plus"></i>Add Task
+      </button>
+    </div>
+  </div>
+  <app-task-table
+    [projectId]="projectId"
+    [teamId]="team?.id"
+    [startDate]="project?.startDate"
+    [dueDate]="project?.dueDate"
+  ></app-task-table>
+</div>
