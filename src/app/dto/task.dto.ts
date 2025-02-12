@@ -8,6 +8,6 @@ export interface TaskDto {
     completionDate?: string;
     status?: string;
     projectId: number;
-    assignedUserId?: number;
+    assignedUserUsername?: string;
   }
   
