@@ -1,10 +1,18 @@
-<mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+<div
+  class="d-flex align-items-center justify-content-center mt-5 mb-5"
+  *ngIf="isLoading"
+>
+  <mat-spinner mode="indeterminate"></mat-spinner>
+</div>
 
-<div *ngIf="errorStates.tasks" class="alert alert-danger text-center">
+<div
+  *ngIf="errorStates.tasks && !isLoading"
+  class="alert alert-danger text-center"
+>
   {{ errorStates.tasks }}
 </div>
 
-<div *ngIf="!errorStates.tasks">
+<div *ngIf="!errorStates.tasks && !isLoading">
   <div class="table-container">
     <div class="table-wrapper">
       <table
@@ -117,6 +125,7 @@
     [length]="totalElements"
     [hidePageSize]="true"
     [pageSize]="pageSize"
+    [pageIndex]="currentPage"
     (page)="onPageChange($event)"
     style="background-color: transparent"
   ></mat-paginator>

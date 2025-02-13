@@ -14,12 +14,27 @@ import { Router } from '@angular/router';
   styleUrls: ['./project-card.component.css'],
 })
 export class ProjectCardComponent implements OnInit {
+  errorStates = {
+    percentage: null as string | null,
+  };
+
   @Input() project?: ProjectDto;
   chartData: { name: string; value: number }[] = [];
 
   constructor(private projectService: ProjectService, private router: Router) {}
 
   ngOnInit(): void {
+    this.getCompletinoPercentage();
+  }
+
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
+
+  getCompletinoPercentage(): void {
     this.projectService
       .getProjectCompletionPercentage(this.project!.id!)
       .subscribe({
@@ -28,12 +43,12 @@ export class ProjectCardComponent implements OnInit {
             { name: 'Completed', value: percentage },
             { name: 'Remaining', value: 100 - percentage },
           ];
+          this.setErrorState('percentage', null);
         },
-        error: (error) => {
-          console.error(
-            'Errore durante il recupero della percenrtuale di completamento del progetto',
-            error,
-            error
+        error: () => {
+          this.setErrorState(
+            'percentage',
+            'Failed to get completion percentage!'
           );
         },
       });

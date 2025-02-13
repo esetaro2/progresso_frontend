@@ -15,6 +15,7 @@ import {
   ConfirmDialogData,
 } from '../confirm-dialog/confirm-dialog.component';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
+import { ToastService } from '../../service/toast.service';
 
 interface Task {
   id?: number;
@@ -50,10 +51,16 @@ export class TaskTableComponent implements OnInit {
 
   loadingStates = {
     tasks: false,
+    deleteTask: false,
+    completeTask: false,
+    editTask: false,
   };
 
   errorStates = {
     tasks: null as string | null,
+    deleteTask: null as string | null,
+    completeTask: null as string | null,
+    editTask: null as string | null,
   };
 
   get isLoading(): boolean {
@@ -86,7 +93,11 @@ export class TaskTableComponent implements OnInit {
   selectedRow: Task | null = null;
   selectedTaskId: number | null = null;
 
-  constructor(private taskService: TaskService, private dialog: MatDialog) {}
+  constructor(
+    private toastService: ToastService,
+    private taskService: TaskService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.loadTasks();
@@ -126,7 +137,7 @@ export class TaskTableComponent implements OnInit {
         },
         error: () => {
           this.setLoadingState('tasks', false);
-          this.setErrorState('tasks', "No tasks found.");
+          this.setErrorState('tasks', 'No tasks found.');
           this.dataSource.data = [];
         },
       });
@@ -152,17 +163,27 @@ export class TaskTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
+        this.setLoadingState('completeTask', true);
+
         this.taskService.completeTask(this.selectedTaskId!).subscribe({
-          next: (task: TaskDto) => {
-            console.log('Task completata', task);
+          next: () => {
+            this.toastService.show('Task completed successfully!', {
+              classname: 'bg-success text-light',
+              delay: 5000,
+            });
+            this.setLoadingState('completeTask', false);
+            this.setErrorState('completeTask', null);
             this.loadTasks();
           },
-          error: (error) => {
-            console.error('Errore completamento task', error);
+          error: () => {
+            this.setLoadingState('completeTask', false);
+            this.setErrorState('completeTask', 'Failed to complete task!')
+            this.toastService.show(this.errorStates.completeTask!, {
+              classname: 'bg-danger text-light',
+              delay: 5000,
+            });
           },
         });
-      } else {
-        console.log('Azione annullata.');
       }
     });
   }
@@ -187,15 +208,27 @@ export class TaskTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
+        this.setLoadingState('deleteTask', true);
+
         this.taskService
           .removeTaskFromProject(this.projectId!, this.selectedTaskId!)
           .subscribe({
             next: () => {
-              console.log('Task eliminata');
+              this.setLoadingState('deleteTask', false);
+              this.setErrorState('deleteTask', null);
+              this.toastService.show('Task deleted successfully!', {
+                classname: 'bg-success text-light',
+                delay: 5000,
+              })
               this.loadTasks();
             },
-            error: (error) => {
-              console.error('Errore eliminazione task', error);
+            error: () => {
+              this.setLoadingState('deleteTask', false);
+              this.setErrorState('deleteTask', 'Failed to delete task!');
+              this.toastService.show(this.errorStates.deleteTask!, {
+                classname: 'bg-danger text-light',
+                delay: 5000,
+              })
             },
           });
       } else {

@@ -115,14 +115,3 @@ small .fa-check {
   align-items: center;
   text-align: center;
 }
-
-.error-message {
-  height: 1.5em;
-  margin-top: 0.5em;
-  visibility: hidden;
-  color: #f44336;
-}
-
-.error-message.show {
-  visibility: visible;
-}

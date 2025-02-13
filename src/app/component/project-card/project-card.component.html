@@ -1,6 +1,5 @@
 <div
   class="card"
-  class="card"
   (click)="goToProjectDetails()"
   (keydown.enter)="goToProjectDetails()"
   tabindex="0"
@@ -18,13 +17,11 @@
       placement="top"
       [ngbTooltip]="getTooltipText()"
     >
-      <mat-icon [ngClass]="getStatusClass()" class="animated-circle"
-        >circle</mat-icon
-      >
+      <mat-icon [ngClass]="getStatusClass()"> circle </mat-icon>
     </button>
   </div>
 
-  <div class="card-body d-flex align-content-center justify-content-between">
+  <div class="card-body d-flex align-items-center justify-content-between">
     <div class="d-flex align-self-center">
       <p>
         Priority:
@@ -32,13 +29,20 @@
       </p>
     </div>
 
-    <ngx-charts-pie-chart
-      [results]="chartData"
-      [view]="[100, 100]"
-      [doughnut]="true"
-      [scheme]="'cool'"
-      [margins]="[0, 0, 0, 0]"
-    >
-    </ngx-charts-pie-chart>
+    <div class="d-flex align-items-center">
+      <div *ngIf="errorStates.percentage" class="alert alert-danger m-0">
+        {{ errorStates.percentage }}
+      </div>
+
+      <div *ngIf="!errorStates.percentage">
+        <ngx-charts-pie-chart
+          [results]="chartData"
+          [view]="[100, 100]"
+          [scheme]="'cool'"
+          [margins]="[0, 0, 0, 0]"
+        >
+        </ngx-charts-pie-chart>
+      </div>
+    </div>
   </div>
 </div>

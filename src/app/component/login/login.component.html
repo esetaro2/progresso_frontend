@@ -4,7 +4,7 @@
   <div class="card form-container">
     <div class="card-body">
       <h2 class="text-center mb-4">Login</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="loginForm">
         <div class="form-group">
           <label for="username">Username</label>
           <input
@@ -14,7 +14,6 @@
             formControlName="username"
             required
             (input)="onInput('username')"
-            autocomplete="off"
           />
           <small>
             <span
@@ -103,14 +102,11 @@
             >
           </small>
         </div>
-        <div class="btn-link-container">
-          <div [ngClass]="{ show: errorMessage }" class="error-message">
-            {{ errorMessage }}
-          </div>
+        <div class="btn-link-container mt-4">
           <button
-            type="submit"
-            class="btn btn-primary btn-block mt-4"
+            class="btn btn-primary btn-block"
             [disabled]="loginForm.invalid"
+            (click)="onSubmit()"
           >
             Login
           </button>

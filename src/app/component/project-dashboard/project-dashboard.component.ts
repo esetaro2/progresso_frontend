@@ -7,7 +7,6 @@ import { MaterialModule } from '../../material.module';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Page } from '../../dto/page.dto';
-import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { FilterSectionComponent } from '../filter-section/filter-section.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +21,6 @@ import { AuthService } from '../../service/auth.service';
     MaterialModule,
     FormsModule,
     NgbModule,
-    LoadingSpinnerComponent,
     FilterSectionComponent,
     PaginationComponent,
   ],
@@ -113,7 +111,7 @@ export class ProjectDashboardComponent implements OnInit {
         },
         error: () => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found.');
+          this.setErrorState('projects', 'No projects found!');
           this.projects = [];
         },
       });
@@ -142,7 +140,7 @@ export class ProjectDashboardComponent implements OnInit {
         },
         error: () => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found.');
+          this.setErrorState('projects', 'No projects found!');
           this.projects = [];
         },
       });
@@ -171,7 +169,7 @@ export class ProjectDashboardComponent implements OnInit {
         },
         error: () => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found.');
+          this.setErrorState('projects', 'No projects found!');
           this.projects = [];
         },
       });

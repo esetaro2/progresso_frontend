@@ -144,7 +144,7 @@ export class ProjectPageComponent implements OnInit {
           this.setLoadingState('percentage', false);
           this.setErrorState(
             'percentage',
-            'Unable to retrieve the project completion percentage.'
+            'Unable to retrieve the project completion percentage!'
           );
         },
       });
@@ -163,7 +163,7 @@ export class ProjectPageComponent implements OnInit {
         this.setLoadingState('manager', false);
         this.setErrorState(
           'manager',
-          "Unable to retrieve the project manager's information."
+          "Unable to retrieve the project manager's information!"
         );
       },
     });
@@ -181,7 +181,7 @@ export class ProjectPageComponent implements OnInit {
       },
       error: () => {
         this.setLoadingState('team', false);
-        this.setErrorState('team', "Unable to retrieve the project's team.");
+        this.setErrorState('team', "Unable to retrieve the project's team!");
       },
     });
   }
@@ -205,7 +205,7 @@ export class ProjectPageComponent implements OnInit {
         this.setLoadingState('teamMembers', false);
         this.setErrorState(
           'teamMembers',
-          "Unable to retrieve the team's members."
+          "Unable to retrieve the team's members!"
         );
       },
     });

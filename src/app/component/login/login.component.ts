@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UserLoginDto } from '../../dto/user-login.dto';
 import { CommonModule } from '@angular/common';
 import { UserResponseDto } from '../../dto/user-response.dto';
+import { ToastService } from '../../service/toast.service';
 
 @Component({
   standalone: true,
@@ -15,16 +16,21 @@ import { UserResponseDto } from '../../dto/user-response.dto';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
+  errorStates = {
+    login: null as string | null,
+  };
+
   loginForm: FormGroup;
   passwordFieldType = 'password';
   private usernameRegex =
-    '^[a-zA-Z]\\.[a-zA-Z]+\\.(am|pm|tm)[0-9]+@progresso\\.com$';
+    '^[a-zA-Z]\\.[a-zA-Z_]+\\.(am|pm|tm)[0-9]+@progresso\\.com$';
   errorMessage = '';
 
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.loginForm = this.fb.group({
       username: [
@@ -35,9 +41,15 @@ export class LoginComponent {
     });
   }
 
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -49,10 +61,15 @@ export class LoginComponent {
     this.authService.login(userLoginDto).subscribe({
       next: (response: { userResponseDto: UserResponseDto }) => {
         console.log(response.userResponseDto);
+        this.setErrorState('login', null);
         this.router.navigate(['']);
       },
       error: () => {
-        this.errorMessage = 'Username or password is incorrect.';
+        this.setErrorState('login', 'Username or password is incorrect!');
+        this.toastService.show(this.errorStates.login!, {
+          classname: 'bg-danger text-light',
+          delay: 5000,
+        });
       },
     });
   }

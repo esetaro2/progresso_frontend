@@ -16,7 +16,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MaterialModule } from '../../material.module';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { UserResponseDto } from '../../dto/user-response.dto';
+import { ToastService } from '../../service/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -31,12 +31,15 @@ import { UserResponseDto } from '../../dto/user-response.dto';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
+  errorStates = {
+    register: null as string | null,
+  };
+
   registrationForm: FormGroup;
-  errorMessage = '';
   roles = [
     { label: 'Admin', value: 'ADMIN' },
     { label: 'Project Manager', value: 'PROJECTMANAGER' },
-    { label: 'Developer', value: 'TEAMMEMBER' },
+    { label: 'Team Member', value: 'TEAMMEMBER' },
   ];
   selectedRoleLabel = 'Select role';
 
@@ -76,7 +79,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.registrationForm = this.formBuilder.group({
       firstName: [
@@ -100,7 +104,7 @@ export class RegisterComponent implements OnInit {
       birthMonth: ['', [Validators.required]],
       birthDay: ['', [Validators.required]],
       birthYear: ['', [Validators.required]],
-      phonePrefix: this.phonePrefixControl,
+      phonePrefix: [this.phonePrefixControl, Validators.required],
       phoneNumber: [
         '',
         [
@@ -170,27 +174,21 @@ export class RegisterComponent implements OnInit {
     );
   }
 
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
+
   onSubmit() {
     if (this.registrationForm.invalid) {
+      this.registrationForm.markAllAsTouched();
       return;
     }
 
     const formValues = this.registrationForm.value;
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const monthIndex = monthNames.indexOf(formValues.birthMonth) + 1;
+    const monthIndex = this.birthMonths.indexOf(formValues.birthMonth) + 1;
     const birthDate = `${formValues.birthYear}-${String(monthIndex).padStart(
       2,
       '0'
@@ -211,12 +209,27 @@ export class RegisterComponent implements OnInit {
     };
 
     this.authService.register(registrationDto).subscribe({
-      next: (response: UserResponseDto) => {
-        console.log('Registration successful', response);
-        this.router.navigate(['/']);
+      next: () => {
+        this.setErrorState('register', null);
+        this.registrationForm.reset();
+        this.selectedBirthDayLabel = 'DD';
+        this.selectedBirthMonthLabel = 'MM';
+        this.selectedBirthYearLabel = 'YYYY';
+        this.selectedRoleLabel = 'Select role';
+        formValues.phonePrefix = this.phonePrefixControl.setValue('');
+        this.toastService.show('Registration successful', {
+          classname: 'bg-success text-light',
+          delay: 5000,
+        });
+
+        this.setErrorState('register', null);
       },
-      error: () => {
-        this.errorMessage = 'Something went wrong. Please try again.';
+      error: (error) => {
+        this.setErrorState('register', error.message.replace(/^"|"$/g, ''));
+        this.toastService.show(this.errorStates.register!, {
+          classname: 'bg-danger text-light',
+          delay: 5000
+        })
       },
     });
   }
