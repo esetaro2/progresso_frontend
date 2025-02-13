@@ -36,6 +36,20 @@ import { ToastService } from '../../service/toast.service';
 export class CreateProjectStepperDialogComponent implements OnInit {
   @Output() projectCreated = new EventEmitter<void>();
 
+  loadingStates = {
+    createProject: false,
+    assignTeam: false,
+  };
+
+  errorStates = {
+    createProject: null as string | null,
+    assignTeam: null as string | null,
+  };
+
+  get isLoading(): boolean {
+    return Object.values(this.loadingStates).some((state) => state);
+  }
+
   projectForm: FormGroup;
   projectDto!: ProjectDto;
 
@@ -117,6 +131,17 @@ export class CreateProjectStepperDialogComponent implements OnInit {
   ngOnInit(): void {
     this.updateStartDateDays();
     this.updateDueDateDays();
+  }
+
+  setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
+    this.loadingStates[key] = state;
+  }
+
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
   }
 
   todayDateBeforeStartValidator = (
@@ -238,28 +263,44 @@ export class CreateProjectStepperDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.setLoadingState('createProject', true);
+
     this.projectService.createProject(this.projectDto).subscribe({
       next: (project) => {
         console.log('Progetto creato con PM', project);
+        this.setLoadingState('createProject', false);
+        this.setErrorState('createProject', null);
 
         if (this.selectedTeamId) {
+          this.setLoadingState('assignTeam', true);
+
           this.projectService
             .assignTeamToProject(project.id!, this.selectedTeamId!)
             .subscribe({
               next: (updatedProject) => {
                 console.log('Project con PM e Team', updatedProject);
+                this.setLoadingState('assignTeam', false);
+                this.setErrorState('assignTeam', null);
+
+                this.projectCreated.emit();
+                this.dialogRef.close();
+                this.toastService.show('Project created successfully!', {
+                  classname: 'bg-success text-light',
+                  delay: 5000,
+                });
+                this.toastService.show(
+                  'Team assigned to project successfully!',
+                  {
+                    classname: 'bg-success text-light',
+                    delay: 5000,
+                  }
+                );
               },
-              error: (error) => {
-                console.error('Error assigning team', error);
+              error: () => {
+                this.setLoadingState('assignTeam', false);
+                this.setErrorState('assignTeam', 'Failed to assign team!');
               },
             });
-
-          this.projectCreated.emit();
-          this.dialogRef.close();
-          this.toastService.show('Project created successfully!', {
-            classname: 'bg-success text-light',
-            delay: 5000,
-          });
         } else {
           this.projectCreated.emit();
           this.dialogRef.close();
@@ -269,8 +310,9 @@ export class CreateProjectStepperDialogComponent implements OnInit {
           });
         }
       },
-      error: (error) => {
-        console.error('Error creating project', error);
+      error: () => {
+        this.setLoadingState('createProject', false);
+        this.setErrorState('createProject', 'Failed to create project!');
       },
     });
   }

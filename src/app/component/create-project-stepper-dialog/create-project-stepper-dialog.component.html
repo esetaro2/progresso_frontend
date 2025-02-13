@@ -1,8 +1,21 @@
 <mat-horizontal-stepper [linear]="true">
   <mat-step [stepControl]="projectForm">
     <ng-template matStepLabel>Project Information</ng-template>
-    <h2 class="text-center mb-4" mat-dialog-title>Create Project</h2>
+
     <div mat-dialog-content>
+      <div
+        *ngIf="errorStates.createProject && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createProject }}
+      </div>
+      <div
+        *ngIf="errorStates.assignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.assignTeam }}
+      </div>
+
       <form [formGroup]="projectForm">
         <!-- Name Field -->
         <div class="mb-3">
@@ -105,6 +118,30 @@
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
+                  id="startYearDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                >
+                  {{ selectedStartYearLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="startYearDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let year of yearsList"
+                    (click)="onStartYearSelected(year)"
+                  >
+                    {{ year }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
                   id="startMonthDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
@@ -126,7 +163,7 @@
                 </div>
               </div>
 
-              <div ngbDropdown class="me-2">
+              <div ngbDropdown>
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
                   id="startDayDropdown"
@@ -146,30 +183,6 @@
                     (click)="onStartDaySelected(day)"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
-
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
-                  id="startYearDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
-                >
-                  {{ selectedStartYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
-                    *ngFor="let year of yearsList"
-                    (click)="onStartYearSelected(year)"
-                  >
-                    {{ year }}
                   </button>
                 </div>
               </div>
@@ -207,6 +220,34 @@
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
+                  id="dueYearDropdown"
+                  ngbDropdownToggle
+                  style="font-size: small"
+                  [disabled]="
+                    projectForm.hasError('startBeforeToday') ||
+                    !isStartDateValid()
+                  "
+                >
+                  {{ selectedDueYearLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="dueYearDropdown"
+                  class="custom-dropdown-menu"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let year of yearsList"
+                    (click)="onDueYearSelected(year)"
+                  >
+                    {{ year }}
+                  </button>
+                </div>
+              </div>
+
+              <div ngbDropdown class="me-2">
+                <button
+                  class="btn btn-outline-primary fixed-width-dropdown"
                   id="dueMonthDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
@@ -232,7 +273,7 @@
                 </div>
               </div>
 
-              <div ngbDropdown class="me-2">
+              <div ngbDropdown>
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
                   id="dueDayDropdown"
@@ -256,34 +297,6 @@
                     (click)="onDueDaySelected(day)"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
-
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
-                  id="dueYearDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
-                  [disabled]="
-                    projectForm.hasError('startBeforeToday') ||
-                    !isStartDateValid()
-                  "
-                >
-                  {{ selectedDueYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
-                    *ngFor="let year of yearsList"
-                    (click)="onDueYearSelected(year)"
-                  >
-                    {{ year }}
                   </button>
                 </div>
               </div>
@@ -332,9 +345,23 @@
     </div>
   </mat-step>
 
-  <mat-step>
+  <mat-step [completed]="selectedPmId !== 0">
     <ng-template matStepLabel>Assign Project Manager</ng-template>
+
     <div mat-dialog-content>
+      <div
+        *ngIf="errorStates.createProject && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createProject }}
+      </div>
+      <div
+        *ngIf="errorStates.assignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.assignTeam }}
+      </div>
+
       <app-available-pm-table
         (pmSelected)="onPmSelected($event)"
       ></app-available-pm-table>
@@ -349,6 +376,18 @@
 
   <mat-step>
     <ng-template matStepLabel>Assign Team</ng-template>
+    <div
+      *ngIf="errorStates.createProject && !isLoading"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStates.createProject }}
+    </div>
+    <div
+      *ngIf="errorStates.assignTeam && !isLoading"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStates.assignTeam }}
+    </div>
     <div
       mat-dialog-content
       class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
@@ -370,7 +409,6 @@
       class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
       *ngIf="existingTeam"
     >
-      <h3>Select a Team</h3>
       <app-available-team-table
         (teamSelected)="onTeamSelected($event)"
       ></app-available-team-table>
