@@ -1,7 +1,15 @@
 <mat-horizontal-stepper [linear]="true">
   <mat-step [stepControl]="taskForm">
     <ng-template matStepLabel>Task Information</ng-template>
+
     <div mat-dialog-content>
+      <div
+        *ngIf="errorStates.createTask && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createTask }}
+      </div>
+
       <form [formGroup]="taskForm">
         <!-- Name Field -->
         <div class="mb-3">
@@ -392,12 +400,20 @@
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Assign User</ng-template>
+    <div
+      *ngIf="errorStates.createTask && !isLoading"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStates.createTask }}
+    </div>
+
     <app-team-members-table
       [teamId]="this.data.teamId"
       (teamMemberSelectedId)="onTeamMemberSelected($event)"
     ></app-team-members-table>
 
     <div mat-dialog-actions>
+      <button mat-button matDialogClose>Close</button>
       <button mat-button matStepperPrevious>Back</button>
       <button
         mat-button

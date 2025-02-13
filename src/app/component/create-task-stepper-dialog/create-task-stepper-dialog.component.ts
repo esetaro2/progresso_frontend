@@ -198,9 +198,9 @@ export class CreateTaskStepperDialogComponent implements OnInit {
           this.setLoadingState('createTask', false);
           this.setErrorState('createTask', null);
         },
-        error: (error) => {
+        error: () => {
           this.setLoadingState('createTask', false);
-          this.setErrorState('createTask', error.message.replace(/^"|"$/g, ''));
+          this.setErrorState('createTask', 'Failed to create task!');
         },
       });
   }
