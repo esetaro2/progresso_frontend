@@ -1,5 +1,11 @@
-<h2 matDialogTitle class="text-center mb-3">Assign Team</h2>
-<div class="d-flex flex-column align-items-center justify-content-center">
+<div class="d-flex flex-column align-items-center justify-content-center p-5">
+  <div
+    *ngIf="errorStates.assignTeamToProject && !isLoading"
+    class="alert alert-danger text-center mt-5"
+  >
+    {{ errorStates.assignTeamToProject }}
+  </div>
+
   <div
     *ngIf="!existingTeam"
     class="d-flex flex-column align-items-center justify-content-center"
