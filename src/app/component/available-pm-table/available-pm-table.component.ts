@@ -14,7 +14,6 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 interface ProjectManager {
   id: number;
@@ -33,12 +32,22 @@ function compare(
 
 @Component({
   selector: 'app-available-pm-table',
-  imports: [MaterialModule, CommonModule, FormsModule, LoadingSpinnerComponent],
+  imports: [MaterialModule, CommonModule, FormsModule],
   templateUrl: './available-pm-table.component.html',
   styleUrl: './available-pm-table.component.css',
 })
 export class AvailablePmTableComponent implements OnInit {
-  loading = false;
+  loadingStates = {
+    availableProjectManagers: false,
+  };
+
+  errorStates = {
+    availableProjectManagers: null as string | null,
+  };
+
+  get isLoading(): boolean {
+    return Object.values(this.loadingStates).some((state) => state);
+  }
 
   @Output() pmSelected = new EventEmitter<number>();
 
@@ -67,23 +76,32 @@ export class AvailablePmTableComponent implements OnInit {
     this.getAvailablePms();
   }
 
+  setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
+    this.loadingStates[key] = state;
+  }
+
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
+
   getAvailablePms(): void {
-    this.loading = true;
+    this.setLoadingState('availableProjectManagers', true);
 
     if (this.searchQuery !== '') {
       this.isSearchQueryPresent = true;
     }
 
     this.userService
-      .getAvailablePms(this.currentPage, this.pageSize, this.searchQuery)
+      .getAvailablePms(this.currentPage, this.pageSize, this.searchQuery.trim())
       .subscribe({
         next: (pageData: Page<UserResponseDto>) => {
           this.dataSource.data = pageData.content;
-          console.log('Available PMs', this.dataSource.data);
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
           this.dataSource.sort = this.sort;
-          this.loading = false;
 
           const selectedRow = this.dataSource.data.find(
             (pm) => pm.id === this.selectedPmId
@@ -93,12 +111,16 @@ export class AvailablePmTableComponent implements OnInit {
           } else {
             this.selectedRow = null;
           }
+
+          this.setLoadingState('availableProjectManagers', false);
+          this.setErrorState('availableProjectManagers', null);
         },
-        error: (error) => {
-          console.error('Error fetching available Project Managers', error);
-          this.loading = false;
-          this.errorMessage = error.message;
-          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
+        error: () => {
+          this.setLoadingState('availableProjectManagers', false);
+          this.setErrorState(
+            'availableProjectManagers',
+            'No available project managers found!'
+          );
           this.dataSource.data = [];
         },
       });
