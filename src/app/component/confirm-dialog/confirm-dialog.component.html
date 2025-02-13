@@ -1,8 +1,13 @@
-<h2 mat-dialog-title>{{ title }}</h2>
-<mat-dialog-content>
+<h2 mat-dialog-title class="text-center">{{ title }}</h2>
+<div mat-dialog-content class="text-center">
   <p>{{ message }}</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">{{ cancelText }}</button>
-  <button mat-button color="primary" (click)="onConfirm()">{{ confirmText }}</button>
-</mat-dialog-actions>
+  <div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancel()">{{ cancelText }}</button>
+      <button mat-button color="primary" (click)="onConfirm()">
+        {{ confirmText }}
+      </button>
+      <div></div>
+    </div>
+  </div>
+</div>
