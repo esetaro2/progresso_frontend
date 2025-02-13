@@ -1,40 +1,48 @@
-<app-loading-spinner *ngIf="loading"></app-loading-spinner>
-<div class="table-container">
-  <div class="d-flex align-items-center" style="width: 600px;">
-    <div class="input-group position-relative">
-      <input
-        name="searchInput"
-        placeholder="Search..."
-        [(ngModel)]="searchQuery"
-        class="form-control"
-        style="border-top-right-radius: 4px; border-bottom-right-radius: 4px"
-        (keydown.enter)="applyFilter()"
-      />
-      <mat-icon
-        class="position-absolute top-0 end-0 search-icon"
-        style="
-          height: 100%;
-          margin-right: 10px;
-          display: flex;
-          align-items: center;
-          z-index: 12;
-        "
-      >
-        search
-      </mat-icon>
-    </div>
-    <button
-      mat-button
-      [ngClass]="{
-            invisible: !isSearchQueryPresent,
-          }"
-      (click)="resetAllFilters()"
+<div class="d-flex align-items-center" style="width: 600px">
+  <div class="input-group position-relative">
+    <input
+      name="searchInput"
+      placeholder="Search..."
+      [(ngModel)]="searchQuery"
+      class="form-control"
+      style="border-top-right-radius: 4px; border-bottom-right-radius: 4px"
+      (keydown.enter)="applyFilter()"
+    />
+    <mat-icon
+      class="position-absolute top-0 end-0 search-icon"
+      style="
+        height: 100%;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        z-index: 12;
+      "
     >
-      <i class="fa fa-times"></i>
-    </button>
+      search
+    </mat-icon>
   </div>
+  <button *ngIf="isSearchQueryPresent" mat-button (click)="resetAllFilters()">
+    <i class="fa fa-times"></i>
+  </button>
+</div>
 
-  <table mat-table [dataSource]="dataSource" matSort>
+<div
+  class="d-flex align-items-center justify-content-center mt-5"
+  *ngIf="isLoading"
+>
+  <mat-spinner mode="indeterminate"></mat-spinner>
+</div>
+
+<div
+  class="table-container"
+  *ngIf="!isLoading && !errorStates.getAvailableTeams"
+>
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="sortData($event)"
+  >
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -61,14 +69,15 @@
     [length]="totalElements"
     [hidePageSize]="true"
     [pageSize]="pageSize"
+    [pageIndex]="currentPage"
     (page)="onPageChange($event)"
     *ngIf="dataSource.data.length !== 0"
   ></mat-paginator>
 </div>
-<h5
-  style="color: #3080f7"
-  *ngIf="dataSource.data.length === 0"
-  class="text-center m-5"
+
+<div
+  *ngIf="errorStates.getAvailableTeams && !isLoading"
+  class="alert alert-danger text-center mt-5"
 >
-  {{ errorMessage }}
-</h5>
+  {{ errorStates.getAvailableTeams }}
+</div>
