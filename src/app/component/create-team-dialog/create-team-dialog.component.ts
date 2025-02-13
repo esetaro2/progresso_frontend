@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { MaterialModule } from '../../material.module';
 import { CommonModule } from '@angular/common';
 import {
@@ -10,31 +10,10 @@ import {
 } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TeamDto } from '../../dto/team.dto';
-import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
-import { SelectionModel } from '@angular/cdk/collections';
 import { TeamService } from '../../service/team.service';
-import { UserService } from '../../service/user.service';
-import { UserResponseDto } from '../../dto/user-response.dto';
-import { Page } from '../../dto/page.dto';
 import { MatDialogRef } from '@angular/material/dialog';
-
-interface TeamMember {
-  id: number;
-  firstName: string;
-  lastName: string;
-  username: string;
-}
-
-function compare(
-  a: string | number,
-  b: string | number,
-  isAsc: boolean
-): number {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-}
+import { AvailableTeamMembersTableComponent } from '../available-team-members-table/available-team-members-table.component';
+import { ToastService } from '../../service/toast.service';
 
 @Component({
   selector: 'app-create-team-dialog',
@@ -44,38 +23,35 @@ function compare(
     ReactiveFormsModule,
     NgbModule,
     FormsModule,
-    LoadingSpinnerComponent,
+    AvailableTeamMembersTableComponent,
   ],
   templateUrl: './create-team-dialog.component.html',
   styleUrl: './create-team-dialog.component.css',
 })
-export class CreateTeamDialogComponent implements OnInit {
-  loading = false;
-  errorMessage = '';
+export class CreateTeamDialogComponent {
+  loadingStates = {
+    createTeam: false,
+    assignTeamMembers: false,
+  };
+
+  errorStates = {
+    createTeam: null as string | null,
+    assignTeamMembers: null as string | null,
+  };
+
+  get isLoading(): boolean {
+    return Object.values(this.loadingStates).some((state) => state);
+  }
 
   teamForm: FormGroup;
-
-  displayedColumns: string[] = ['id', 'firstName', 'lastName', 'username'];
-  dataSource = new MatTableDataSource<TeamMember>();
-  selection = new SelectionModel<TeamMember>(true, []);
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  searchQuery = '';
-  isSearchQueryPresent = false;
-  currentPage = 0;
-  pageSize = 6;
-  totalElements = 0;
-  totalPages = 0;
 
   selectedTeamMemberIds: number[] = [];
 
   constructor(
     private fb: FormBuilder,
     private teamService: TeamService,
-    private userService: UserService,
-    private dialogRef: MatDialogRef<CreateTeamDialogComponent>
+    private dialogRef: MatDialogRef<CreateTeamDialogComponent>,
+    private toastService: ToastService
   ) {
     this.teamForm = this.fb.group({
       name: [
@@ -89,90 +65,63 @@ export class CreateTeamDialogComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.getAvailableTms();
+  setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
+    this.loadingStates[key] = state;
   }
 
-  getAvailableTms(): void {
-    this.loading = true;
-    if (this.searchQuery !== '') {
-      this.isSearchQueryPresent = true;
-    }
+  setErrorState(
+    key: keyof typeof this.errorStates,
+    error: string | null
+  ): void {
+    this.errorStates[key] = error;
+  }
 
-    this.userService
-      .getAvailableTms(this.currentPage, this.pageSize, this.searchQuery)
-      .subscribe({
-        next: (pageData: Page<UserResponseDto>) => {
-          this.dataSource.data = pageData.content;
-          console.log('Available Tms', this.dataSource.data);
-          this.totalElements = pageData.page.totalElements;
-          this.totalPages = pageData.page.totalPages;
-          this.dataSource.sort = this.sort;
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error fetching available Team Members', error);
-          this.loading = false;
-          this.errorMessage = error.message;
-          this.errorMessage = this.errorMessage.replace(/^"|"$/g, '');
-          this.dataSource.data = [];
-        },
-      });
+  onSelectedTeamMembers(selectedTeamMembersIdsEvent: number[]): void {
+    this.selectedTeamMemberIds = selectedTeamMembersIdsEvent;
+    console.log(
+      'Team Members selezionati dal figlio: ',
+      this.selectedTeamMemberIds
+    );
   }
 
   createTeam(): void {
     const teamName = this.teamForm.get('name')?.value;
     const selectedUserIds = this.selectedTeamMemberIds;
 
+    this.setLoadingState('createTeam', true);
+
     this.teamService.createTeam(teamName).subscribe({
       next: (team: TeamDto) => {
+        this.setLoadingState('createTeam', false);
+        this.setErrorState('createTeam', null);
+
+        this.setLoadingState('assignTeamMembers', true);
+
         this.teamService.addMembersToTeam(team.id!, selectedUserIds).subscribe({
           next: (updatedTeam: TeamDto) => {
-            console.log('Team creato con membri', updatedTeam);
+            this.setLoadingState('assignTeamMembers', false);
+            this.setErrorState('assignTeamMembers', null);
+
             this.dialogRef.close(updatedTeam);
+            this.toastService.show('Team created successfully!', {
+              classname: 'bg-success text-light',
+              delay: 5000,
+            });
           },
-          error: (error) => {
-            console.error(
-              "Errore durante l' aggiunta dei membri al team",
-              error
+          error: () => {
+            this.setLoadingState('assignTeamMembers', false);
+            this.setErrorState(
+              'assignTeamMembers',
+              'Failed to assign team members!'
             );
           },
         });
       },
-      error: (error) => {
-        console.error('Errore durante la creazione del team', error);
+      error: () => {
+        this.setLoadingState('createTeam', false);
+        this.setErrorState('createTeam', 'Failed to create team!');
       },
     });
-  }
-
-  onRowClicked(row: TeamMember): void {
-    if (this.selectedTeamMemberIds.includes(row.id)) {
-      this.selection.deselect(row);
-      this.selectedTeamMemberIds = this.selectedTeamMemberIds.filter(
-        (id) => id !== row.id
-      );
-    } else {
-      this.selection.select(row);
-      this.selectedTeamMemberIds.push(row.id);
-    }
-    console.log('Team Members selezionati: ', this.selectedTeamMemberIds);
-  }
-
-  applyFilter(): void {
-    this.currentPage = 0;
-    this.getAvailableTms();
-  }
-
-  resetAllFilters(): void {
-    this.isSearchQueryPresent = false;
-    this.searchQuery = '';
-    this.applyFilter();
-  }
-
-  onPageChange(event: PageEvent): void {
-    this.currentPage = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.getAvailableTms();
   }
 
   onInput(controlName: string) {
@@ -181,27 +130,5 @@ export class CreateTeamDialogComponent implements OnInit {
       control.markAsTouched();
       control.updateValueAndValidity();
     }
-  }
-
-  sortData(sort: Sort): void {
-    const data = this.dataSource.data.slice();
-    if (!sort.active || sort.direction === '') {
-      this.dataSource.data = data;
-      return;
-    }
-
-    this.dataSource.data = data.sort((a, b) => {
-      const isAsc = sort.direction === 'asc';
-      switch (sort.active) {
-        case 'firstName':
-          return compare(a.firstName, b.firstName, isAsc);
-        case 'lastName':
-          return compare(a.lastName, b.lastName, isAsc);
-        case 'username':
-          return compare(a.username, b.username, isAsc);
-        default:
-          return 0;
-      }
-    });
   }
 }

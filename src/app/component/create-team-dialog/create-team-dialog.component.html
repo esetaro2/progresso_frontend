@@ -1,140 +1,96 @@
-<app-loading-spinner *ngIf="loading"></app-loading-spinner>
-<h2 class="text-center mb-4" mat-dialog-title>Create Team</h2>
-<div mat-dialog-content>
-  <form [formGroup]="teamForm">
-    <div class="mb-3">
-      <label for="name">Name</label>
-      <input
-        type="text"
-        id="name"
-        class="form-control"
-        formControlName="name"
-        required
-        (input)="onInput('name')"
-      />
-      <small>
-        <span
-          *ngIf="teamForm.get('name')?.touched && teamForm.get('name')?.invalid"
-        >
-          <i class="fa fa-times"></i>
-          <span *ngIf="teamForm.get('name')?.errors?.['required']">
-            Team name is required.
-          </span>
-          <span *ngIf="teamForm.get('name')?.errors?.['minlength']">
-            Team name is too short.
-          </span>
-          <span *ngIf="teamForm.get('name')?.errors?.['maxlength']">
-            Team name is too long.
-          </span>
-        </span>
-        <span
-          *ngIf="teamForm.get('name')?.touched && teamForm.get('name')?.valid"
-        >
-          <i class="fa fa-check"></i> Team name is valid.
-        </span>
-        <span *ngIf="!teamForm.get('name')?.touched">
-          Please enter the team name.
-        </span>
-      </small>
-    </div>
-  </form>
+<mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="teamForm">
+    <ng-template matStepLabel>Enter Team Name</ng-template>
 
-  <div class="table-container">
-    <div class="d-flex align-items-center">
-      <div class="input-group position-relative">
+    <!-- Error Message -->
+    <div
+      *ngIf="errorStates.createTeam && !isLoading"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStates.createTeam }}
+    </div>
+
+    <form [formGroup]="teamForm">
+      <div class="mb-3">
+        <label for="name">Name</label>
         <input
-          name="searchInput"
-          placeholder="Search..."
-          [(ngModel)]="searchQuery"
+          type="text"
+          id="name"
           class="form-control"
-          style="border-top-right-radius: 4px; border-bottom-right-radius: 4px"
-          (keydown.enter)="applyFilter()"
+          formControlName="name"
+          required
+          (input)="onInput('name')"
         />
-        <mat-icon
-          class="position-absolute top-0 end-0 search-icon"
-          style="
-            height: 100%;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            z-index: 12;
-          "
-        >
-          search
-        </mat-icon>
+        <small>
+          <span
+            *ngIf="
+              teamForm.get('name')?.touched && teamForm.get('name')?.invalid
+            "
+          >
+            <i class="fa fa-times"></i>
+            <span *ngIf="teamForm.get('name')?.errors?.['required']">
+              Team name is required.
+            </span>
+            <span *ngIf="teamForm.get('name')?.errors?.['minlength']">
+              Team name is too short.
+            </span>
+            <span *ngIf="teamForm.get('name')?.errors?.['maxlength']">
+              Team name is too long.
+            </span>
+          </span>
+          <span
+            *ngIf="teamForm.get('name')?.touched && teamForm.get('name')?.valid"
+          >
+            <i class="fa fa-check"></i> Team name is valid.
+          </span>
+          <span *ngIf="!teamForm.get('name')?.touched">
+            Please enter the team name.
+          </span>
+        </small>
       </div>
+    </form>
+
+    <div mat-dialog-actions>
+      <button mat-button matDialogClose>Close</button>
       <button
         mat-button
-        [ngClass]="{
-          invisible: !isSearchQueryPresent,
-        }"
-        (click)="resetAllFilters()"
+        matStepperNext
+        [disabled]="teamForm.invalid || isLoading"
       >
-        <i class="fa fa-times"></i>
+        Next
       </button>
     </div>
+  </mat-step>
 
-    <table
-      mat-table
-      [dataSource]="dataSource"
-      matSort
-      (matSortChange)="sortData($event)"
-      *ngIf="dataSource.data.length !== 0"
+  <mat-step [completed]="selectedTeamMemberIds.length > 0">
+    <ng-template matStepLabel>Select Team Members</ng-template>
+
+    <!-- Error Message -->
+    <div
+      *ngIf="errorStates.createTeam && !isLoading"
+      class="alert alert-danger text-center"
     >
-      <!-- Definizione delle colonne -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let tm">{{ tm.id }}</td>
-      </ng-container>
+      {{ errorStates.createTeam }}
+    </div>
 
-      <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
-        <td mat-cell *matCellDef="let tm">{{ tm.firstName }}</td>
-      </ng-container>
+    <!-- Available Team Members Table -->
+    <app-available-team-members-table
+      (selectedTeamMembers)="onSelectedTeamMembers($event)"
+    ></app-available-team-members-table>
 
-      <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-        <td mat-cell *matCellDef="let tm">{{ tm.lastName }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
-        <td mat-cell *matCellDef="let tm">{{ tm.username }}</td>
-      </ng-container>
-
-      <!-- Righe della tabella -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        (click)="onRowClicked(row)"
-        [class.selected]="selectedTeamMemberIds.includes(row.id)"
-        class="tableRow"
-      ></tr>
-    </table>
-    <mat-paginator
-      *ngIf="dataSource.data.length !== 0"
-      [length]="totalElements"
-      [hidePageSize]="true"
-      [pageSize]="pageSize"
-      (page)="onPageChange($event)"
-    ></mat-paginator>
-  </div>
-  <h5
-    style="color: #3080f7"
-    *ngIf="dataSource.data.length === 0"
-    class="text-center mt-5"
-  >
-    {{ errorMessage }}
-  </h5>
-</div>
-<div mat-dialog-actions>
-  <button mat-button matDialogClose>Cancel</button>
-  <button
-    mat-button
-    [disabled]="teamForm.invalid || selection.isEmpty()"
-    (click)="createTeam()"
-  >
-    Create And Assign Team
-  </button>
-</div>
+    <div mat-dialog-actions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button
+        mat-button
+        [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
+        (click)="createTeam()"
+      >
+        <span *ngIf="!isLoading">Create And Assign Team</span>
+        <span *ngIf="isLoading">
+          <mat-spinner [diameter]="24"></mat-spinner>
+        </span>
+      </button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>

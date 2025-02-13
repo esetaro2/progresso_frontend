@@ -44,19 +44,3 @@ small .fa-times {
 small .fa-check {
   color: #28a745;
 }
-
-.tableRow {
-  cursor: pointer;
-}
-
-.tableRow:hover {
-  background-color: rgba(104, 104, 255, 0.1);
-}
-
-tr.selected {
-  background-color: rgba(0, 0, 255, 0.1);
-}
-
-tr.mat-row {
-  cursor: pointer;
-}
