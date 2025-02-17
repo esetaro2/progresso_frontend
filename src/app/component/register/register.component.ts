@@ -1,19 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
   Validators,
   ReactiveFormsModule,
-  FormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { UserRegistrationDto } from '../../dto/user-registration.dto';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { MaterialModule } from '../../material.module';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToastService } from '../../service/toast.service';
@@ -30,7 +26,7 @@ import { ToastService } from '../../service/toast.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   errorStates = {
     register: null as string | null,
   };
@@ -63,19 +59,6 @@ export class RegisterComponent implements OnInit {
   daysInMonth: number[] = [];
   yearsList: number[] = [];
 
-  phonePrefixes: { code: string; label: string }[] = [];
-  selectedPhonePrefix = '+1';
-  filteredPrefixes!: Observable<{ code: string; label: string }[]>;
-
-  phonePrefixControl = new FormControl();
-
-  countries: { name: string; isoCode: string }[] = [];
-  states: { name: string; isoCode: string }[] = [];
-  provinces: { name: string; isoCode: string }[] = [];
-  regions: { name: string; isoCode: string }[] = [];
-  cities: { name: string; isoCode: string }[] = [];
-  selectedCountry = '';
-
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -104,7 +87,10 @@ export class RegisterComponent implements OnInit {
       birthMonth: ['', [Validators.required]],
       birthDay: ['', [Validators.required]],
       birthYear: ['', [Validators.required]],
-      phonePrefix: [this.phonePrefixControl, Validators.required],
+      phonePrefix: [
+        '',
+        [Validators.required, Validators.minLength(2), Validators.maxLength(5)],
+      ],
       phoneNumber: [
         '',
         [
@@ -166,14 +152,6 @@ export class RegisterComponent implements OnInit {
     this.yearsList = this.getYearsList();
   }
 
-  ngOnInit(): void {
-    this.loadPhonePrefixes();
-    this.filteredPrefixes = this.phonePrefixControl.valueChanges.pipe(
-      startWith(''),
-      map((value) => this._filterPrefixes(value))
-    );
-  }
-
   setErrorState(
     key: keyof typeof this.errorStates,
     error: string | null
@@ -184,6 +162,12 @@ export class RegisterComponent implements OnInit {
   onSubmit() {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
+      Object.keys(this.registrationForm.controls).forEach((key) => {
+        const control = this.registrationForm.get(key);
+        if (control && control.errors) {
+          console.log(`Errors for ${key}:`, control.errors);
+        }
+      });
       return;
     }
 
@@ -212,12 +196,9 @@ export class RegisterComponent implements OnInit {
       next: () => {
         this.setErrorState('register', null);
         this.registrationForm.reset();
-        this.selectedBirthDayLabel = 'DD';
-        this.selectedBirthMonthLabel = 'MM';
-        this.selectedBirthYearLabel = 'YYYY';
-        this.selectedRoleLabel = 'Select role';
-        formValues.phonePrefix = this.phonePrefixControl.setValue('');
-        this.toastService.show('Registration successful', {
+        this.registrationForm.updateValueAndValidity();
+
+        this.toastService.show('Registration successful!', {
           classname: 'bg-success text-light',
           delay: 5000,
         });
@@ -228,8 +209,8 @@ export class RegisterComponent implements OnInit {
         this.setErrorState('register', error.message.replace(/^"|"$/g, ''));
         this.toastService.show(this.errorStates.register!, {
           classname: 'bg-danger text-light',
-          delay: 5000
-        })
+          delay: 5000,
+        });
       },
     });
   }
@@ -270,30 +251,6 @@ export class RegisterComponent implements OnInit {
   onRoleSelected(role: { value: string; label: string }) {
     this.selectedRoleLabel = role.label;
     this.onDropdownSelect(role.value, 'role');
-  }
-
-  onPhonePrefixSelected(prefix: { code: string; label: string }) {
-    this.selectedPhonePrefix = prefix.code;
-    this.registrationForm.get('phoneNumber')?.setValue('');
-    this.registrationForm.get('phoneNumber')?.markAsTouched();
-    this.registrationForm.get('phoneNumber')?.updateValueAndValidity();
-  }
-
-  loadPhonePrefixes(): void {
-    const countries = getCountries();
-    this.phonePrefixes = countries.map((country) => ({
-      code: `+${getCountryCallingCode(country)}`,
-      label: country,
-    }));
-  }
-
-  private _filterPrefixes(value: string): { code: string; label: string }[] {
-    const filterValue = value.toLowerCase();
-    return this.phonePrefixes.filter(
-      (prefix) =>
-        prefix.label.toLowerCase().includes(filterValue) ||
-        prefix.code.includes(filterValue)
-    );
   }
 
   formatPhoneNumber(event: Event): void {

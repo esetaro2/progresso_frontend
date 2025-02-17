@@ -122,6 +122,10 @@ export class ProjectPageComponent implements OnInit {
     });
   }
 
+  onUpdateProjectPercentage(): void {
+    this.getProjectPercentage();
+  }
+
   getProjectPercentage(): void {
     this.setLoadingState('percentage', true);
 

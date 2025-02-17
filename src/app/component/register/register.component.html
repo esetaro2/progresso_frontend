@@ -226,29 +226,19 @@
           <div class="col">
             <label for="phonePrefix">Phone Number</label>
             <div class="d-flex">
-              <!-- Prefix Dropdown -->
+              <!-- Prefix Input -->
               <div class="col-md-4">
-                <div>
-                  <input
-                    id="phonePrefix"
-                    type="text"
-                    class="form-control"
-                    placeholder="+ 1"
-                    aria-label="Phone Prefix"
-                    matInput
-                    [formControl]="phonePrefixControl"
-                    [matAutocomplete]="auto"
-                    style="text-align: center; cursor: pointer"
-                  />
-                  <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option
-                      *ngFor="let prefix of filteredPrefixes | async"
-                      [value]="prefix.code"
-                    >
-                      {{ prefix.code }} - {{ prefix.label }}
-                    </mat-option>
-                  </mat-autocomplete>
-                </div>
+                <input
+                  id="phonePrefix"
+                  type="text"
+                  class="form-control"
+                  placeholder="+1"
+                  aria-label="Phone Prefix"
+                  formControlName="phonePrefix"
+                  style="text-align: center"
+                  autocomplete="off"
+                  onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 43"
+                />
               </div>
 
               <!-- Phone Number Input-->
@@ -265,6 +255,36 @@
                 />
               </div>
             </div>
+
+            <small>
+              <span
+                *ngIf="
+                  registrationForm.get('phonePrefix')?.touched &&
+                  registrationForm.get('phonePrefix')?.invalid
+                "
+              >
+                <i class="fa fa-times"></i>
+                <span
+                  *ngIf="registrationForm.get('phonePrefix')?.errors?.['required']"
+                >
+                  Phone prefix is required.
+                </span>
+                <span
+                  *ngIf="registrationForm.get('phonePrefix')?.errors?.['minlength'] || registrationForm.get('phonePrefix')?.errors?.['maxlength']"
+                >
+                  Invalid phone prefix.
+                </span>
+              </span>
+              <span
+                *ngIf="
+                  registrationForm.get('phonePrefix')?.touched &&
+                  registrationForm.get('phonePrefix')?.valid
+                "
+              >
+                <i class="fa fa-check"></i> Phone prefix is valid.
+              </span>
+            </small>
+
             <small>
               <span
                 *ngIf="
@@ -290,7 +310,7 @@
                   registrationForm.get('phoneNumber')?.valid
                 "
               >
-                <i class="fa fa-check"></i>Phone number is valid.
+                <i class="fa fa-check"></i> Phone number is valid.
               </span>
               <span *ngIf="!registrationForm.get('phoneNumber')?.touched">
                 Please enter a phone number.
@@ -643,8 +663,8 @@
           <!-- Register button -->
           <button
             (click)="onSubmit()"
-            class="btn btn-primary btn-block"
             [disabled]="registrationForm.invalid"
+            class="btn btn-primary btn-block"
           >
             Register
           </button>

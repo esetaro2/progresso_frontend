@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { TaskService } from '../../service/task.service';
 import { Page } from '../../dto/page.dto';
 import { TaskDto } from '../../dto/task.dto';
@@ -49,6 +56,8 @@ export class TaskTableComponent implements OnInit {
   @Input() startDate?: string;
   @Input() dueDate?: string;
 
+  @Output() updateProjectPercentage = new EventEmitter<void>();
+
   loadingStates = {
     tasks: false,
     deleteTask: false,
@@ -83,8 +92,6 @@ export class TaskTableComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  searchQuery = '';
-
   currentPage = 0;
   pageSize = 6;
   totalElements = 0;
@@ -92,6 +99,23 @@ export class TaskTableComponent implements OnInit {
 
   selectedRow: Task | null = null;
   selectedTaskId: number | null = null;
+
+  selectedStatus?: string;
+  statuses: string[] = ['IN_PROGRESS', 'COMPLETED'];
+  statusLabels: Record<string, string> = {
+    IN_PROGRESS: 'In Progress',
+    COMPLETED: 'Completed',
+  };
+  availableStatuses: string[] = [];
+
+  selectedPriority?: string;
+  priorities: string[] = ['LOW', 'MEDIUM', 'HIGH'];
+  priorityLabels: Record<string, string> = {
+    LOW: 'Low',
+    MEDIUM: 'Medium',
+    HIGH: 'High',
+  };
+  availablePriorities: string[] = [];
 
   constructor(
     private toastService: ToastService,
@@ -118,7 +142,13 @@ export class TaskTableComponent implements OnInit {
     this.setLoadingState('tasks', true);
 
     this.taskService
-      .getTasksByProjectId(this.projectId!, this.currentPage, this.pageSize)
+      .getTasksByProjectIdAndFilters(
+        this.projectId!,
+        this.currentPage,
+        this.pageSize,
+        this.selectedStatus,
+        this.selectedPriority
+      )
       .subscribe({
         next: (pageData: Page<TaskDto>) => {
           this.totalElements = pageData.page.totalElements;
@@ -132,6 +162,24 @@ export class TaskTableComponent implements OnInit {
 
           this.dataSource.data = tasks;
           this.dataSource.sort = this.sort;
+
+          this.availableStatuses = Array.from(
+            new Set(
+              this.dataSource.data
+                .map((task) => task.status)
+                .filter((status): status is string => status !== undefined)
+            )
+          );
+          this.availablePriorities = Array.from(
+            new Set(
+              this.dataSource.data
+                .map((task) => task.priority)
+                .filter(
+                  (priority): priority is string => priority !== undefined
+                )
+            )
+          );
+
           this.setLoadingState('tasks', false);
           this.setErrorState('tasks', null);
         },
@@ -141,6 +189,30 @@ export class TaskTableComponent implements OnInit {
           this.dataSource.data = [];
         },
       });
+  }
+
+  selectStatus(status: string): void {
+    this.selectedStatus = status;
+    this.currentPage = 0;
+    this.loadTasks();
+  }
+
+  resetStatus(): void {
+    this.selectedStatus = '';
+    this.currentPage = 0;
+    this.loadTasks();
+  }
+
+  selectPriority(priority: string): void {
+    this.selectedPriority = priority;
+    this.currentPage = 0;
+    this.loadTasks();
+  }
+
+  resetPriority(): void {
+    this.selectedPriority = '';
+    this.currentPage = 0;
+    this.loadTasks();
   }
 
   openCompleteDialog(row: Task): void {
@@ -167,17 +239,22 @@ export class TaskTableComponent implements OnInit {
 
         this.taskService.completeTask(this.selectedTaskId!).subscribe({
           next: () => {
+            this.loadTasks();
+            this.currentPage = 0;
+
             this.toastService.show('Task completed successfully!', {
               classname: 'bg-success text-light',
               delay: 5000,
             });
+
+            this.updateProjectPercentage.emit();
+
             this.setLoadingState('completeTask', false);
             this.setErrorState('completeTask', null);
-            this.loadTasks();
           },
           error: () => {
             this.setLoadingState('completeTask', false);
-            this.setErrorState('completeTask', 'Failed to complete task!')
+            this.setErrorState('completeTask', 'Failed to complete task!');
             this.toastService.show(this.errorStates.completeTask!, {
               classname: 'bg-danger text-light',
               delay: 5000,
@@ -214,13 +291,18 @@ export class TaskTableComponent implements OnInit {
           .removeTaskFromProject(this.projectId!, this.selectedTaskId!)
           .subscribe({
             next: () => {
-              this.setLoadingState('deleteTask', false);
-              this.setErrorState('deleteTask', null);
+              this.currentPage = 0;
+              this.loadTasks();
+
               this.toastService.show('Task deleted successfully!', {
                 classname: 'bg-success text-light',
                 delay: 5000,
-              })
-              this.loadTasks();
+              });
+
+              this.updateProjectPercentage.emit();
+
+              this.setLoadingState('deleteTask', false);
+              this.setErrorState('deleteTask', null);
             },
             error: () => {
               this.setLoadingState('deleteTask', false);
@@ -228,7 +310,7 @@ export class TaskTableComponent implements OnInit {
               this.toastService.show(this.errorStates.deleteTask!, {
                 classname: 'bg-danger text-light',
                 delay: 5000,
-              })
+              });
             },
           });
       } else {
@@ -237,7 +319,7 @@ export class TaskTableComponent implements OnInit {
     });
   }
 
-  openEditDialog(row: Task): void {
+  openEditDialog(row: TaskDto): void {
     console.log('Task selezionata per modifica', row);
 
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
@@ -252,9 +334,10 @@ export class TaskTableComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.componentInstance.taskUpdated.subscribe(() =>{
+      this.currentPage = 0;
       this.loadTasks();
-    });
+    })
   }
 
   onPageChange(event: PageEvent): void {

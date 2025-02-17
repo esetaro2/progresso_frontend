@@ -37,9 +37,9 @@
   color: #4caf50;
 }
 
-.task-description {
+.task-description, .task-name {
   display: block;
-  max-width: 250px;
+  max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

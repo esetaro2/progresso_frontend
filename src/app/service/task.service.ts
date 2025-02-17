@@ -81,13 +81,21 @@ export class TaskService {
     );
   }
 
-  getTasksByProjectId(
+  getTasksByProjectIdAndFilters(
     projectId: number,
     page: number,
     size: number,
+    status?: string,
+    priority?: string,
     sort?: string
   ): Observable<Page<TaskDto>> {
-    const params = this.createPageableParams(page, size, sort);
+    let params = this.createPageableParams(page, size, sort);
+
+    if (status != null && status.length != 0)
+      params = params.set('status', status);
+    if (priority != null && priority.length != 0)
+      params = params.set('priority', priority);
+
     return this.http.get<Page<TaskDto>>(`${this.apiUrl}/project/${projectId}`, {
       params,
     });
