@@ -102,7 +102,6 @@ export class ProjectDashboardComponent implements OnInit {
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
-          console.log('PageData ALL Filters', pageData);
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
@@ -131,7 +130,6 @@ export class ProjectDashboardComponent implements OnInit {
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
-          console.log('Pagedata PM Filters', pageData);
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
@@ -160,7 +158,6 @@ export class ProjectDashboardComponent implements OnInit {
       )
       .subscribe({
         next: (pageData: Page<ProjectDto>) => {
-          console.log('Pagedata TM Filters', pageData);
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;

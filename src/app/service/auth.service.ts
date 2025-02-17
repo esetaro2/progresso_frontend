@@ -57,6 +57,13 @@ export class AuthService {
     );
   }
 
+  activateUser(userId: number): Observable<UserResponseDto> {
+    return this.http.put<UserResponseDto>(
+      `${this.apiUrl}/${userId}/activate`,
+      {}
+    );
+  }
+
   getToken(): string | null {
     const token = this.token || localStorage.getItem('token');
     if (token) {

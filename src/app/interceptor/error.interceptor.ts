@@ -23,18 +23,31 @@ export function ErrorInterceptor(
           `Server Error Code: ${error.status} - ${error.statusText}`
         );
 
-        if (error.status === 400) {
-          if (error.error && typeof error.error === 'object') {
-            errorMessage = error.error.message || JSON.stringify(error.error);
+        if (error.error) {
+          if (typeof error.error === 'object' && error.error.message) {
+            errorMessage = error.error.message;
+          } else if (typeof error.error === 'object') {
+            errorMessage = JSON.stringify(error.error);
           } else if (typeof error.error === 'string') {
             errorMessage = error.error;
-          } else {
-            errorMessage = 'Bad request.';
           }
-        } else if (error.status === 404) {
-          errorMessage = 'The requested resource was not found.';
-        } else if (error.status >= 500) {
-          errorMessage = 'Server error. Please try again later.';
+        } else {
+          switch (error.status) {
+            case 400:
+              errorMessage = 'Bad request.';
+              break;
+            case 403:
+              errorMessage = 'Access denied.';
+              break;
+            case 404:
+              errorMessage = 'The requested resource was not found.';
+              break;
+            case 500:
+              errorMessage = 'Server error. Please try again later.';
+              break;
+            default:
+              errorMessage = error.statusText || errorMessage;
+          }
         }
       }
 
