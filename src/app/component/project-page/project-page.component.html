@@ -42,8 +42,8 @@
           {{ errorStates.team }}
         </div>
 
-        <div *ngIf="!loadingStates.team && !errorStates.team">
-          <h5 *ngIf="team">Team: {{ team!.name }}</h5>
+        <div *ngIf="!loadingStates.team && !errorStates.team && team">
+          <h5>Team: {{ team!.name }}</h5>
 
           <div
             *ngIf="errorStates.teamMembers && !isLoading"
