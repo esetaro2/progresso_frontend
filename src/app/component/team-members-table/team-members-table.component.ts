@@ -47,6 +47,7 @@ function compare(
 })
 export class TeamMembersTableComponent implements OnInit {
   @Input() teamId?: number;
+  @Input() readOnly?: boolean;
   @Output() teamMemberSelectedId = new EventEmitter<number>();
 
   loadingStates = {

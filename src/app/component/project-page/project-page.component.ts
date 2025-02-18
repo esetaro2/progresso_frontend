@@ -17,6 +17,7 @@ import { TaskTableComponent } from '../task-table/task-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignTeamDialogComponent } from '../assign-team-dialog/assign-team-dialog.component';
 import { CreateTaskStepperDialogComponent } from '../create-task-stepper-dialog/create-task-stepper-dialog.component';
+import { TeamMembersTableComponent } from "../team-members-table/team-members-table.component";
 
 @Component({
   selector: 'app-project-page',
@@ -28,7 +29,8 @@ import { CreateTaskStepperDialogComponent } from '../create-task-stepper-dialog/
     NgbModule,
     NgxChartsModule,
     TaskTableComponent,
-  ],
+    TeamMembersTableComponent
+],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css',
 })

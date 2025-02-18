@@ -41,24 +41,42 @@
         <div *ngIf="errorStates.team && !isLoading" class="alert alert-danger">
           {{ errorStates.team }}
         </div>
+
         <div *ngIf="!loadingStates.team && !errorStates.team">
           <h5 *ngIf="team">Team: {{ team!.name }}</h5>
-          <h5 *ngIf="!team">
-            No team has been assigned to this project. Click
-            <a
-              role="button"
-              tabindex="0"
-              class="span-link"
-              (click)="onAssignTeam()"
-              (keyup.enter)="onAssignTeam()"
-              (keyup.space)="onAssignTeam()"
-              aria-label="Assign team"
-            >
-              here
-            </a>
-            to assign a team.
-          </h5>
+
+          <div
+            *ngIf="errorStates.teamMembers && !isLoading"
+            class="alert alert-danger"
+          >
+            {{ errorStates.teamMembers }}
+          </div>
+
+          <div
+            *ngIf="!loadingStates.teamMembers && !errorStates.teamMembers"
+            style="height: 475px;"
+          >
+            <app-team-members-table
+              [teamId]="team!.id"
+              [readOnly]="true"
+            ></app-team-members-table>
+          </div>
         </div>
+        <h5 *ngIf="!team">
+          No team has been assigned to this project. Click
+          <a
+            role="button"
+            tabindex="0"
+            class="span-link"
+            (click)="onAssignTeam()"
+            (keyup.enter)="onAssignTeam()"
+            (keyup.space)="onAssignTeam()"
+            aria-label="Assign team"
+          >
+            here
+          </a>
+          to assign a team.
+        </h5>
       </div>
     </div>
 
