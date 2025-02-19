@@ -41,44 +41,47 @@
     dataSource.data.length > 0
   "
 >
-  <table
-    mat-table
-    [dataSource]="dataSource"
-    matSort
-    (matSortChange)="sortData($event)"
-    *ngIf="dataSource.data.length !== 0"
-  >
-    <!-- Definizione delle colonne -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef>ID</th>
-      <td mat-cell *matCellDef="let pm">{{ pm.id }}</td>
-    </ng-container>
+  <div class="table-wrapper">
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      (matSortChange)="sortData($event)"
+      *ngIf="dataSource.data.length !== 0"
+    >
+      <!-- Definizione delle colonne -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let pm">{{ pm.id }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="firstName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
-      <td mat-cell *matCellDef="let pm">{{ pm.firstName }}</td>
-    </ng-container>
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+        <td mat-cell *matCellDef="let pm">{{ pm.firstName }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="lastName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-      <td mat-cell *matCellDef="let pm">{{ pm.lastName }}</td>
-    </ng-container>
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+        <td mat-cell *matCellDef="let pm">{{ pm.lastName }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="username">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
-      <td mat-cell *matCellDef="let pm">{{ pm.username }}</td>
-    </ng-container>
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+        <td mat-cell *matCellDef="let pm">{{ pm.username }}</td>
+      </ng-container>
 
-    <!-- Righe della tabella -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      (click)="onRowClicked(row)"
-      [class.selected]="selectedRow?.id === row.id"
-      class="tableRow"
-    ></tr>
-  </table>
+      <!-- Righe della tabella -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="onRowClicked(row)"
+        [class.selected]="selectedRow?.id === row.id"
+        class="tableRow"
+      ></tr>
+    </table>
+  </div>
+
   <mat-paginator
     [length]="totalElements"
     [pageIndex]="currentPage"

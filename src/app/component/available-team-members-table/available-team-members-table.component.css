@@ -37,3 +37,9 @@ tr.mat-row {
 .form-control:focus + .search-icon {
   color: #007bff;
 }
+
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  display: block;
+}

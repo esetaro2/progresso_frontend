@@ -138,6 +138,15 @@ export class TaskTableComponent implements OnInit {
     this.errorStates[key] = error;
   }
 
+  isBeforeStart(task: Task): boolean {
+    const startDate = new Date(task.startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+
+    return today < startDate;
+  }
+
   loadTasks(): void {
     this.setLoadingState('tasks', true);
 
@@ -334,10 +343,10 @@ export class TaskTableComponent implements OnInit {
       },
     });
 
-    dialogRef.componentInstance.taskUpdated.subscribe(() =>{
+    dialogRef.componentInstance.taskUpdated.subscribe(() => {
       this.currentPage = 0;
       this.loadTasks();
-    })
+    });
   }
 
   onPageChange(event: PageEvent): void {
@@ -412,5 +421,11 @@ export class TaskTableComponent implements OnInit {
       default:
         return 'Unknown Status';
     }
+  }
+
+  getCompleteTooltip(task: Task): string | null {
+    if (this.isBeforeStart(task)) {
+      return 'Task has not started yet';
+    } else return null;
   }
 }

@@ -37,3 +37,9 @@ tr.selected {
 tr.mat-row {
   cursor: pointer;
 }
+
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  display: block;
+}

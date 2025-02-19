@@ -72,7 +72,7 @@ export class TeamMembersTableComponent implements OnInit {
   searchQuery = '';
   isSearchQueryPresent = false;
   currentPage = 0;
-  pageSize = 6;
+  pageSize = 4;
   totalElements = 0;
   totalPages = 0;
 

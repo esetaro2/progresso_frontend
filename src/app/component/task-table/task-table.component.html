@@ -25,9 +25,9 @@
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-          <td mat-cell *matCellDef="let task"><span class="task-name" [title]="task.name">{{
-            task.name
-          }}</span></td>
+          <td mat-cell *matCellDef="let task">
+            <span class="task-name" [title]="task.name">{{ task.name }}</span>
+          </td>
         </ng-container>
 
         <!-- Start Date Column -->
@@ -141,14 +141,18 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let task">
-            <button
-              mat-icon-button
-              class="btn complete-button"
-              [disabled]="task.status === 'COMPLETED' || isLoading"
-              (click)="openCompleteDialog(task)"
-            >
-              <mat-icon>check</mat-icon>
-            </button>
+            <span [ngbTooltip]="getCompleteTooltip(task)">
+              <button
+                mat-icon-button
+                class="btn complete-button"
+                [disabled]="
+                  task.status === 'COMPLETED' || isLoading || isBeforeStart(task)
+                "
+                (click)="openCompleteDialog(task)"
+              >
+                <mat-icon>check</mat-icon>
+              </button>
+            </span>
             <button
               mat-icon-button
               class="btn btn-outline-primary"

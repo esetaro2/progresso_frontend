@@ -59,7 +59,7 @@ export class AvailablePmTableComponent implements OnInit {
 
   searchQuery = '';
   currentPage = 0;
-  pageSize = 6;
+  pageSize = 4;
   totalElements = 0;
   totalPages = 0;
 
