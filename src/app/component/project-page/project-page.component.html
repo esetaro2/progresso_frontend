@@ -2,7 +2,7 @@
 
 <div
   *ngIf="errorStates.project && !isLoading"
-  class="alert alert-danger text-center"
+  class="alert alert-danger text-center mt-3"
 >
   {{ errorStates.project }}
 </div>
@@ -11,12 +11,25 @@
   *ngIf="!loadingStates.project && !errorStates.project"
   class="container-fluid p-4 d-flex flex-column min-vh-100"
 >
-  <h2 class="text-center mb-2">{{ project?.name }}</h2>
-  <h5 class="text-center mb-5" style="color: gray">
-    <i>{{ project?.description }}</i>
-  </h5>
+  <div class="d-flex justify-content-center">
+    <div class="d-flex flex-column align-items-center">
+      <h2 class="text-center mb-2">{{ project?.name }}</h2>
+      <h5 class="text-center mb-5" style="color: gray">
+        <i>{{ project?.description }}</i>
+      </h5>
+    </div>
 
-  <div class="row mb-5 p-5 align-items-center">
+    <button
+      class="btn btn-outline-primary align-self-center ms-3 mb-5"
+      ngbTooltip="Edit project"
+      [openDelay]="500"
+      (click)="onEditProject()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+
+  <div class="row p-5 align-items-center">
     <div class="col me-2 mb-5 d-flex flex-column">
       <div class="d-flex gap-5 mb-2">
         <h5>Start Date: {{ project?.startDate }}</h5>
@@ -26,13 +39,15 @@
           <span [ngClass]="getPriorityClass()">{{ project?.priority }}</span>
         </h5>
       </div>
-      <div class="d-flex mb-4 flex-column">
+
+      <div class="d-flex mb-4 flex-column" style="height: 420px">
         <div
           *ngIf="errorStates.manager && !isLoading"
           class="alert alert-danger"
         >
           {{ errorStates.manager }}
         </div>
+
         <h5 *ngIf="!loadingStates.manager && !errorStates.manager">
           Project Manager: {{ projectManager?.firstName }}
           {{ projectManager?.lastName }} ({{ projectManager?.username }})
@@ -52,16 +67,14 @@
             {{ errorStates.teamMembers }}
           </div>
 
-          <div
-            *ngIf="!loadingStates.teamMembers && !errorStates.teamMembers"
-            style="height: 475px;"
-          >
+          <div *ngIf="!loadingStates.teamMembers && !errorStates.teamMembers">
             <app-team-members-table
               [teamId]="team!.id"
               [readOnly]="true"
             ></app-team-members-table>
           </div>
         </div>
+
         <h5 *ngIf="!team">
           No team has been assigned to this project. Click
           <a
@@ -103,7 +116,7 @@
         </ngx-charts-pie-chart>
 
         <mat-icon
-          style="cursor: pointer; overflow: visible"
+          style="cursor: pointer"
           [ngbTooltip]="getTooltipText()"
           [ngClass]="getStatusClass()"
           >circle</mat-icon
@@ -134,6 +147,7 @@
       </button>
     </div>
   </div>
+
   <app-task-table
     [projectId]="projectId"
     [teamId]="team?.id"

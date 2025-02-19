@@ -2,13 +2,14 @@
   <mat-step [stepControl]="projectForm">
     <ng-template matStepLabel>Project Information</ng-template>
 
-    <div mat-dialog-content>
+    <div matDialogContent>
       <div
         *ngIf="errorStates.createProject && !isLoading"
         class="alert alert-danger text-center"
       >
         {{ errorStates.createProject }}
       </div>
+
       <div
         *ngIf="errorStates.assignTeam && !isLoading"
         class="alert alert-danger text-center"
@@ -332,12 +333,13 @@
         </div>
       </form>
     </div>
-    <div mat-dialog-actions>
-      <button mat-button matDialogClose>Close</button>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
       <button
         mat-button
         matStepperNext
-        [disabled]="!projectForm.valid"
+        [disabled]="!projectForm.valid || isLoading"
         (click)="onCreateFirstPartProject()"
       >
         Next
@@ -348,13 +350,14 @@
   <mat-step [completed]="selectedPmId !== 0">
     <ng-template matStepLabel>Assign Project Manager</ng-template>
 
-    <div mat-dialog-content>
+    <div matDialogContent>
       <div
         *ngIf="errorStates.createProject && !isLoading"
         class="alert alert-danger text-center"
       >
         {{ errorStates.createProject }}
       </div>
+
       <div
         *ngIf="errorStates.assignTeam && !isLoading"
         class="alert alert-danger text-center"
@@ -367,70 +370,84 @@
       ></app-available-pm-table>
     </div>
 
-    <div mat-dialog-actions>
-      <button mat-button matDialogClose>Close</button>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matStepperNext [disabled]="!selectedPmId">Next</button>
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button mat-button matStepperNext [disabled]="!selectedPmId || isLoading">
+        Next
+      </button>
     </div>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel>Assign Team</ng-template>
-    <div
-      *ngIf="errorStates.createProject && !isLoading"
-      class="alert alert-danger text-center"
-    >
-      {{ errorStates.createProject }}
-    </div>
-    <div
-      *ngIf="errorStates.assignTeam && !isLoading"
-      class="alert alert-danger text-center"
-    >
-      {{ errorStates.assignTeam }}
-    </div>
-    <div
-      mat-dialog-content
-      class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
-      *ngIf="!existingTeam"
-    >
-      <button mat-raised-button (click)="existingTeam = true">
-        Assign Existing Team
-      </button>
-      <span class="mx-2">or</span>
-      <button mat-raised-button (click)="openCreateTeamDialog()">
-        Create New Team
-      </button>
-      <span class="mx-2">or</span>
-      <button mat-raised-button (click)="onSubmit()">Assign Team Later</button>
-    </div>
 
-    <div
-      mat-dialog-content
-      class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
-      *ngIf="existingTeam"
-    >
-      <app-available-team-table
-        (teamSelected)="onTeamSelected($event)"
-      ></app-available-team-table>
-      <button
-        mat-raised-button
-        (click)="existingTeam = false; selectedTeamId = null"
-        class="align-self-center"
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.createProject && !isLoading"
+        class="alert alert-danger text-center"
       >
-        Cancel
-      </button>
+        {{ errorStates.createProject }}
+      </div>
+
+      <div
+        *ngIf="errorStates.assignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.assignTeam }}
+      </div>
+
+      <div
+        class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+        *ngIf="!existingTeam"
+      >
+        <button mat-raised-button (click)="existingTeam = true">
+          Assign Existing Team
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button mat-raised-button (click)="openCreateTeamDialog()">
+          Create New Team
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button mat-raised-button (click)="onSubmit()">
+          Assign Team Later
+        </button>
+      </div>
+
+      <div *ngIf="existingTeam">
+        <app-available-team-table
+          (teamSelected)="onTeamSelected($event)"
+        ></app-available-team-table>
+
+        <div class="d-flex align-items-center justify-content-center">
+          <button
+            mat-raised-button
+            (click)="existingTeam = false; selectedTeamId = null"
+            class="mx-auto"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div mat-dialog-actions>
-      <button mat-button matDialogClose>Close</button>
-      <button mat-button matStepperPrevious>Back</button>
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
       <button
         mat-button
         *ngIf="existingTeam"
-        [disabled]="!selectedTeamId"
+        [disabled]="!selectedTeamId || isLoading"
         (click)="onSubmit()"
       >
-        Create
+        <span *ngIf="!isLoading">Complete</span>
+        <span *ngIf="isLoading">
+          <mat-spinner [diameter]="24"></mat-spinner>
+        </span>
       </button>
     </div>
   </mat-step>

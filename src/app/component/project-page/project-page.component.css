@@ -17,21 +17,21 @@
 }
 
 .not-started-circle {
-  font-size: 40px;
+  font-size: 25px;
   color: #9e9e9e;
 }
 
 .in-progress-circle {
-  font-size: 40px;
+  font-size: 25px;
   color: #ffc107;
 }
 
 .completed-circle {
-  font-size: 40px;
+  font-size: 25px;
   color: #4caf50;
 }
 
 .cancelled-circle {
-  font-size: 35px;
+  font-size: 25px;
   color: #f44336;
 }

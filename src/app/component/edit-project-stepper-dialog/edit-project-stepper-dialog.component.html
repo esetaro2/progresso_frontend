@@ -1,16 +1,33 @@
-<mat-horizontal-stepper [linear]="true">
-  <mat-step [stepControl]="taskForm">
-    <ng-template matStepLabel>Task Information</ng-template>
+<mat-horizontal-stepper
+  [linear]="true"
+  (selectionChange)="onStepChange($event)"
+>
+  <mat-step [stepControl]="projectForm">
+    <ng-template matStepLabel>Project Information</ng-template>
 
     <div matDialogContent>
       <div
-        *ngIf="errorStates.createTask && !isLoading"
+        *ngIf="errorStates.updateProject && !isLoading"
         class="alert alert-danger text-center"
       >
-        {{ errorStates.createTask }}
+        {{ errorStates.updateProject }}
       </div>
 
-      <form [formGroup]="taskForm">
+      <div
+        *ngIf="errorStates.updateProjectManager && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateProjectManager }}
+      </div>
+
+      <div
+        *ngIf="errorStates.reassignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.reassignTeam }}
+      </div>
+
+      <form [formGroup]="projectForm">
         <!-- Name Field -->
         <div class="mb-3">
           <label for="name">Name</label>
@@ -26,29 +43,23 @@
           <small>
             <span
               *ngIf="
-                taskForm.get('name')?.touched && taskForm.get('name')?.invalid
+                projectForm.get('name')?.touched &&
+                projectForm.get('name')?.invalid
               "
             >
               <i class="fa fa-times"></i>
-              <span *ngIf="taskForm.get('name')?.errors?.['required']">
-                Task name is required.
-              </span>
-              <span *ngIf="taskForm.get('name')?.errors?.['minlength']">
-                Task name is too short.
-              </span>
-              <span *ngIf="taskForm.get('name')?.errors?.['maxlength']">
-                Task name is too long.
-              </span>
+              <span *ngIf="projectForm.get('name')?.errors?.['required']"
+                >Project name is required.</span
+              >
+              <span *ngIf="projectForm.get('name')?.errors?.['minlength']"
+                >Project name is too short.</span
+              >
+              <span *ngIf="projectForm.get('name')?.errors?.['maxlength']"
+                >Project name is too long.</span
+              >
             </span>
-            <span
-              *ngIf="
-                taskForm.get('name')?.touched && taskForm.get('name')?.valid
-              "
-            >
-              <i class="fa fa-check"></i> Task name is valid.
-            </span>
-            <span *ngIf="!taskForm.get('name')?.touched">
-              Please enter the task name.
+            <span *ngIf="projectForm.get('name')?.valid">
+              <i class="fa fa-check"></i> Project name is valid.
             </span>
           </small>
         </div>
@@ -67,79 +78,25 @@
           <small>
             <span
               *ngIf="
-                taskForm.get('description')?.touched &&
-                taskForm.get('description')?.invalid
+                projectForm.get('description')?.touched &&
+                projectForm.get('description')?.invalid
               "
             >
               <i class="fa fa-times"></i>
-              <span *ngIf="taskForm.get('description')?.errors?.['required']">
-                Description is required.
-              </span>
-              <span *ngIf="taskForm.get('description')?.errors?.['minlength']">
-                Description is too short.
-              </span>
-              <span *ngIf="taskForm.get('description')?.errors?.['maxlength']">
-                Description is too long (max 255 characters).
-              </span>
-            </span>
-            <span
-              *ngIf="
-                taskForm.get('description')?.touched &&
-                taskForm.get('description')?.valid
-              "
-            >
-              <i class="fa fa-check"></i> Description is valid.
-            </span>
-            <span *ngIf="!taskForm.get('description')?.touched">
-              Please enter the task description.
-            </span>
-          </small>
-        </div>
-
-        <!-- Priority Field -->
-        <div class="mb-3">
-          <label for="priorityDropdown">Priority</label>
-          <div ngbDropdown>
-            <button
-              class="btn btn-outline-primary w-100"
-              id="priorityDropdown"
-              ngbDropdownToggle
-            >
-              {{ selectedPriorityLabel || "Select priority" }}
-            </button>
-            <div
-              ngbDropdownMenu
-              aria-labelledby="priorityDropdown"
-              class="w-100 text-center"
-            >
-              <button
-                class="dropdown-item"
-                *ngFor="let p of priorities"
-                (click)="onPrioritySelected(p)"
+              <span *ngIf="projectForm.get('description')?.errors?.['required']"
+                >Description is required.</span
               >
-                {{ p }}
-              </button>
-            </div>
-          </div>
-          <small>
-            <span
-              *ngIf="
-                taskForm.get('priority')?.touched &&
-                taskForm.get('priority')?.invalid
-              "
-            >
-              <i class="fa fa-times"></i> Priority is required.
+              <span
+                *ngIf="projectForm.get('description')?.errors?.['minlength']"
+                >Description is too short.</span
+              >
+              <span
+                *ngIf="projectForm.get('description')?.errors?.['maxlength']"
+                >Description is too long (max 255 characters).</span
+              >
             </span>
-            <span
-              *ngIf="
-                taskForm.get('priority')?.touched &&
-                taskForm.get('priority')?.valid
-              "
-            >
-              <i class="fa fa-check"></i> Priority is valid.
-            </span>
-            <span *ngIf="!taskForm.get('priority')?.touched">
-              Please select the task priority.
+            <span *ngIf="projectForm.get('description')?.valid">
+              <i class="fa fa-check"></i> Description is valid.
             </span>
           </small>
         </div>
@@ -149,7 +106,6 @@
           <div class="col-md-6 mb-3">
             <label for="startMonthDropdown">Start Date</label>
             <div class="d-flex">
-              <!-- Order: YYYY, MM, DD -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -222,38 +178,19 @@
                 </div>
               </div>
             </div>
-            <small class="d-flex flex-column">
+            <small>
               <span
                 *ngIf="
-                  !taskForm.get('startYear')?.touched ||
-                  !taskForm.get('startMonth')?.touched ||
-                  !taskForm.get('startDay')?.touched
+                  projectForm.get('startMonth')?.valid &&
+                  projectForm.get('startDay')?.valid &&
+                  projectForm.get('startYear')?.valid &&
+                  !projectForm.hasError('startBeforeToday')
                 "
               >
-                Please select a start date.
+                <i class="fa fa-check"></i>Start date is valid.
               </span>
-              <span
-                *ngIf="
-                  taskForm.get('startYear')?.valid &&
-                  taskForm.get('startMonth')?.valid &&
-                  taskForm.get('startDay')?.valid &&
-                  !taskForm.hasError('startBeforeToday') &&
-                  !taskForm.hasError('startBeforeProjectStartDate') &&
-                  !taskForm.hasError('startAfterProjectDueDate')
-                "
-              >
-                <i class="fa fa-check"></i> Start date is valid.
-              </span>
-              <span *ngIf="taskForm.hasError('startBeforeToday')">
-                <i class="fa fa-times"></i> Start date must not be in the past.
-              </span>
-              <span *ngIf="taskForm.hasError('startBeforeProjectStartDate')">
-                <i class="fa fa-times"></i> Start date must be after the project
-                start date.
-              </span>
-              <span *ngIf="taskForm.hasError('startAfterProjectDueDate')">
-                <i class="fa fa-times"></i> Start date must be before the
-                project due date.
+              <span *ngIf="projectForm.hasError('startBeforeToday')">
+                <i class="fa fa-times"></i>Start date must not be in the past.
               </span>
             </small>
           </div>
@@ -262,7 +199,6 @@
           <div class="col-md-6 mb-3">
             <label for="dueMonthDropdown">Due Date</label>
             <div class="d-flex">
-              <!-- Order: YYYY, MM, DD -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -270,8 +206,7 @@
                   ngbDropdownToggle
                   style="font-size: small"
                   [disabled]="
-                    taskForm.hasError('startBeforeProjectStartDate') ||
-                    taskForm.hasError('startAfterProjectDueDate') ||
+                    projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
                 >
@@ -299,8 +234,7 @@
                   ngbDropdownToggle
                   style="font-size: small"
                   [disabled]="
-                    taskForm.hasError('startBeforeProjectStartDate') ||
-                    taskForm.hasError('startAfterProjectDueDate') ||
+                    projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
                 >
@@ -328,8 +262,7 @@
                   ngbDropdownToggle
                   style="font-size: small"
                   [disabled]="
-                    taskForm.hasError('startBeforeProjectStartDate') ||
-                    taskForm.hasError('startAfterProjectDueDate') ||
+                    projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
                 >
@@ -354,32 +287,17 @@
             <small>
               <span
                 *ngIf="
-                  !taskForm.get('dueYear')?.touched ||
-                  !taskForm.get('dueMonth')?.touched ||
-                  !taskForm.get('dueDay')?.touched
+                  projectForm.get('dueMonth')?.valid &&
+                  projectForm.get('dueDay')?.valid &&
+                  projectForm.get('dueYear')?.valid &&
+                  !projectForm.hasError('dueBeforeStart')
                 "
               >
-                Please select a due date.
+                <i class="fa fa-check"></i>Due date is valid.
               </span>
-
-              <span
-                *ngIf="
-                  taskForm.get('dueYear')?.valid &&
-                  taskForm.get('dueMonth')?.valid &&
-                  taskForm.get('dueDay')?.valid &&
-                  !taskForm.hasError('dueBeforeStart') &&
-                  !taskForm.hasError('dueAfterProjectDueDate')
-                "
-              >
-                <i class="fa fa-check"></i> Due date is valid.
-              </span>
-              <span *ngIf="taskForm.hasError('dueBeforeStart')">
-                <i class="fa fa-times"></i> Due date must be after the start
+              <span *ngIf="projectForm.hasError('dueBeforeStart')">
+                <i class="fa fa-times"></i>Due date must be after the start
                 date.
-              </span>
-              <span *ngIf="taskForm.hasError('dueAfterProjectDueDate')">
-                <i class="fa fa-times"></i> Due date must be before the project
-                due date.
               </span>
             </small>
           </div>
@@ -392,8 +310,8 @@
       <button
         mat-button
         matStepperNext
-        [disabled]="!taskForm.valid || isLoading"
-        (click)="onCreateFirstPartTask()"
+        [disabled]="!projectForm.valid || isLoading"
+        (click)="onEditFirstPartProject()"
       >
         Next
       </button>
@@ -401,20 +319,66 @@
   </mat-step>
 
   <mat-step>
-    <ng-template matStepLabel>Assign User</ng-template>
+    <ng-template matStepLabel>Update Project Manager</ng-template>
 
     <div matDialogContent>
       <div
-        *ngIf="errorStates.createTask && !isLoading"
+        *ngIf="errorStates.updateProject && !isLoading"
         class="alert alert-danger text-center"
       >
-        {{ errorStates.createTask }}
+        {{ errorStates.updateProject }} ,sdhfkjhdfsk
       </div>
 
-      <app-team-members-table
-        [teamId]="this.data.teamId"
-        (teamMemberSelectedId)="onTeamMemberSelected($event)"
-      ></app-team-members-table>
+      <div
+        *ngIf="errorStates.updateProjectManager && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateProjectManager }}
+      </div>
+
+      <div
+        *ngIf="errorStates.reassignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.reassignTeam }}
+      </div>
+
+      <div
+        *ngIf="!updateProjectManager"
+        class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+      >
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="updateProjectManager = true"
+        >
+          Update Project Manager
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button mat-raised-button matStepperNext>
+          Keep Current Project Manager
+        </button>
+      </div>
+
+      <div *ngIf="updateProjectManager">
+        <app-available-pm-table
+          (pmSelected)="onPmSelected($event)"
+        ></app-available-pm-table>
+
+        <div class="d-flex align-items-center justify-content-center">
+          <button
+            mat-raised-button
+            (click)="
+              updateProjectManager = false;
+              selectedPmId = this.data.project.projectManagerId
+            "
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
 
     <div matDialogActions>
@@ -422,7 +386,86 @@
       <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
       <button
         mat-button
-        [disabled]="!selectedTeamMemberId || isLoading"
+        matStepperNext
+        *ngIf="updateProjectManager"
+        [disabled]="(updateProjectManager && !selectedPmId) || isLoading"
+      >
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Update Team</ng-template>
+
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.updateProject && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateProject }}
+      </div>
+      <div
+        *ngIf="errorStates.updateProjectManager && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateProjectManager }}
+      </div>
+      <div
+        *ngIf="errorStates.reassignTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.reassignTeam }}
+      </div>
+
+      <div
+        *ngIf="!existingTeam"
+        class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+      >
+        <button mat-raised-button (click)="existingTeam = true">
+          Assign Existing Team
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button mat-raised-button (click)="openCreateTeamDialog()">
+          Create New Team
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button mat-raised-button>Update Team</button>
+
+        <span class="mx-2">or</span>
+        <button mat-raised-button (click)="onSubmit()">
+          Keep Current Team
+        </button>
+      </div>
+
+      <div *ngIf="existingTeam">
+        <app-available-team-table
+          (teamSelected)="onTeamSelected($event)"
+        ></app-available-team-table>
+
+        <div class="d-flex align-items-center justify-content-center">
+          <button
+            mat-raised-button
+            (click)="existingTeam = false; selectedTeamId = null"
+            class="align-self-center"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button
+        mat-button
+        *ngIf="existingTeam"
+        [disabled]="!selectedTeamId"
         (click)="onSubmit()"
       >
         <span *ngIf="!isLoading">Complete</span>

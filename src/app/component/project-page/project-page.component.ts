@@ -17,7 +17,8 @@ import { TaskTableComponent } from '../task-table/task-table.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignTeamDialogComponent } from '../assign-team-dialog/assign-team-dialog.component';
 import { CreateTaskStepperDialogComponent } from '../create-task-stepper-dialog/create-task-stepper-dialog.component';
-import { TeamMembersTableComponent } from "../team-members-table/team-members-table.component";
+import { TeamMembersTableComponent } from '../team-members-table/team-members-table.component';
+import { EditProjectStepperDialogComponent } from '../edit-project-stepper-dialog/edit-project-stepper-dialog.component';
 
 @Component({
   selector: 'app-project-page',
@@ -29,8 +30,8 @@ import { TeamMembersTableComponent } from "../team-members-table/team-members-ta
     NgbModule,
     NgxChartsModule,
     TaskTableComponent,
-    TeamMembersTableComponent
-],
+    TeamMembersTableComponent,
+  ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css',
 })
@@ -245,6 +246,22 @@ export class ProjectPageComponent implements OnInit {
       dialogRef.close();
       this.taskTableComponent.loadTasks();
     });
+  }
+
+  onEditProject(): void {
+    const dialogRef = this.dialog.open(EditProjectStepperDialogComponent, {
+      width: '100%',
+      maxWidth: '750px',
+      data: {
+        project: this.project,
+        team: this.team,
+      }
+    })
+
+    dialogRef.componentInstance.projectUpdated.subscribe(() => {
+      dialogRef.close();
+      this.getProjectInfo();
+    })
   }
 
   getPriorityClass(): string {
