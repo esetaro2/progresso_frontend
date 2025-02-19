@@ -255,13 +255,14 @@ export class ProjectPageComponent implements OnInit {
       data: {
         project: this.project,
         team: this.team,
-      }
-    })
+      },
+    });
 
     dialogRef.componentInstance.projectUpdated.subscribe(() => {
       dialogRef.close();
       this.getProjectInfo();
-    })
+      this.taskTableComponent.loadTasks();
+    });
   }
 
   getPriorityClass(): string {

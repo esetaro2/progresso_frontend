@@ -1,4 +1,7 @@
-<mat-horizontal-stepper [linear]="true">
+<mat-horizontal-stepper
+  [linear]="true"
+  (selectionChange)="onStepChange($event)"
+>
   <mat-step label="Task Info" [stepControl]="taskForm">
     <div matDialogContent>
       <div
@@ -426,15 +429,15 @@
 
       <div *ngIf="reassignUser">
         <app-team-members-table
-          *ngIf="reassignUser"
           [teamId]="this.data.teamId"
-          (teamMemberSelectedId)="onTeamMemberSelected($event)"
+          [multiSelect]="false"
+          (teamMembersSelected)="onTeamMemberSelected($event)"
         ></app-team-members-table>
 
         <div class="d-flex align-items-center justify-content-center">
           <button
             mat-raised-button
-            (click)="reassignUser = false; selectedTeamMemberId = null"
+            (click)="reassignUser = false; selectedTeamMemberIds = []"
             class="align-self-center"
           >
             Cancel
@@ -449,7 +452,7 @@
       <button
         mat-button
         *ngIf="reassignUser"
-        [disabled]="!selectedTeamMemberId || isLoading"
+        [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
         (click)="onSubmit()"
       >
         <span *ngIf="!isLoading">Complete</span>

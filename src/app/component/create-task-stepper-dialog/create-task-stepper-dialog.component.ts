@@ -80,7 +80,7 @@ export class CreateTaskStepperDialogComponent implements OnInit {
   priorities = ['HIGH', 'MEDIUM', 'LOW'];
   selectedPriorityLabel = 'Select Priority';
 
-  selectedTeamMemberId: number | null = null;
+  selectedTeamMemberIds: number[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -176,15 +176,19 @@ export class CreateTaskStepperDialogComponent implements OnInit {
     console.log('First part task', this.taskDto);
   }
 
-  onTeamMemberSelected(teamMemberId: number): void {
-    this.selectedTeamMemberId = teamMemberId;
+  onTeamMemberSelected(teamMemberIds: number[]): void {
+    this.selectedTeamMemberIds = teamMemberIds;
+    console.log(this.selectedTeamMemberIds);
   }
 
   onSubmit(): void {
     this.setLoadingState('createTask', true);
 
     this.taskService
-      .createAndAssignTaskToUser(this.taskDto!, this.selectedTeamMemberId!)
+      .createAndAssignTaskToUser(
+        this.taskDto!,
+        this.selectedTeamMemberIds.at(0)!
+      )
       .subscribe({
         next: (task: TaskDto) => {
           console.log('Task creato con successo', task);

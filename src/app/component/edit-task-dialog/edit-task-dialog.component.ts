@@ -98,7 +98,7 @@ export class EditTaskDialogComponent implements OnInit {
 
   reassignUser = false;
   selectedRow: TeamMember | null = null;
-  selectedTeamMemberId: number | null = null;
+  selectedTeamMemberIds: number[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -188,6 +188,19 @@ export class EditTaskDialogComponent implements OnInit {
     this.errorStates[key] = error;
   }
 
+  onStepChange(event: { selectedIndex: number }) {
+    console.log('Step cambiato:', event.selectedIndex);
+
+    switch (event.selectedIndex) {
+      case 0:
+        this.onEditFirstPartTask();
+        break;
+      case 1:
+        this.onEditFirstPartTask();
+        break;
+    }
+  }
+
   onEditFirstPartTask() {
     const formValues = this.taskForm.value;
 
@@ -229,9 +242,9 @@ export class EditTaskDialogComponent implements OnInit {
     console.log('First part task', this.taskDto);
   }
 
-  onTeamMemberSelected(teamMemberId: number): void {
-    this.selectedTeamMemberId = teamMemberId;
-    console.log(this.selectedTeamMemberId);
+  onTeamMemberSelected(teamMemberIds: number[]): void {
+    this.selectedTeamMemberIds = teamMemberIds;
+    console.log(this.selectedTeamMemberIds);
   }
 
   onSubmit() {
@@ -242,11 +255,11 @@ export class EditTaskDialogComponent implements OnInit {
         this.setLoadingState('updateTask', false);
         this.setErrorState('updateTask', null);
 
-        if (this.selectedTeamMemberId) {
+        if (this.selectedTeamMemberIds.length !== 0) {
           this.setLoadingState('reassignTask', true);
 
           this.taskService
-            .reassignTaskToUser(task.id!, this.selectedTeamMemberId)
+            .reassignTaskToUser(task.id!, this.selectedTeamMemberIds.at(0)!)
             .subscribe({
               next: (task) => {
                 console.log('Task with reassigned user', task);

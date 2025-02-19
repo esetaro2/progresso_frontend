@@ -409,7 +409,8 @@
 
       <app-team-members-table
         [teamId]="this.data.teamId"
-        (teamMemberSelectedId)="onTeamMemberSelected($event)"
+        [multiSelect]="false"
+        (teamMembersSelected)="onTeamMemberSelected($event)"
       ></app-team-members-table>
     </div>
 
@@ -418,7 +419,7 @@
       <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
       <button
         mat-button
-        [disabled]="!selectedTeamMemberId || isLoading"
+        [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
         (click)="onSubmit()"
       >
         <span *ngIf="!isLoading">Complete</span>

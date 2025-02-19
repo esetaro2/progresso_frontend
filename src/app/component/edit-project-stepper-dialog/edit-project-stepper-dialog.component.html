@@ -428,7 +428,9 @@
 
         <span class="mx-2">or</span>
 
-        <button mat-raised-button>Update Team</button>
+        <button mat-raised-button (click)="openEditTeamDialog()">
+          Edit Team
+        </button>
 
         <span class="mx-2">or</span>
         <button mat-raised-button (click)="onSubmit()">
@@ -469,6 +471,4 @@
       </button>
     </div>
   </mat-step>
-
-  <mat-step label="Reassign Task"></mat-step>
 </mat-horizontal-stepper>

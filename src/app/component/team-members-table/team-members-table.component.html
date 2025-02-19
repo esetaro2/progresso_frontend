@@ -69,7 +69,7 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"
         (click)="onRowClicked(row)"
-        [class.selected]="selectedRow?.id === row.id"
+        [class.selected]="selectedTeamMemberIds.includes(row.id)"
         [class.not-selectable]="readOnly"
         class="tableRow"
       ></tr>

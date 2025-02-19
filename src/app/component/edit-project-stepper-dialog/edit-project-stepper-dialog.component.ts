@@ -23,6 +23,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from '../../material.module';
 import { AvailablePmTableComponent } from '../available-pm-table/available-pm-table.component';
 import { AvailableTeamTableComponent } from '../available-team-table/available-team-table.component';
+import { EditTeamStepperDialogComponent } from '../edit-team-stepper-dialog/edit-team-stepper-dialog.component';
 
 @Component({
   selector: 'app-edit-project-stepper-dialog',
@@ -316,6 +317,21 @@ export class EditProjectStepperDialogComponent implements OnInit {
         console.log('SELECTED TEAM ID PASSATO DAL DIALOG', this.selectedTeamId);
         this.onSubmit();
       }
+    });
+  }
+
+  openEditTeamDialog(): void {
+    const dialogRef = this.dialog.open(EditTeamStepperDialogComponent, {
+      data: {
+        team: this.data.team,
+      },
+      width: '100%',
+      maxWidth: '750px',
+    });
+
+    dialogRef.componentInstance.teamUpdated.subscribe(() => {
+      this.projectUpdated.emit();
+      dialogRef.close();
     });
   }
 

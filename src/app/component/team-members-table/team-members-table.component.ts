@@ -48,7 +48,8 @@ function compare(
 export class TeamMembersTableComponent implements OnInit {
   @Input() teamId?: number;
   @Input() readOnly?: boolean;
-  @Output() teamMemberSelectedId = new EventEmitter<number>();
+  @Input() multiSelect?: boolean;
+  @Output() teamMembersSelected = new EventEmitter<number[]>();
 
   loadingStates = {
     teamMembers: false,
@@ -64,7 +65,7 @@ export class TeamMembersTableComponent implements OnInit {
 
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'username'];
   dataSource = new MatTableDataSource<TeamMember>();
-  selection = new SelectionModel<TeamMember>(true, []);
+  selection = new SelectionModel<TeamMember>(this.multiSelect, []);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -77,7 +78,7 @@ export class TeamMembersTableComponent implements OnInit {
   totalPages = 0;
 
   selectedRow: TeamMember | null = null;
-  selectedTeamMemberId: number | null = null;
+  selectedTeamMemberIds: number[] = [];
 
   constructor(private userService: UserService) {}
 
@@ -116,16 +117,6 @@ export class TeamMembersTableComponent implements OnInit {
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
           this.dataSource.sort = this.sort;
-
-          const selectedRow = this.dataSource.data.find(
-            (tm) => tm.id === this.selectedTeamMemberId
-          );
-          if (selectedRow) {
-            this.selectedRow = selectedRow;
-          } else {
-            this.selectedRow = null;
-          }
-
           this.setLoadingState('teamMembers', false);
           this.setErrorState('teamMembers', null);
         },
@@ -138,9 +129,22 @@ export class TeamMembersTableComponent implements OnInit {
   }
 
   onRowClicked(row: TeamMember): void {
-    this.selectedRow = row;
-    this.selectedTeamMemberId = row.id;
-    this.teamMemberSelectedId.emit(this.selectedTeamMemberId);
+    if (this.multiSelect) {
+      if (this.selectedTeamMemberIds.includes(row.id)) {
+        this.selection.deselect(row);
+        this.selectedTeamMemberIds = this.selectedTeamMemberIds.filter(
+          (id) => id !== row.id
+        );
+      } else {
+        this.selection.select(row);
+        this.selectedTeamMemberIds.push(row.id);
+      }
+    } else {
+      this.selection.clear();
+      this.selection.select(row);
+      this.selectedTeamMemberIds = [row.id];
+    }
+    this.teamMembersSelected.emit(this.selectedTeamMemberIds);
   }
 
   applyFilter(): void {

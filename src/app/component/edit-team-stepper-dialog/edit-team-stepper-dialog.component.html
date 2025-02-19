@@ -1,0 +1,189 @@
+<mat-horizontal-stepper [linear]="true">
+  <mat-step label="Update Team Name" [stepControl]="teamForm">
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.updateTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateTeam }}
+      </div>
+
+      <div
+        *ngIf="errorStates.addTeamMembers"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.addTeamMembers }}
+      </div>
+
+      <div
+        *ngIf="errorStates.removeTeamMembers"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.removeTeamMembers }}
+      </div>
+
+      <form [formGroup]="teamForm">
+        <div class="mb-3">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            required
+            (input)="onInput('name')"
+          />
+          <small>
+            <span
+              *ngIf="
+                teamForm.get('name')?.touched && teamForm.get('name')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span *ngIf="teamForm.get('name')?.errors?.['required']">
+                Team name is required.
+              </span>
+              <span *ngIf="teamForm.get('name')?.errors?.['minlength']">
+                Team name is too short.
+              </span>
+              <span *ngIf="teamForm.get('name')?.errors?.['maxlength']">
+                Team name is too long.
+              </span>
+            </span>
+            <span *ngIf="teamForm.get('name')?.valid">
+              <i class="fa fa-check"></i> Team name is valid.
+            </span>
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose>Close</button>
+      <button
+        mat-button
+        matStepperNext
+        [disabled]="teamForm.invalid || isLoading"
+      >
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step
+    label="Update Team Members"
+    [completed]="
+      addSelectedTeamMemberIds.length > 0 ||
+      removeSelectedTeamMemberIds.length > 0
+    "
+  >
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.updateTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.updateTeam }}
+      </div>
+
+      <div
+        *ngIf="errorStates.addTeamMembers"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.addTeamMembers }}
+      </div>
+
+      <div
+        *ngIf="errorStates.removeTeamMembers"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.removeTeamMembers }}
+      </div>
+
+      <div
+        *ngIf="!showAddMembers && !showRemoveMembers"
+        class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+      >
+        <button
+          mat-raised-button
+          (click)="showAddMembers = true; showRemoveMembers = false"
+        >
+          Add Team Members
+        </button>
+
+        <span class="mx-2">or</span>
+
+        <button
+          mat-raised-button
+          (click)="showAddMembers = false; showRemoveMembers = true"
+        >
+          Remove Team Members
+        </button>
+      </div>
+
+      <div *ngIf="showAddMembers">
+        <app-available-team-members-table
+          (selectedTeamMembers)="onSelectedTeamMembers($event)"
+        ></app-available-team-members-table>
+
+        <div
+          class="d-flex flex-column align-items-center justify-content-center gap-2"
+        >
+          <button
+            mat-raised-button
+            [disabled]="addSelectedTeamMemberIds.length === 0"
+            (click)="addMembersToTeam(); showAddMembers = false"
+          >
+            Add Members
+          </button>
+
+          <button
+            mat-raised-button
+            (click)="showAddMembers = false; addSelectedTeamMemberIds = []"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="showRemoveMembers">
+        <app-team-members-table
+          [teamId]="this.data.team.id"
+          [multiSelect]="true"
+          (teamMembersSelected)="onTeamMemberSelected($event)"
+        ></app-team-members-table>
+
+        <div
+          class="d-flex flex-column align-items-center justify-content-center gap-2"
+        >
+          <button
+            mat-raised-button
+            [disabled]="removeSelectedTeamMemberIds.length === 0"
+            (click)="removeMembersFromTeam(); showRemoveMembers = false"
+          >
+            Remove Members
+          </button>
+
+          <button
+            mat-raised-button
+            (click)="
+              showRemoveMembers = false; removeSelectedTeamMemberIds = []
+            "
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button mat-button [disabled]="isLoading" (click)="updateTeam()">
+        <span *ngIf="!isLoading">Complete</span>
+        <span *ngIf="isLoading">
+          <mat-spinner [diameter]="24"></mat-spinner>
+        </span>
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
