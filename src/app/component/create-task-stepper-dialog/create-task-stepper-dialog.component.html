@@ -1,7 +1,5 @@
 <mat-horizontal-stepper [linear]="true">
-  <mat-step [stepControl]="taskForm">
-    <ng-template matStepLabel>Task Information</ng-template>
-
+  <mat-step label="Task Info" [stepControl]="taskForm">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createTask && !isLoading"
@@ -400,9 +398,7 @@
     </div>
   </mat-step>
 
-  <mat-step>
-    <ng-template matStepLabel>Assign User</ng-template>
-
+  <mat-step label="Assign User">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createTask && !isLoading"

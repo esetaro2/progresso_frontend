@@ -2,9 +2,7 @@
   [linear]="true"
   (selectionChange)="onStepChange($event)"
 >
-  <mat-step [stepControl]="projectForm">
-    <ng-template matStepLabel>Project Information</ng-template>
-
+  <mat-step label="Project Info" [stepControl]="projectForm">
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateProject && !isLoading"
@@ -318,9 +316,7 @@
     </div>
   </mat-step>
 
-  <mat-step>
-    <ng-template matStepLabel>Update Project Manager</ng-template>
-
+  <mat-step label="Update Project Manager">
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateProject && !isLoading"
@@ -395,9 +391,7 @@
     </div>
   </mat-step>
 
-  <mat-step>
-    <ng-template matStepLabel>Update Team</ng-template>
-
+  <mat-step label="Update Team">
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateProject && !isLoading"
@@ -475,4 +469,6 @@
       </button>
     </div>
   </mat-step>
+
+  <mat-step label="Reassign Task"></mat-step>
 </mat-horizontal-stepper>

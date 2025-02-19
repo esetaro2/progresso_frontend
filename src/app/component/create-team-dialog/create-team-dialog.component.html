@@ -1,7 +1,5 @@
 <mat-vertical-stepper [linear]="true">
-  <mat-step [stepControl]="teamForm">
-    <ng-template matStepLabel>Enter Team Name</ng-template>
-
+  <mat-step label="Enter Team Name" [stepControl]="teamForm">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createTeam && !isLoading"
@@ -65,9 +63,10 @@
     </div>
   </mat-step>
 
-  <mat-step [completed]="selectedTeamMemberIds.length > 0">
-    <ng-template matStepLabel>Select Team Members</ng-template>
-
+  <mat-step
+    label="Select Team Members"
+    [completed]="selectedTeamMemberIds.length > 0"
+  >
     <div matDialogContent>
       <div
         *ngIf="errorStates.createTeam && !isLoading"

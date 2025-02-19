@@ -1,7 +1,5 @@
 <mat-horizontal-stepper [linear]="true">
-  <mat-step [stepControl]="taskForm">
-    <ng-template matStepLabel>Task Information</ng-template>
-
+  <mat-step label="Task Info" [stepControl]="taskForm">
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateTask && !isLoading"
@@ -397,9 +395,7 @@
     </div>
   </mat-step>
 
-  <mat-step>
-    <ng-template matStepLabel>Reassign Task</ng-template>
-
+  <mat-step label="Reassign TaskReassign Task">
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateTask && !isLoading"

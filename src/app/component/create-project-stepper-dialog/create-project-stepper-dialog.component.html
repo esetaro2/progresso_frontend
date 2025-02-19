@@ -1,7 +1,5 @@
 <mat-horizontal-stepper [linear]="true">
-  <mat-step [stepControl]="projectForm">
-    <ng-template matStepLabel>Project Information</ng-template>
-
+  <mat-step label="Project Info" [stepControl]="projectForm">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createProject && !isLoading"
@@ -347,9 +345,7 @@
     </div>
   </mat-step>
 
-  <mat-step [completed]="selectedPmId !== 0">
-    <ng-template matStepLabel>Assign Project Manager</ng-template>
-
+  <mat-step label="Assign Project Manager" [completed]="selectedPmId !== 0">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createProject && !isLoading"
@@ -379,9 +375,7 @@
     </div>
   </mat-step>
 
-  <mat-step>
-    <ng-template matStepLabel>Assign Team</ng-template>
-
+  <mat-step label="Assign Team">
     <div matDialogContent>
       <div
         *ngIf="errorStates.createProject && !isLoading"
