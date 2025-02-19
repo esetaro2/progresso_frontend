@@ -35,4 +35,9 @@ export const routes: Routes = [
     path: 'not-authorized',
     component: NotAuthorizedComponent,
   },
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
 ];
