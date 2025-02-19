@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
     }
 
     if (requiredRoles && (!userRole || !requiredRoles.includes(userRole))) {
-      this.router.navigate(['/not-authorized']);
+      this.router.navigate(['']);
       return false;
     }
 
