@@ -20,7 +20,6 @@
         [dataSource]="dataSource"
         matSort
         (matSortChange)="sortData($event)"
-        style="background-color: transparent"
       >
         <!-- Name Column -->
         <ng-container matColumnDef="name">
@@ -206,6 +205,5 @@
     [pageSize]="pageSize"
     [pageIndex]="currentPage"
     (page)="onPageChange($event)"
-    style="background-color: transparent"
   ></mat-paginator>
 </div>
