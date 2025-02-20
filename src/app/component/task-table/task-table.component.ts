@@ -423,9 +423,27 @@ export class TaskTableComponent implements OnInit {
     }
   }
 
-  getCompleteTooltip(task: Task): string | null {
-    if (this.isBeforeStart(task)) {
-      return 'Task has not started yet';
-    } else return null;
+  getButtonTooltip(
+    task: Task,
+    action: 'complete' | 'edit' | 'delete'
+  ): string | null {
+    if (action === 'complete') {
+      if (this.isBeforeStart(task) && task.ownerUsername === 'Unassigned') {
+        return 'The task has not started and is unassigned.';
+      }
+
+      if (this.isBeforeStart(task)) {
+        return 'The task has not started yet';
+      } else if (task.ownerUsername === 'Unassigned') {
+        return 'The task is not assigned to any user';
+      } else if (task.status === 'COMPLETED') {
+        return 'The task is already completed';
+      }
+    } else if (action === 'edit' || action === 'delete') {
+      if (task.status === 'COMPLETED') {
+        return `Cannot ${action} a completed task`;
+      }
+    }
+    return null;
   }
 }

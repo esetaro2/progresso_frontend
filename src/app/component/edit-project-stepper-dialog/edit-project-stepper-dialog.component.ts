@@ -183,8 +183,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
 
     if (startMonth && startDay && startYear) {
       const startMonthIndex = this.months.indexOf(startMonth);
-
-      const startDate = new Date(
+      const newStartDate = new Date(
         startYear,
         startMonthIndex,
         startDay,
@@ -196,11 +195,26 @@ export class EditProjectStepperDialogComponent implements OnInit {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      if (startDate < today) {
+      if (this.data.project) {
+        const originalStartDate = new Date(this.data.project.startDate);
+        originalStartDate.setHours(0, 0, 0, 0);
+
+        if (
+          this.data.project.status !== 'IN_PROGRESS' &&
+          newStartDate.getTime() === originalStartDate.getTime()
+        ) {
+          return null;
+        }
+
+        if (this.data.project.status === 'IN_PROGRESS') {
+          return { startDateLocked: true };
+        }
+      }
+
+      if (newStartDate < today) {
         return { startBeforeToday: true };
       }
     }
-
     return null;
   };
 
@@ -259,6 +273,32 @@ export class EditProjectStepperDialogComponent implements OnInit {
         this.onEditFirstPartProject();
         break;
     }
+  }
+
+  isValidForNext(): boolean {
+    if (this.projectForm.valid) {
+      return true;
+    }
+
+    const controlsValid = Object.keys(this.projectForm.controls).every(
+      (key) => {
+        const control = this.projectForm.get(key);
+        return control?.valid;
+      }
+    );
+
+    const groupErrors = this.projectForm.errors;
+
+    if (
+      controlsValid &&
+      groupErrors &&
+      Object.keys(groupErrors).length === 1 &&
+      groupErrors['startDateLocked']
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   onEditFirstPartProject(): void {

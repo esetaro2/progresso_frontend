@@ -154,6 +154,7 @@
                   id="startYearDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  disabled
                 >
                   {{ selectedStartYearLabel }}
                 </button>
@@ -166,6 +167,7 @@
                     class="dropdown-item"
                     *ngFor="let year of yearsList"
                     (click)="onStartYearSelected(year)"
+                    disabled
                   >
                     {{ year }}
                   </button>
@@ -178,6 +180,7 @@
                   id="startMonthDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  disabled
                 >
                   {{ selectedStartMonthLabel }}
                 </button>
@@ -190,6 +193,7 @@
                     class="dropdown-item"
                     *ngFor="let month of months"
                     (click)="onStartMonthSelected(month)"
+                    disabled
                   >
                     {{ month }}
                   </button>
@@ -202,6 +206,7 @@
                   id="startDayDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  disabled
                 >
                   {{ selectedStartDayLabel }}
                 </button>
@@ -214,6 +219,7 @@
                     class="dropdown-item"
                     *ngFor="let day of daysInStartMonth"
                     (click)="onStartDaySelected(day)"
+                    disabled
                   >
                     {{ day }}
                   </button>
@@ -221,37 +227,9 @@
               </div>
             </div>
             <small class="d-flex flex-column">
-              <span
-                *ngIf="
-                  !taskForm.get('startYear')?.touched ||
-                  !taskForm.get('startMonth')?.touched ||
-                  !taskForm.get('startDay')?.touched
-                "
-              >
-                Please select a start date.
-              </span>
-              <span
-                *ngIf="
-                  taskForm.get('startYear')?.valid &&
-                  taskForm.get('startMonth')?.valid &&
-                  taskForm.get('startDay')?.valid &&
-                  !taskForm.hasError('startBeforeToday') &&
-                  !taskForm.hasError('startBeforeProjectStartDate') &&
-                  !taskForm.hasError('startAfterProjectDueDate')
-                "
-              >
-                <i class="fa fa-check"></i> Start date is valid.
-              </span>
-              <span *ngIf="taskForm.hasError('startBeforeToday')">
-                <i class="fa fa-times"></i> Start date must not be in the past.
-              </span>
-              <span *ngIf="taskForm.hasError('startBeforeProjectStartDate')">
-                <i class="fa fa-times"></i> Start date must be after the project
-                start date.
-              </span>
-              <span *ngIf="taskForm.hasError('startAfterProjectDueDate')">
-                <i class="fa fa-times"></i> Start date must be before the
-                project due date.
+              <span>
+                <i class="fa fa-info"></i> Start date cannot be changed for an
+                ongoing task.
               </span>
             </small>
           </div>

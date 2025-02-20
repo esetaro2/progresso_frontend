@@ -156,13 +156,17 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let task">
-            <span [ngbTooltip]="getCompleteTooltip(task)">
+            <span
+              [ngbTooltip]="getButtonTooltip(task, 'complete')"
+              [openDelay]="500"
+            >
               <button
                 mat-icon-button
                 class="btn complete-button"
                 [disabled]="
                   task.status === 'COMPLETED' ||
                   isLoading ||
+                  task.ownerUsername === 'Unassigned' ||
                   isBeforeStart(task)
                 "
                 (click)="openCompleteDialog(task)"
@@ -170,22 +174,34 @@
                 <mat-icon>check</mat-icon>
               </button>
             </span>
-            <button
-              mat-icon-button
-              class="btn btn-outline-primary"
-              [disabled]="task.status === 'COMPLETED' || isLoading"
-              (click)="openEditDialog(task)"
+            
+            <span
+              [ngbTooltip]="getButtonTooltip(task, 'edit')"
+              [openDelay]="500"
             >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              class="btn btn-outline-danger"
-              [disabled]="task.status === 'COMPLETED' || isLoading"
-              (click)="openDeleteDialog(task)"
+              <button
+                mat-icon-button
+                class="btn btn-outline-primary"
+                [disabled]="task.status === 'COMPLETED' || isLoading"
+                (click)="openEditDialog(task)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+            </span>
+
+            <span
+              [ngbTooltip]="getButtonTooltip(task, 'delete')"
+              [openDelay]="500"
             >
-              <mat-icon>delete</mat-icon>
-            </button>
+              <button
+                mat-icon-button
+                class="btn btn-outline-danger"
+                [disabled]="task.status === 'COMPLETED' || isLoading"
+                (click)="openDeleteDialog(task)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
           </td>
         </ng-container>
 

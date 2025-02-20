@@ -2,7 +2,11 @@
   [linear]="true"
   (selectionChange)="onStepChange($event)"
 >
-  <mat-step label="Project Info" [stepControl]="projectForm">
+  <mat-step
+    label="Project Info"
+    [stepControl]="projectForm"
+    [completed]="isValidForNext()"
+  >
     <div matDialogContent>
       <div
         *ngIf="errorStates.updateProject && !isLoading"
@@ -104,12 +108,14 @@
           <div class="col-md-6 mb-3">
             <label for="startMonthDropdown">Start Date</label>
             <div class="d-flex">
+              <!-- Start Year Dropdown -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
                   id="startYearDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  [disabled]="projectForm.hasError('startDateLocked')"
                 >
                   {{ selectedStartYearLabel }}
                 </button>
@@ -122,18 +128,21 @@
                     class="dropdown-item"
                     *ngFor="let year of yearsList"
                     (click)="onStartYearSelected(year)"
+                    [disabled]="projectForm.hasError('startDateLocked')"
                   >
                     {{ year }}
                   </button>
                 </div>
               </div>
 
+              <!-- Start Month Dropdown -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
                   id="startMonthDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  [disabled]="projectForm.hasError('startDateLocked')"
                 >
                   {{ selectedStartMonthLabel }}
                 </button>
@@ -146,18 +155,21 @@
                     class="dropdown-item"
                     *ngFor="let month of months"
                     (click)="onStartMonthSelected(month)"
+                    [disabled]="projectForm.hasError('startDateLocked')"
                   >
                     {{ month }}
                   </button>
                 </div>
               </div>
 
+              <!-- Start Day Dropdown -->
               <div ngbDropdown>
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
                   id="startDayDropdown"
                   ngbDropdownToggle
                   style="font-size: small"
+                  [disabled]="projectForm.hasError('startDateLocked')"
                 >
                   {{ selectedStartDayLabel }}
                 </button>
@@ -170,6 +182,7 @@
                     class="dropdown-item"
                     *ngFor="let day of daysInStartMonth"
                     (click)="onStartDaySelected(day)"
+                    [disabled]="projectForm.hasError('startDateLocked')"
                   >
                     {{ day }}
                   </button>
@@ -177,18 +190,23 @@
               </div>
             </div>
             <small>
+              <span *ngIf="projectForm.hasError('startDateLocked')">
+                <i class="fa fa-info"></i>
+                Start date cannot be changed for an ongoing project.
+              </span>
               <span
                 *ngIf="
+                  !projectForm.hasError('startDateLocked') &&
                   projectForm.get('startMonth')?.valid &&
                   projectForm.get('startDay')?.valid &&
                   projectForm.get('startYear')?.valid &&
                   !projectForm.hasError('startBeforeToday')
                 "
               >
-                <i class="fa fa-check"></i>Start date is valid.
+                <i class="fa fa-check"></i> Start date is valid.
               </span>
               <span *ngIf="projectForm.hasError('startBeforeToday')">
-                <i class="fa fa-times"></i>Start date must not be in the past.
+                <i class="fa fa-times"></i> Start date must not be in the past.
               </span>
             </small>
           </div>
@@ -308,7 +326,7 @@
       <button
         mat-button
         matStepperNext
-        [disabled]="!projectForm.valid || isLoading"
+        [disabled]="!isValidForNext() || isLoading"
         (click)="onEditFirstPartProject()"
       >
         Next

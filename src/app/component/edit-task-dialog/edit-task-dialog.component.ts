@@ -159,10 +159,7 @@ export class EditTaskDialogComponent implements OnInit {
       },
       {
         validators: [
-          this.todayDateBeforeStartValidator,
           this.startBeforeDueValidator,
-          this.startDateBeforeProjectDueDateValidator,
-          this.startDateAfterProjectStartDateValidator,
           this.dueDateBeforeProjectDueDateValidator,
         ],
       }
@@ -171,6 +168,59 @@ export class EditTaskDialogComponent implements OnInit {
     this.taskForm.markAllAsTouched();
     this.yearsList = this.getYearsList();
   }
+
+  startBeforeDueValidator = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    const startMonth = control.get('startMonth')?.value;
+    const startDay = control.get('startDay')?.value;
+    const startYear = control.get('startYear')?.value;
+    const dueMonth = control.get('dueMonth')?.value;
+    const dueDay = control.get('dueDay')?.value;
+    const dueYear = control.get('dueYear')?.value;
+
+    if (startMonth && startDay && startYear && dueMonth && dueDay && dueYear) {
+      const startMonthIndex = this.months.indexOf(startMonth);
+      const dueMonthIndex = this.months.indexOf(dueMonth);
+
+      const startDate = new Date(
+        startYear,
+        startMonthIndex,
+        startDay,
+        0,
+        0,
+        0,
+        0
+      );
+      const dueDate = new Date(dueYear, dueMonthIndex, dueDay, 0, 0, 0, 0);
+
+      if (dueDate < startDate) {
+        return { dueBeforeStart: true };
+      }
+    }
+    return null;
+  };
+
+  dueDateBeforeProjectDueDateValidator = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    const dueMonth = control.get('dueMonth')?.value;
+    const dueDay = control.get('dueDay')?.value;
+    const dueYear = control.get('dueYear')?.value;
+
+    if (dueMonth && dueDay && dueYear && this.data?.dueDate) {
+      const dueMonthIndex = this.months.indexOf(dueMonth);
+
+      const dueDate = new Date(dueYear, dueMonthIndex, dueDay, 0, 0, 0, 0);
+      const projectDueDate = new Date(this.data.dueDate);
+      projectDueDate.setHours(0, 0, 0, 0);
+
+      if (dueDate > projectDueDate) {
+        return { dueAfterProjectDueDate: true };
+      }
+    }
+    return null;
+  };
 
   ngOnInit(): void {
     this.updateStartDateDays();
@@ -298,147 +348,6 @@ export class EditTaskDialogComponent implements OnInit {
       },
     });
   }
-
-  todayDateBeforeStartValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const startMonth = control.get('startMonth')?.value;
-    const startDay = control.get('startDay')?.value;
-    const startYear = control.get('startYear')?.value;
-
-    if (startMonth && startDay && startYear) {
-      const startMonthIndex = this.months.indexOf(startMonth);
-
-      const startDate = new Date(
-        startYear,
-        startMonthIndex,
-        startDay,
-        0,
-        0,
-        0,
-        0
-      );
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (startDate < today) {
-        return { startBeforeToday: true };
-      }
-    }
-
-    return null;
-  };
-
-  startBeforeDueValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const startMonth = control.get('startMonth')?.value;
-    const startDay = control.get('startDay')?.value;
-    const startYear = control.get('startYear')?.value;
-    const dueMonth = control.get('dueMonth')?.value;
-    const dueDay = control.get('dueDay')?.value;
-    const dueYear = control.get('dueYear')?.value;
-
-    if (startMonth && startDay && startYear && dueMonth && dueDay && dueYear) {
-      const startMonthIndex = this.months.indexOf(startMonth);
-      const dueMonthIndex = this.months.indexOf(dueMonth);
-
-      const startDate = new Date(
-        startYear,
-        startMonthIndex,
-        startDay,
-        0,
-        0,
-        0,
-        0
-      );
-      const dueDate = new Date(dueYear, dueMonthIndex, dueDay, 0, 0, 0, 0);
-
-      if (dueDate < startDate) {
-        return { dueBeforeStart: true };
-      }
-    }
-    return null;
-  };
-
-  startDateAfterProjectStartDateValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const startMonth = control.get('startMonth')?.value;
-    const startDay = control.get('startDay')?.value;
-    const startYear = control.get('startYear')?.value;
-
-    if (startMonth && startDay && startYear && this.data?.startDate) {
-      const startMonthIndex = this.months.indexOf(startMonth);
-
-      const startDate = new Date(
-        startYear,
-        startMonthIndex,
-        startDay,
-        0,
-        0,
-        0,
-        0
-      );
-      const projectStartDate = new Date(this.data.startDate);
-      projectStartDate.setHours(0, 0, 0, 0);
-
-      if (startDate < projectStartDate) {
-        return { startBeforeProjectStartDate: true };
-      }
-    }
-    return null;
-  };
-
-  startDateBeforeProjectDueDateValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const startMonth = control.get('startMonth')?.value;
-    const startDay = control.get('startDay')?.value;
-    const startYear = control.get('startYear')?.value;
-
-    if (startMonth && startDay && startYear && this.data?.dueDate) {
-      const startMonthIndex = this.months.indexOf(startMonth);
-
-      const startDate = new Date(
-        startYear,
-        startMonthIndex,
-        startDay,
-        0,
-        0,
-        0,
-        0
-      );
-      const projectDueDate = new Date(this.data.dueDate);
-      projectDueDate.setHours(0, 0, 0, 0);
-
-      if (startDate > projectDueDate) {
-        return { startAfterProjectDueDate: true };
-      }
-    }
-    return null;
-  };
-
-  dueDateBeforeProjectDueDateValidator = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    const dueMonth = control.get('dueMonth')?.value;
-    const dueDay = control.get('dueDay')?.value;
-    const dueYear = control.get('dueYear')?.value;
-
-    if (dueMonth && dueDay && dueYear && this.data?.dueDate) {
-      const dueMonthIndex = this.months.indexOf(dueMonth);
-
-      const dueDate = new Date(dueYear, dueMonthIndex, dueDay, 0, 0, 0, 0);
-      const projectDueDate = new Date(this.data.dueDate);
-      projectDueDate.setHours(0, 0, 0, 0);
-
-      if (dueDate > projectDueDate) {
-        return { dueAfterProjectDueDate: true };
-      }
-    }
-    return null;
-  };
 
   private updateStartDateDays() {
     this.daysInStartMonth = this.getDaysInMonth(
