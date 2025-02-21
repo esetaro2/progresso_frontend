@@ -45,11 +45,8 @@ export class ProjectCardComponent implements OnInit {
           ];
           this.setErrorState('percentage', null);
         },
-        error: () => {
-          this.setErrorState(
-            'percentage',
-            'Failed to get completion percentage!'
-          );
+        error: (error) => {
+          this.setErrorState('percentage', error.message);
         },
       });
   }

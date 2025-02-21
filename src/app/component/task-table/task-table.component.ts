@@ -192,9 +192,9 @@ export class TaskTableComponent implements OnInit {
           this.setLoadingState('tasks', false);
           this.setErrorState('tasks', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('tasks', false);
-          this.setErrorState('tasks', 'No tasks found.');
+          this.setErrorState('tasks', error.message);
           this.dataSource.data = [];
         },
       });
@@ -261,9 +261,9 @@ export class TaskTableComponent implements OnInit {
             this.setLoadingState('completeTask', false);
             this.setErrorState('completeTask', null);
           },
-          error: () => {
+          error: (error) => {
             this.setLoadingState('completeTask', false);
-            this.setErrorState('completeTask', 'Failed to complete task!');
+            this.setErrorState('completeTask', error.message);
             this.toastService.show(this.errorStates.completeTask!, {
               classname: 'bg-danger text-light',
               delay: 5000,
@@ -313,9 +313,9 @@ export class TaskTableComponent implements OnInit {
               this.setLoadingState('deleteTask', false);
               this.setErrorState('deleteTask', null);
             },
-            error: () => {
+            error: (error) => {
               this.setLoadingState('deleteTask', false);
-              this.setErrorState('deleteTask', 'Failed to delete task!');
+              this.setErrorState('deleteTask', error.message);
               this.toastService.show(this.errorStates.deleteTask!, {
                 classname: 'bg-danger text-light',
                 delay: 5000,

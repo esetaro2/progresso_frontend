@@ -119,7 +119,7 @@ export class ProjectPageComponent implements OnInit {
       },
       error: (error) => {
         this.setLoadingState('project', false);
-        this.setErrorState('project', error.message.replace(/^"|"$/g, ''));
+        this.setErrorState('project', error.message);
         this.router.navigate(['']);
       },
     });
@@ -147,12 +147,9 @@ export class ProjectPageComponent implements OnInit {
           this.setLoadingState('percentage', false);
           this.setErrorState('percentage', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('percentage', false);
-          this.setErrorState(
-            'percentage',
-            'Unable to retrieve the project completion percentage!'
-          );
+          this.setErrorState('percentage', error.message);
         },
       });
   }
@@ -166,12 +163,9 @@ export class ProjectPageComponent implements OnInit {
         this.setLoadingState('manager', false);
         this.setErrorState('manager', null);
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('manager', false);
-        this.setErrorState(
-          'manager',
-          "Unable to retrieve the project manager's information!"
-        );
+        this.setErrorState('manager', error.message);
       },
     });
   }
@@ -186,9 +180,9 @@ export class ProjectPageComponent implements OnInit {
         this.setLoadingState('team', false);
         this.setErrorState('team', null);
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('team', false);
-        this.setErrorState('team', "Unable to retrieve the project's team!");
+        this.setErrorState('team', error.message);
       },
     });
   }
@@ -208,12 +202,9 @@ export class ProjectPageComponent implements OnInit {
         this.setLoadingState('teamMembers', false);
         this.setErrorState('teamMembers', null);
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('teamMembers', false);
-        this.setErrorState(
-          'teamMembers',
-          "Unable to retrieve the team's members!"
-        );
+        this.setErrorState('teamMembers', error.message);
       },
     });
   }

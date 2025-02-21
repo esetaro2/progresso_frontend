@@ -64,8 +64,8 @@ export class LoginComponent {
         this.setErrorState('login', null);
         this.router.navigate(['']);
       },
-      error: () => {
-        this.setErrorState('login', 'Username or password is incorrect!');
+      error: (error) => {
+        this.setErrorState('login', error.message);
         this.toastService.show(this.errorStates.login!, {
           classname: 'bg-danger text-light',
           delay: 5000,

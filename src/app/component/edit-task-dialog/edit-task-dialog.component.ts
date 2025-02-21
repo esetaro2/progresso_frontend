@@ -328,9 +328,9 @@ export class EditTaskDialogComponent implements OnInit {
                   delay: 5000,
                 });
               },
-              error: () => {
+              error: (error) => {
                 this.setLoadingState('reassignTask', false);
-                this.setErrorState('reassignTask', 'Failed to assign user!');
+                this.setErrorState('reassignTask', error.message);
               },
             });
         } else {
@@ -342,9 +342,9 @@ export class EditTaskDialogComponent implements OnInit {
           });
         }
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('updateTask', false);
-        this.setErrorState('updateTask', 'Failed to update task!');
+        this.setErrorState('updateTask', error.message);
       },
     });
   }

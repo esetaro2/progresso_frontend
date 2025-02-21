@@ -115,12 +115,9 @@ export class AvailablePmTableComponent implements OnInit {
           this.setLoadingState('availableProjectManagers', false);
           this.setErrorState('availableProjectManagers', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('availableProjectManagers', false);
-          this.setErrorState(
-            'availableProjectManagers',
-            'No available project managers found!'
-          );
+          this.setErrorState('availableProjectManagers', error.message);
           this.dataSource.data = [];
         },
       });

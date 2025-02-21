@@ -447,12 +447,9 @@ export class EditProjectStepperDialogComponent implements OnInit {
                           this.projectUpdated.emit();
                           this.dialogRef.close();
                         },
-                        error: () => {
+                        error: (error) => {
                           this.setLoadingState('reassignTeam', false);
-                          this.setErrorState(
-                            'reassignTeam',
-                            'Failed to update team!'
-                          );
+                          this.setErrorState('reassignTeam', error.message);
                         },
                       });
                   } else {
@@ -461,12 +458,9 @@ export class EditProjectStepperDialogComponent implements OnInit {
                     this.dialogRef.close();
                   }
                 },
-                error: () => {
+                error: (error) => {
                   this.setLoadingState('updateProjectManager', false);
-                  this.setErrorState(
-                    'updateProjectManager',
-                    'Failed to update project manager!'
-                  );
+                  this.setErrorState('updateProjectManager', error.message);
                 },
               });
           }
@@ -495,9 +489,9 @@ export class EditProjectStepperDialogComponent implements OnInit {
                   this.projectUpdated.emit();
                   this.dialogRef.close();
                 },
-                error: () => {
+                error: (error) => {
                   this.setLoadingState('reassignTeam', false);
-                  this.setErrorState('reassignTeam', 'Failed to update team!');
+                  this.setErrorState('reassignTeam', error.message);
                 },
               });
           }
@@ -507,9 +501,9 @@ export class EditProjectStepperDialogComponent implements OnInit {
             this.dialogRef.close();
           }
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('updateProject', false);
-          this.setErrorState('updateProject', 'Failed to update project info!');
+          this.setErrorState('updateProject', error.message);
         },
       });
   }

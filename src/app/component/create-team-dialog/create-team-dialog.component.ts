@@ -108,18 +108,15 @@ export class CreateTeamDialogComponent {
               delay: 5000,
             });
           },
-          error: () => {
+          error: (error) => {
             this.setLoadingState('assignTeamMembers', false);
-            this.setErrorState(
-              'assignTeamMembers',
-              'Failed to assign team members!'
-            );
+            this.setErrorState('assignTeamMembers', error.message);
           },
         });
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('createTeam', false);
-        this.setErrorState('createTeam', 'Failed to create team!');
+        this.setErrorState('createTeam', error.message);
       },
     });
   }

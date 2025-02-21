@@ -206,7 +206,7 @@ export class RegisterComponent {
         this.setErrorState('register', null);
       },
       error: (error) => {
-        this.setErrorState('register', error.message.replace(/^"|"$/g, ''));
+        this.setErrorState('register', error.message);
         this.toastService.show(this.errorStates.register!, {
           classname: 'bg-danger text-light',
           delay: 5000,

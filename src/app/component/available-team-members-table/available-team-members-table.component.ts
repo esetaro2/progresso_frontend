@@ -111,9 +111,9 @@ export class AvailableTeamMembersTableComponent implements OnInit {
           this.setLoadingState('teamMembers', false);
           this.setErrorState('teamMembers', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('teamMembers', false);
-          this.setErrorState('teamMembers', 'No available team members found!');
+          this.setErrorState('teamMembers', error.message);
           this.dataSource.data = [];
         },
       });

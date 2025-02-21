@@ -103,9 +103,9 @@ export class AssignTeamDialogComponent {
           this.setLoadingState('assignTeamToProject', false);
           this.setErrorState('assignTeamToProject', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('assignTeamToProject', false);
-          this.setErrorState('assignTeamToProject', 'Failed to assign team!');
+          this.setErrorState('assignTeamToProject', error.message);
         },
       });
   }

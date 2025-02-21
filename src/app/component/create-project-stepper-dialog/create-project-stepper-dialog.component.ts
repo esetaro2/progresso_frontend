@@ -296,9 +296,9 @@ export class CreateProjectStepperDialogComponent implements OnInit {
                   }
                 );
               },
-              error: () => {
+              error: (error) => {
                 this.setLoadingState('assignTeam', false);
-                this.setErrorState('assignTeam', 'Failed to assign team!');
+                this.setErrorState('assignTeam', error.message);
               },
             });
         } else {
@@ -310,9 +310,9 @@ export class CreateProjectStepperDialogComponent implements OnInit {
           });
         }
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('createProject', false);
-        this.setErrorState('createProject', 'Failed to create project!');
+        this.setErrorState('createProject', error.message);
       },
     });
   }

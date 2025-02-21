@@ -87,7 +87,11 @@ export class AvailableTeamTableComponent implements OnInit {
     }
 
     this.teamService
-      .getAvailableTeams(this.currentPage, this.pageSize, this.searchQuery.trim())
+      .getAvailableTeams(
+        this.currentPage,
+        this.pageSize,
+        this.searchQuery.trim()
+      )
       .subscribe({
         next: (pageData: Page<TeamDto>) => {
           this.dataSource.data = pageData.content;
@@ -107,9 +111,9 @@ export class AvailableTeamTableComponent implements OnInit {
           this.setLoadingState('getAvailableTeams', false);
           this.setErrorState('getAvailableTeams', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('getAvailableTeams', false);
-          this.setErrorState('getAvailableTeams', 'No teams found!');
+          this.setErrorState('getAvailableTeams', error.message);
           this.dataSource.data = [];
         },
       });

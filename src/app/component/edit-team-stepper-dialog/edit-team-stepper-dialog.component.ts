@@ -121,9 +121,9 @@ export class EditTeamStepperDialogComponent {
         this.teamUpdated.emit();
         this.dialogRef.close();
       },
-      error: () => {
+      error: (error) => {
         this.setLoadingState('updateTeam', false);
-        this.setErrorState('updateTeam', 'Failed to update team!');
+        this.setErrorState('updateTeam', error.message);
       },
     });
   }
@@ -146,9 +146,9 @@ export class EditTeamStepperDialogComponent {
 
           this.addSelectedTeamMemberIds = [];
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('addTeamMembers', false);
-          this.setErrorState('addTeamMembers', 'Failed to add team members!');
+          this.setErrorState('addTeamMembers', error.message);
           this.addSelectedTeamMemberIds = [];
         },
       });
@@ -177,12 +177,9 @@ export class EditTeamStepperDialogComponent {
 
           this.removeSelectedTeamMemberIds = [];
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('removeTeamMembers', false);
-          this.setErrorState(
-            'removeTeamMembers',
-            'Failed to remove team members!'
-          );
+          this.setErrorState('removeTeamMembers', error.message);
           this.removeSelectedTeamMemberIds = [];
         },
       });

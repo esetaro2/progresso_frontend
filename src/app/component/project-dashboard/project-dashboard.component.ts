@@ -108,9 +108,9 @@ export class ProjectDashboardComponent implements OnInit {
           this.setLoadingState('projects', false);
           this.setErrorState('projects', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found!');
+          this.setErrorState('projects', error.message);
           this.projects = [];
         },
       });
@@ -136,9 +136,9 @@ export class ProjectDashboardComponent implements OnInit {
           this.setLoadingState('projects', false);
           this.setErrorState('projects', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found!');
+          this.setErrorState('projects', error.message);
           this.projects = [];
         },
       });
@@ -164,9 +164,9 @@ export class ProjectDashboardComponent implements OnInit {
           this.setLoadingState('projects', false);
           this.setErrorState('projects', null);
         },
-        error: () => {
+        error: (error) => {
           this.setLoadingState('projects', false);
-          this.setErrorState('projects', 'No projects found!');
+          this.setErrorState('projects', error.message);
           this.projects = [];
         },
       });

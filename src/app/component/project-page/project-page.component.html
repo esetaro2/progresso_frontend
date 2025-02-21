@@ -43,7 +43,7 @@
       <div class="d-flex mb-4 flex-column" style="height: 420px">
         <div
           *ngIf="errorStates.manager && !isLoading"
-          class="alert alert-danger"
+          class="alert alert-danger text-center"
         >
           {{ errorStates.manager }}
         </div>
@@ -53,7 +53,7 @@
           {{ projectManager?.lastName }} ({{ projectManager?.username }})
         </h5>
 
-        <div *ngIf="errorStates.team && !isLoading" class="alert alert-danger">
+        <div *ngIf="errorStates.team && !isLoading" class="alert alert-danger text-center">
           {{ errorStates.team }}
         </div>
 
@@ -62,7 +62,7 @@
 
           <div
             *ngIf="errorStates.teamMembers && !isLoading"
-            class="alert alert-danger"
+            class="alert alert-danger text-center"
           >
             {{ errorStates.teamMembers }}
           </div>
