@@ -30,6 +30,11 @@ import { CommentDto } from '../../dto/comment.dto';
 import { CommentService } from '../../service/comment.service';
 import { CommentComponent } from '../comment/comment.component';
 import { PageEvent } from '@angular/material/paginator';
+import { ToastService } from '../../service/toast.service';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogData,
+} from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-project-page',
@@ -57,6 +62,7 @@ export class ProjectPageComponent implements OnInit {
     manager: false,
     team: false,
     teamMembers: false,
+    completeProject: false,
   };
 
   errorStates = {
@@ -65,6 +71,7 @@ export class ProjectPageComponent implements OnInit {
     manager: null as string | null,
     team: null as string | null,
     teamMembers: null as string | null,
+    completeProject: null as string | null,
   };
 
   loadingStatesComments = {
@@ -124,7 +131,8 @@ export class ProjectPageComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private toastService: ToastService
   ) {
     this.commentForm = this.fb.group({
       content: [
@@ -337,9 +345,46 @@ export class ProjectPageComponent implements OnInit {
     });
   }
 
-  /* onCompleteProject(): void {
+  onCompleteProject(): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Complete Project',
+      message: 'Are you sure you want to complete this project?',
+      confirmText: 'Complete',
+      cancelText: 'Cancel',
+    };
 
-  } */
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '100%',
+      maxWidth: '400px',
+      data: dialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.setLoadingState('completeProject', true);
+
+        this.projectService.completeProject(this.projectId).subscribe({
+          next: () => {
+            this.setLoadingState('completeProject', false);
+            this.setErrorState('completeProject', null);
+
+            this.toastService.show('Project completed successfully!', {
+              classname: 'bg-success text-light',
+              delay: 5000,
+            });
+
+            this.getProjectInfo();
+            this.taskTableComponent.loadTasks();
+            this.loadComments();
+          },
+          error: (error) => {
+            this.setLoadingState('completeProject', false);
+            this.setErrorState('completeProject', error.message);
+          },
+        });
+      }
+    });
+  }
 
   loadComments(): void {
     this.setLoadingStateComments('loadComments', true);

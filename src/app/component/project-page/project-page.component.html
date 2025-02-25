@@ -8,6 +8,13 @@
 </div>
 
 <div
+  *ngIf="errorStates.completeProject && !isLoading"
+  class="alert alert-danger text-center mt-3"
+>
+  {{ errorStates.completeProject }}
+</div>
+
+<div
   *ngIf="!loadingStates.project && !errorStates.project"
   class="container-fluid p-4 d-flex flex-column min-vh-100"
 >
@@ -28,15 +35,15 @@
       <mat-icon>edit</mat-icon>
     </button>
 
-    <!-- <button
-      *ngIf="completedPercentage === 100"
+    <button
+      *ngIf="completedPercentage === 100 && project?.status === 'IN_PROGRESS'"
       class="btn btn-outline-success align-self-center ms-3 mb-5"
       ngbTooltip="Complete project"
       [openDelay]="500"
       (click)="onCompleteProject()"
     >
       <mat-icon>check</mat-icon>
-    </button> -->
+    </button>
   </div>
 
   <div class="row p-5 align-items-center">
