@@ -5,7 +5,6 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { UserRegistrationDto } from '../../dto/user-registration.dto';
 import { CommonModule } from '@angular/common';
@@ -62,7 +61,6 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router,
     private toastService: ToastService
   ) {
     this.registrationForm = this.formBuilder.group({
@@ -179,17 +177,17 @@ export class RegisterComponent {
     )}-${String(formValues.birthDay).padStart(2, '0')}`;
 
     const registrationDto: UserRegistrationDto = {
-      firstName: formValues.firstName,
-      lastName: formValues.lastName,
-      birthDate: birthDate,
-      phoneNumber: `${formValues.phonePrefix} ${formValues.phoneNumber}`,
-      streetAddress: formValues.streetAddress,
-      city: formValues.city,
-      stateProvinceRegion: formValues.stateProvinceRegion,
-      country: formValues.country,
-      zipCode: formValues.zipCode,
-      email: formValues.email,
-      role: formValues.role,
+      firstName: formValues.firstName.trim(),
+      lastName: formValues.lastName.trim(),
+      birthDate: birthDate.trim(),
+      phoneNumber: `${formValues.phonePrefix} ${formValues.phoneNumber}`.trim(),
+      streetAddress: formValues.streetAddress.trim(),
+      city: formValues.city.trim(),
+      stateProvinceRegion: formValues.stateProvinceRegion.trim(),
+      country: formValues.country.trim(),
+      zipCode: formValues.zipCode.trim(),
+      email: formValues.email.trim(),
+      role: formValues.role.trim(),
     };
 
     this.authService.register(registrationDto).subscribe({

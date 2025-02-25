@@ -223,8 +223,8 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     )}-${String(formValues.dueDay).padStart(2, '0')}`;
 
     this.projectDto = {
-      name: formValues.name,
-      description: formValues.description,
+      name: formValues.name.trim(),
+      description: formValues.description.trim(),
       startDate: startDate,
       dueDate: dueDate,
       projectManagerId: this.selectedPmId,

@@ -3,7 +3,7 @@
   (selectionChange)="onStepChange($event)"
 >
   <mat-step
-    label="Project Info"
+    label="Update Project Info"
     [stepControl]="projectForm"
     [completed]="isValidForNext()"
   >
@@ -340,7 +340,7 @@
         *ngIf="errorStates.updateProject && !isLoading"
         class="alert alert-danger text-center"
       >
-        {{ errorStates.updateProject }} ,sdhfkjhdfsk
+        {{ errorStates.updateProject }}
       </div>
 
       <div

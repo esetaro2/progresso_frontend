@@ -27,6 +27,16 @@
     >
       <mat-icon>edit</mat-icon>
     </button>
+
+    <!-- <button
+      *ngIf="completedPercentage === 100"
+      class="btn btn-outline-success align-self-center ms-3 mb-5"
+      ngbTooltip="Complete project"
+      [openDelay]="500"
+      (click)="onCompleteProject()"
+    >
+      <mat-icon>check</mat-icon>
+    </button> -->
   </div>
 
   <div class="row p-5 align-items-center">
@@ -53,7 +63,10 @@
           {{ projectManager?.lastName }} ({{ projectManager?.username }})
         </h5>
 
-        <div *ngIf="errorStates.team && !isLoading" class="alert alert-danger text-center">
+        <div
+          *ngIf="errorStates.team && !isLoading"
+          class="alert alert-danger text-center"
+        >
           {{ errorStates.team }}
         </div>
 
@@ -158,5 +171,83 @@
       [dueDate]="project?.dueDate"
       (updateProjectPercentage)="onUpdateProjectPercentage()"
     ></app-task-table>
+  </div>
+
+  <div class="d-flex flex-column mt-5 comment-section">
+    <h4>Comments</h4>
+    <div class="d-flex">
+      <h6>{{ userFirstName }} {{ userLastName }} ({{ userUsername }})</h6>
+    </div>
+
+    <form [formGroup]="commentForm" (ngSubmit)="onCreateComment()">
+      <div class="position-relative d-flex">
+        <textarea
+          id="content"
+          class="form-control"
+          formControlName="content"
+          (input)="onInput('content')"
+          style="resize: none; height: 100px"
+          placeholder="Write a comment..."
+        ></textarea>
+        <button
+          class="sendButton btn btn-primary rounded-circle"
+          [disabled]="commentForm.invalid"
+          type="submit"
+        >
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <small style="height: 20px">
+        <span
+          *ngIf="
+            commentForm.get('content')?.touched &&
+            commentForm.get('content')?.invalid
+          "
+        >
+          <span *ngIf="commentForm.get('content')?.errors?.['maxlength']">
+            <i class="fa fa-times"></i>Comment is too long.
+          </span>
+        </span>
+      </small>
+    </form>
+
+    <div
+      *ngIf="errorStatesComments.createComment && !isLoadingComments"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStatesComments.createComment }}
+    </div>
+
+    <div
+      class="d-flex align-items-center justify-content-center mt-5 mb-5"
+      *ngIf="isLoadingComments"
+    >
+      <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+
+    <div
+      *ngIf="
+        !isLoadingComments &&
+        !errorStatesComments.loadComments &&
+        !errorStatesComments.createComment
+      "
+    >
+      <div *ngFor="let comment of comments" class="comment">
+        <app-comment
+          [comment]="comment"
+          (replyComment)="onReplyComment($event)"
+          (editComment)="onEditComment()"
+          (deleteComment)="onDeleteComment()"
+        ></app-comment>
+      </div>
+
+      <mat-paginator
+        [length]="totalElementsComment"
+        [pageIndex]="currentPageComment"
+        [hidePageSize]="true"
+        [pageSize]="pageSizeComment"
+        (page)="onPageChange($event)"
+      ></mat-paginator>
+    </div>
   </div>
 </div>

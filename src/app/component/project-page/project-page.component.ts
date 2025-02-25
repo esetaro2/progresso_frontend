@@ -5,7 +5,13 @@ import { ProjectDto } from '../../dto/project.dto';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../../service/user.service';
 import { TeamService } from '../../service/team.service';
@@ -19,6 +25,11 @@ import { AssignTeamDialogComponent } from '../assign-team-dialog/assign-team-dia
 import { CreateTaskStepperDialogComponent } from '../create-task-stepper-dialog/create-task-stepper-dialog.component';
 import { TeamMembersTableComponent } from '../team-members-table/team-members-table.component';
 import { EditProjectStepperDialogComponent } from '../edit-project-stepper-dialog/edit-project-stepper-dialog.component';
+import { AuthService } from '../../service/auth.service';
+import { CommentDto } from '../../dto/comment.dto';
+import { CommentService } from '../../service/comment.service';
+import { CommentComponent } from '../comment/comment.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-project-page',
@@ -27,10 +38,12 @@ import { EditProjectStepperDialogComponent } from '../edit-project-stepper-dialo
     CommonModule,
     MaterialModule,
     FormsModule,
+    ReactiveFormsModule,
     NgbModule,
     NgxChartsModule,
     TaskTableComponent,
     TeamMembersTableComponent,
+    CommentComponent,
   ],
   templateUrl: './project-page.component.html',
   styleUrl: './project-page.component.css',
@@ -54,9 +67,28 @@ export class ProjectPageComponent implements OnInit {
     teamMembers: null as string | null,
   };
 
+  loadingStatesComments = {
+    loadComments: false,
+    createComment: false,
+  };
+
+  errorStatesComments = {
+    loadComments: null as string | null,
+    createComment: null as string | null,
+  };
+
   get isLoading(): boolean {
     return Object.values(this.loadingStates).some((state) => state);
   }
+
+  get isLoadingComments(): boolean {
+    return Object.values(this.loadingStatesComments).some((state) => state);
+  }
+
+  userId: number | null = null;
+  userFirstName: string | null = null;
+  userLastName: string | null = null;
+  userUsername: string | null = null;
 
   projectIdParam: string | null = null;
   projectId = 0;
@@ -69,22 +101,50 @@ export class ProjectPageComponent implements OnInit {
   teamMembers: UserResponseDto[] = [];
   teamMembersNames: string[] = [];
 
-  currentPage = 0;
-  totalPages = 0;
-  totalElements = 0;
+  currentPageTeamMembers = 0;
+  totalPagesTeamMembers = 0;
+  totalElementsTeamMembers = 0;
+
+  commentForm: FormGroup;
+  comments: CommentDto[] = [];
+
+  currentPageComment = 0;
+  pageSizeComment = 10;
+  totalPagesComment = 0;
+  totalElementsComment = 0;
+
+  scrollToFirstComment = false;
 
   constructor(
+    private authService: AuthService,
     private route: ActivatedRoute,
     private projectService: ProjectService,
     private userService: UserService,
     private teamService: TeamService,
     private router: Router,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private fb: FormBuilder,
+    private commentService: CommentService
+  ) {
+    this.commentForm = this.fb.group({
+      content: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(500),
+        ],
+      ],
+    });
+  }
 
   ngOnInit(): void {
-    this.projectIdParam = this.route.snapshot.paramMap.get('id');
+    this.userId = this.authService.getUserId();
+    this.userFirstName = this.authService.getUserFirstName();
+    this.userLastName = this.authService.getUserLastName();
+    this.userUsername = this.authService.getUserUsername();
 
+    this.projectIdParam = this.route.snapshot.paramMap.get('id');
     this.projectId = Number.parseInt(this.projectIdParam || '0');
 
     if (this.projectId !== 0) {
@@ -98,6 +158,20 @@ export class ProjectPageComponent implements OnInit {
 
   setErrorState(key: keyof typeof this.errorStates, error: string | null) {
     this.errorStates[key] = error;
+  }
+
+  setLoadingStateComments(
+    key: keyof typeof this.loadingStatesComments,
+    state: boolean
+  ) {
+    this.loadingStatesComments[key] = state;
+  }
+
+  setErrorStateComments(
+    key: keyof typeof this.errorStatesComments,
+    error: string | null
+  ) {
+    this.errorStatesComments[key] = error;
   }
 
   getProjectInfo(): void {
@@ -114,6 +188,9 @@ export class ProjectPageComponent implements OnInit {
         if (this.project?.teamId) {
           this.getTeamInfo();
         }
+
+        this.loadComments();
+
         this.setLoadingState('project', false);
         this.setErrorState('project', null);
       },
@@ -176,7 +253,10 @@ export class ProjectPageComponent implements OnInit {
     this.teamService.getTeamById(this.project!.teamId!).subscribe({
       next: (teamDto: TeamDto) => {
         this.team = teamDto;
-        this.findUsersByTeamID(this.currentPage, this.totalElements);
+        this.findUsersByTeamID(
+          this.currentPageTeamMembers,
+          this.totalElementsTeamMembers
+        );
         this.setLoadingState('team', false);
         this.setErrorState('team', null);
       },
@@ -197,8 +277,8 @@ export class ProjectPageComponent implements OnInit {
           (teammember) =>
             `${teammember.firstName} ${teammember.lastName} (${teammember.username})`
         );
-        this.totalElements = pageData.page.totalElements;
-        this.totalPages = pageData.page.totalPages;
+        this.totalElementsTeamMembers = pageData.page.totalElements;
+        this.totalPagesTeamMembers = pageData.page.totalPages;
         this.setLoadingState('teamMembers', false);
         this.setErrorState('teamMembers', null);
       },
@@ -235,6 +315,7 @@ export class ProjectPageComponent implements OnInit {
 
     dialogRef.componentInstance.taskCreated.subscribe(() => {
       dialogRef.close();
+      this.getProjectPercentage();
       this.taskTableComponent.loadTasks();
     });
   }
@@ -254,6 +335,111 @@ export class ProjectPageComponent implements OnInit {
       this.getProjectInfo();
       this.taskTableComponent.loadTasks();
     });
+  }
+
+  /* onCompleteProject(): void {
+
+  } */
+
+  loadComments(): void {
+    this.setLoadingStateComments('loadComments', true);
+
+    this.commentService
+      .findByProjectId(
+        this.projectId,
+        this.currentPageComment,
+        this.pageSizeComment,
+        'creationDate,DESC'
+      )
+      .subscribe({
+        next: (pageData) => {
+          this.comments = pageData.content;
+          console.log('Comments', this.comments);
+          this.totalElementsComment = pageData.page.totalElements;
+          this.totalPagesComment = pageData.page.totalPages;
+
+          this.setLoadingStateComments('loadComments', false);
+          this.setErrorStateComments('loadComments', null);
+
+          if (this.scrollToFirstComment) {
+            setTimeout(() => {
+              const firstCommentElement =
+                document.querySelector('.comment-section');
+              if (firstCommentElement) {
+                firstCommentElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                });
+              }
+              this.scrollToFirstComment = false;
+            }, 0);
+          }
+        },
+        error: (error) => {
+          this.setLoadingStateComments('loadComments', false);
+          this.setErrorStateComments('loadComments', error.message);
+        },
+      });
+  }
+
+  onCreateComment() {
+    if (this.commentForm.invalid) {
+      return;
+    }
+
+    this.setLoadingStateComments('createComment', true);
+
+    const newComment: CommentDto = {
+      content: this.commentForm.get('content')?.value.trim(),
+      userId: this.userId!,
+      projectId: this.projectId,
+    };
+
+    this.commentService.createComment(newComment).subscribe({
+      next: () => {
+        this.commentForm.reset();
+
+        this.currentPageComment = 0;
+        this.scrollToFirstComment = true;
+
+        this.loadComments();
+
+        this.setLoadingStateComments('createComment', false);
+        this.setErrorStateComments('createComment', null);
+      },
+      error: (error) => {
+        this.setLoadingStateComments('createComment', false);
+        this.setErrorStateComments('createComment', error.message);
+      },
+    });
+  }
+
+  onReplyComment(scrollToFirstCommentReply: boolean): void {
+    this.scrollToFirstComment = scrollToFirstCommentReply;
+    this.currentPageComment = 0;
+    this.loadComments();
+  }
+
+  onEditComment(): void {
+    this.loadComments();
+  }
+
+  onDeleteComment(): void {
+    this.loadComments();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPageComment = event.pageIndex;
+    this.pageSizeComment = event.pageSize;
+    this.loadComments();
+  }
+
+  onInput(controlName: string) {
+    const control = this.commentForm.get(controlName);
+    if (control) {
+      control.markAsTouched();
+      control.updateValueAndValidity();
+    }
   }
 
   getPriorityClass(): string {

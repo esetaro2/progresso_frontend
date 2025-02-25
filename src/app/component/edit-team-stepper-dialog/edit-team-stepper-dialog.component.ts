@@ -104,7 +104,7 @@ export class EditTeamStepperDialogComponent {
   }
 
   updateTeam(): void {
-    const teamName = this.teamForm.get('name')?.value;
+    const teamName = this.teamForm.get('name')?.value.trim();
     this.setLoadingState('updateTeam', true);
 
     this.teamService.updateTeam(this.data.team.id!, teamName).subscribe({

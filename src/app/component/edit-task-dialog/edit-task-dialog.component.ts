@@ -281,9 +281,9 @@ export class EditTaskDialogComponent implements OnInit {
     )}-${String(formValues.dueDay).padStart(2, '0')}`;
 
     this.taskDto = {
-      name: formValues.name,
-      description: formValues.description,
-      priority: formValues.priority,
+      name: formValues.name.trim(),
+      description: formValues.description.trim(),
+      priority: formValues.priority.trim(),
       startDate: startDate,
       dueDate: dueDate,
       projectId: this.data.projectId,

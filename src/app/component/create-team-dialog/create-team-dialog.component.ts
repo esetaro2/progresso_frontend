@@ -85,7 +85,7 @@ export class CreateTeamDialogComponent {
   }
 
   createTeam(): void {
-    const teamName = this.teamForm.get('name')?.value;
+    const teamName = this.teamForm.get('name')?.value.trim();
     const selectedUserIds = this.selectedTeamMemberIds;
 
     this.setLoadingState('createTeam', true);

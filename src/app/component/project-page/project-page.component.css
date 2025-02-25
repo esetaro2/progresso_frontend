@@ -35,3 +35,42 @@
   font-size: 25px;
   color: #f44336;
 }
+
+.form-control {
+  border-radius: 4px;
+  border: 2px solid #ced4da;
+  background-color: #ffffff;
+}
+
+.form-control:hover {
+  border-color: #007bff;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.sendButton {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  color: #6c757d;
+}
+
+small .fa {
+  margin-right: 0.25rem;
+}
+
+small .fa-times {
+  color: #dc3545;
+}

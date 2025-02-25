@@ -178,7 +178,12 @@
     <div matDialogActions>
       <button mat-button matDialogClose [disabled]="isLoading">Close</button>
       <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
-      <button mat-button [disabled]="isLoading" (click)="updateTeam()">
+      <button
+        mat-button
+        [disabled]="isLoading"
+        (click)="updateTeam()"
+        *ngIf="!showRemoveMembers && !showAddMembers"
+      >
         <span *ngIf="!isLoading">Complete</span>
         <span *ngIf="isLoading">
           <mat-spinner [diameter]="24"></mat-spinner>
