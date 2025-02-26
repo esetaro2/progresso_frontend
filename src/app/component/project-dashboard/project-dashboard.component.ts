@@ -63,7 +63,6 @@ export class ProjectDashboardComponent implements OnInit {
     COMPLETED: 'Completed',
     CANCELLED: 'Cancelled',
   };
-  availableStatuses: string[] = [];
 
   selectedPriority?: string;
   priorities: string[] = ['LOW', 'MEDIUM', 'HIGH'];
@@ -72,7 +71,6 @@ export class ProjectDashboardComponent implements OnInit {
     MEDIUM: 'Medium',
     HIGH: 'High',
   };
-  availablePriorities: string[] = [];
 
   currentPage = 0;
   pageSize = 6;
@@ -107,23 +105,6 @@ export class ProjectDashboardComponent implements OnInit {
           this.projects = pageData.content;
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
-
-          this.availableStatuses = Array.from(
-            new Set(
-              this.projects
-                .map((project) => project.status)
-                .filter((status): status is string => status !== undefined)
-            )
-          );
-          this.availablePriorities = Array.from(
-            new Set(
-              this.projects
-                .map((project) => project.priority)
-                .filter(
-                  (priority): priority is string => priority !== undefined
-                )
-            )
-          );
 
           this.setLoadingState('projects', false);
           this.setErrorState('projects', null);

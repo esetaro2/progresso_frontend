@@ -107,7 +107,6 @@ export class TaskTableComponent implements OnInit {
     CANCELLED: 'Cancelled',
     COMPLETED: 'Completed',
   };
-  availableStatuses: string[] = [];
 
   selectedPriority?: string;
   priorities: string[] = ['LOW', 'MEDIUM', 'HIGH'];
@@ -116,7 +115,6 @@ export class TaskTableComponent implements OnInit {
     MEDIUM: 'Medium',
     HIGH: 'High',
   };
-  availablePriorities: string[] = [];
 
   constructor(
     private toastService: ToastService,
@@ -172,23 +170,6 @@ export class TaskTableComponent implements OnInit {
 
           this.dataSource.data = tasks;
           this.dataSource.sort = this.sort;
-
-          this.availableStatuses = Array.from(
-            new Set(
-              this.dataSource.data
-                .map((task) => task.status)
-                .filter((status): status is string => status !== undefined)
-            )
-          );
-          this.availablePriorities = Array.from(
-            new Set(
-              this.dataSource.data
-                .map((task) => task.priority)
-                .filter(
-                  (priority): priority is string => priority !== undefined
-                )
-            )
-          );
 
           this.setLoadingState('tasks', false);
           this.setErrorState('tasks', null);

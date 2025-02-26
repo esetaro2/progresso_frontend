@@ -5,14 +5,7 @@
   <mat-spinner mode="indeterminate"></mat-spinner>
 </div>
 
-<div
-  *ngIf="errorStates.tasks && !isLoading"
-  class="alert alert-danger text-center"
->
-  {{ errorStates.tasks }}
-</div>
-
-<div *ngIf="!errorStates.tasks && !isLoading">
+<div *ngIf="!isLoading">
   <div class="table-container">
     <div class="table-wrapper">
       <table
@@ -77,7 +70,7 @@
                   (selectionChange)="selectPriority($event.value)"
                 >
                   <mat-option
-                    *ngFor="let priority of availablePriorities"
+                    *ngFor="let priority of priorities"
                     [value]="priority"
                   >
                     {{ priorityLabels[priority] }}
@@ -113,10 +106,7 @@
                   [(value)]="selectedStatus"
                   (selectionChange)="selectStatus($event.value)"
                 >
-                  <mat-option
-                    *ngFor="let status of availableStatuses"
-                    [value]="status"
-                  >
+                  <mat-option *ngFor="let status of statuses" [value]="status">
                     {{ statusLabels[status] }}
                   </mat-option>
                 </mat-select>
@@ -227,7 +217,15 @@
     </div>
   </div>
 
+  <div
+    *ngIf="errorStates.tasks && !isLoading"
+    class="alert alert-danger text-center mt-3"
+  >
+    {{ errorStates.tasks }}
+  </div>
+
   <mat-paginator
+    *ngIf="!errorStates.tasks && !isLoading"
     [length]="totalElements"
     [hidePageSize]="true"
     [pageSize]="pageSize"
