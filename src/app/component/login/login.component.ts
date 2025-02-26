@@ -41,6 +41,16 @@ export class LoginComponent {
     });
   }
 
+  preventInitialSpace(event: KeyboardEvent): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (
+      (event.key === ' ' || event.key === 'Enter') &&
+      inputElement.value.length === 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
   setErrorState(
     key: keyof typeof this.errorStates,
     error: string | null

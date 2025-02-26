@@ -65,6 +65,16 @@ export class CreateTeamDialogComponent {
     });
   }
 
+  preventInitialSpace(event: KeyboardEvent): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (
+      (event.key === ' ' || event.key === 'Enter') &&
+      inputElement.value.length === 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
   setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
     this.loadingStates[key] = state;
   }

@@ -26,7 +26,7 @@
   cursor: pointer;
 }
 
-.tableRow:hover {
+.tableRow:hover:not(:has(.btn-outline-secondary:hover)) {
   background-color: rgba(104, 104, 255, 0.1);
 }
 

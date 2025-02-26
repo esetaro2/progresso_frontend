@@ -128,6 +128,16 @@ export class CreateProjectStepperDialogComponent implements OnInit {
     this.yearsList = this.getYearsList();
   }
 
+  preventInitialSpace(event: KeyboardEvent): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (
+      (event.key === ' ' || event.key === 'Enter') &&
+      inputElement.value.length === 0
+    ) {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit(): void {
     this.updateStartDateDays();
     this.updateDueDateDays();

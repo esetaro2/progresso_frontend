@@ -12,6 +12,7 @@
               id="firstName"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="firstName"
               required
               (input)="onInput('firstName')"
@@ -66,6 +67,7 @@
               id="lastName"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="lastName"
               required
               (input)="onInput('lastName')"
@@ -232,6 +234,7 @@
                   id="phonePrefix"
                   type="text"
                   class="form-control"
+                  (keydown)="preventInitialSpace($event)"
                   placeholder="+1"
                   aria-label="Phone Prefix"
                   formControlName="phonePrefix"
@@ -247,6 +250,7 @@
                   id="phoneNumber"
                   type="tel"
                   class="form-control"
+                  (keydown)="preventInitialSpace($event)"
                   formControlName="phoneNumber"
                   required
                   (input)="formatPhoneNumber($event)"
@@ -273,6 +277,11 @@
                   *ngIf="registrationForm.get('phonePrefix')?.errors?.['minlength'] || registrationForm.get('phonePrefix')?.errors?.['maxlength']"
                 >
                   Invalid phone prefix.
+                </span>
+                <span
+                  *ngIf="registrationForm.get('phonePrefix')?.errors?.['pattern']"
+                >
+                  The phone prefix must start with a '+'.
                 </span>
               </span>
               <span
@@ -377,6 +386,7 @@
               id="streetAddress"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="streetAddress"
               required
               (input)="onInput('streetAddress')"
@@ -426,6 +436,7 @@
               id="city"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="city"
               required
               (input)="onInput('city')"
@@ -473,6 +484,7 @@
               id="stateProvinceRegion"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="stateProvinceRegion"
               required
               (input)="onInput('stateProvinceRegion')"
@@ -527,6 +539,7 @@
               id="country"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="country"
               required
               (input)="onInput('country')"
@@ -576,6 +589,7 @@
               id="zipCode"
               type="text"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="zipCode"
               required
               (input)="onInput('zipCode')"
@@ -621,6 +635,7 @@
               id="email"
               type="email"
               class="form-control"
+              (keydown)="preventInitialSpace($event)"
               formControlName="email"
               required
               (input)="onInput('email')"

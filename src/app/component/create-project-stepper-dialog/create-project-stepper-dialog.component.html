@@ -25,6 +25,7 @@
             class="form-control"
             formControlName="name"
             required
+            (keydown)="preventInitialSpace($event)"
             (input)="onInput('name')"
             autocomplete="on"
           />
@@ -68,6 +69,7 @@
             class="form-control"
             formControlName="description"
             required
+            (keydown)="preventInitialSpace($event)"
             (input)="onInput('description')"
             style="resize: none; height: 100px"
           ></textarea>

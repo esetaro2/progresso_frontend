@@ -37,6 +37,7 @@
             type="text"
             id="name"
             class="form-control"
+            (keydown)="preventInitialSpace($event)"
             formControlName="name"
             required
             (input)="onInput('name')"
@@ -72,6 +73,7 @@
           <textarea
             id="description"
             class="form-control"
+            (keydown)="preventInitialSpace($event)"
             formControlName="description"
             required
             (input)="onInput('description')"

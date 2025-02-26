@@ -87,7 +87,12 @@ export class RegisterComponent {
       birthYear: ['', [Validators.required]],
       phonePrefix: [
         '',
-        [Validators.required, Validators.minLength(2), Validators.maxLength(5)],
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(5),
+          Validators.pattern(/^\+\d*$/),
+        ],
       ],
       phoneNumber: [
         '',
@@ -148,6 +153,16 @@ export class RegisterComponent {
 
     this.daysInMonth = this.getDaysInMonth();
     this.yearsList = this.getYearsList();
+  }
+
+  preventInitialSpace(event: KeyboardEvent): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (
+      (event.key === ' ' || event.key === 'Enter') &&
+      inputElement.value.length === 0
+    ) {
+      event.preventDefault();
+    }
   }
 
   setErrorState(

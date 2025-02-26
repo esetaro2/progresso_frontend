@@ -14,6 +14,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
+import { MatDialog } from '@angular/material/dialog';
+import { TeamInfoDialogComponent } from '../team-info-dialog/team-info-dialog.component';
 
 function compare(
   a: string | number,
@@ -44,7 +46,7 @@ export class AvailableTeamTableComponent implements OnInit {
 
   @Output() teamSelected = new EventEmitter<number>();
 
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id', 'name', 'actions'];
   dataSource = new MatTableDataSource<TeamDto>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -62,7 +64,7 @@ export class AvailableTeamTableComponent implements OnInit {
   errorMessage = '';
   isSearchQueryPresent = false;
 
-  constructor(private teamService: TeamService) {}
+  constructor(private teamService: TeamService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.getAvailableTeams();
@@ -117,6 +119,18 @@ export class AvailableTeamTableComponent implements OnInit {
           this.dataSource.data = [];
         },
       });
+  }
+
+  onViewTeam(team: TeamDto): void {
+    console.log('Team info', team);
+
+    this.dialog.open(TeamInfoDialogComponent, {
+      width: '100%',
+      maxWidth: '750px',
+      data: {
+        team: team,
+      },
+    });
   }
 
   applyFilter(): void {

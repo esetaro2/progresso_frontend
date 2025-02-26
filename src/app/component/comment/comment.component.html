@@ -65,6 +65,7 @@
             formControlName="content"
             style="resize: none; height: 100px"
             placeholder="Edit your comment..."
+            (keydown)="preventInitialSpace($event)"
           ></textarea>
           <button
             type="submit"
@@ -161,6 +162,7 @@
         class="form-control"
         formControlName="content"
         style="resize: none; height: 100px"
+        (keydown)="preventInitialSpace($event)"
         placeholder="Write your reply..."
       ></textarea>
       <button

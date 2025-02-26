@@ -11,6 +11,7 @@
             id="username"
             type="text"
             class="form-control"
+            (keydown)="preventInitialSpace($event)"
             formControlName="username"
             required
             (input)="onInput('username')"

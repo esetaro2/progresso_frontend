@@ -23,7 +23,10 @@ export function ErrorInterceptor(
           `Server Error Code: ${error.status} - ${error.statusText}`
         );
 
-        if (error.error) {
+        if (error.status === 0) {
+          errorMessage =
+            'Unable to connect to the server. Please check your internet connection or try again later.';
+        } else if (error.error) {
           if (typeof error.error === 'object' && error.error.message) {
             errorMessage = error.error.message;
           } else if (typeof error.error === 'object') {
