@@ -58,7 +58,11 @@
               color: task.completionDate === 'Not Completed' ? 'red' : 'inherit'
             }"
           >
-            {{ task.completionDate }}
+            {{
+              task.status !== "CANCELLED"
+                ? task.completionDate
+                : "Task cancelled"
+            }}
           </td>
         </ng-container>
 
@@ -172,7 +176,7 @@
                 mat-icon-button
                 class="btn complete-button"
                 [disabled]="
-                  task.status === 'COMPLETED' ||
+                  task.status !== 'IN_PROGRESS' ||
                   isLoading ||
                   task.ownerUsername === 'Unassigned' ||
                   isBeforeStart(task)
@@ -190,7 +194,7 @@
               <button
                 mat-icon-button
                 class="btn btn-outline-primary"
-                [disabled]="task.status === 'COMPLETED' || isLoading"
+                [disabled]="task.status !== 'IN_PROGRESS' || isLoading"
                 (click)="openEditDialog(task)"
               >
                 <mat-icon>edit</mat-icon>
@@ -204,7 +208,7 @@
               <button
                 mat-icon-button
                 class="btn btn-outline-danger"
-                [disabled]="task.status === 'COMPLETED' || isLoading"
+                [disabled]="task.status !== 'IN_PROGRESS' || isLoading"
                 (click)="openDeleteDialog(task)"
               >
                 <mat-icon>delete</mat-icon>

@@ -63,6 +63,7 @@ export class ProjectPageComponent implements OnInit {
     team: false,
     teamMembers: false,
     completeProject: false,
+    deleteProject: false,
   };
 
   errorStates = {
@@ -72,6 +73,7 @@ export class ProjectPageComponent implements OnInit {
     team: null as string | null,
     teamMembers: null as string | null,
     completeProject: null as string | null,
+    deleteProject: null as string | null,
   };
 
   loadingStatesComments = {
@@ -193,6 +195,7 @@ export class ProjectPageComponent implements OnInit {
         if (this.project?.projectManagerId) {
           this.getProjectManagerById();
         }
+
         if (this.project?.teamId) {
           this.getTeamInfo();
         }
@@ -375,11 +378,50 @@ export class ProjectPageComponent implements OnInit {
 
             this.getProjectInfo();
             this.taskTableComponent.loadTasks();
-            this.loadComments();
           },
           error: (error) => {
             this.setLoadingState('completeProject', false);
             this.setErrorState('completeProject', error.message);
+          },
+        });
+      }
+    });
+  }
+
+  onDeleteProject(): void {
+    const dialogData: ConfirmDialogData = {
+      title: 'Delete Project',
+      message: 'Are you sure you want to delete this project?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '100%',
+      maxWidth: '400px',
+      data: dialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.setLoadingState('deleteProject', true);
+
+        this.projectService.removeProject(this.projectId).subscribe({
+          next: () => {
+            this.setLoadingState('deleteProject', false);
+            this.setErrorState('deleteProject', null);
+
+            this.toastService.show('Project deleted successfully!', {
+              classname: 'bg-success text-light',
+              delay: 5000,
+            });
+
+            this.getProjectInfo();
+            this.taskTableComponent.loadTasks();
+          },
+          error: (error) => {
+            this.setLoadingState('deleteProject', false);
+            this.setErrorState('deleteProject', error.message);
           },
         });
       }

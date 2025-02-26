@@ -101,9 +101,10 @@ export class TaskTableComponent implements OnInit {
   selectedTaskId: number | null = null;
 
   selectedStatus?: string;
-  statuses: string[] = ['IN_PROGRESS', 'COMPLETED'];
+  statuses: string[] = ['IN_PROGRESS', 'CANCELLED', 'COMPLETED'];
   statusLabels: Record<string, string> = {
     IN_PROGRESS: 'In Progress',
+    CANCELLED: 'Cancelled',
     COMPLETED: 'Completed',
   };
   availableStatuses: string[] = [];
@@ -432,16 +433,20 @@ export class TaskTableComponent implements OnInit {
         return 'The task has not started and is unassigned.';
       }
 
-      if (this.isBeforeStart(task)) {
-        return 'The task has not started yet';
-      } else if (task.ownerUsername === 'Unassigned') {
+      if (task.ownerUsername === 'Unassigned') {
         return 'The task is not assigned to any user';
       } else if (task.status === 'COMPLETED') {
         return 'The task is already completed';
+      } else if (task.status === 'CANCELLED') {
+        return `Cannot ${action} a cancelled task`;
+      } else if (this.isBeforeStart(task)) {
+        return 'The task has not started yet';
       }
     } else if (action === 'edit' || action === 'delete') {
       if (task.status === 'COMPLETED') {
         return `Cannot ${action} a completed task`;
+      } else if (task.status === 'CANCELLED') {
+        return `Cannot ${action} a cancelled task`;
       }
     }
     return null;

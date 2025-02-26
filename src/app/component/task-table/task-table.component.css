@@ -37,7 +37,13 @@
   color: #4caf50;
 }
 
-.task-description, .task-name {
+.cancelled-circle {
+  font-size: 24px;
+  color: #f44336;
+}
+
+.task-description,
+.task-name {
   display: block;
   max-width: 120px;
   white-space: nowrap;
