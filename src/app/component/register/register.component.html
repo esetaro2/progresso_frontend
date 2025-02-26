@@ -16,6 +16,7 @@
               formControlName="firstName"
               required
               (input)="onInput('firstName')"
+              autocomplete="off"
             />
             <small>
               <span
@@ -67,6 +68,7 @@
               id="lastName"
               type="text"
               class="form-control"
+              autocomplete="off"
               (keydown)="preventInitialSpace($event)"
               formControlName="lastName"
               required
@@ -386,6 +388,7 @@
               id="streetAddress"
               type="text"
               class="form-control"
+              autocomplete="off"
               (keydown)="preventInitialSpace($event)"
               formControlName="streetAddress"
               required
@@ -436,6 +439,7 @@
               id="city"
               type="text"
               class="form-control"
+              autocomplete="off"
               (keydown)="preventInitialSpace($event)"
               formControlName="city"
               required
@@ -484,6 +488,7 @@
               id="stateProvinceRegion"
               type="text"
               class="form-control"
+              autocomplete="off"
               (keydown)="preventInitialSpace($event)"
               formControlName="stateProvinceRegion"
               required
@@ -539,6 +544,7 @@
               id="country"
               type="text"
               class="form-control"
+              autocomplete="off"
               (keydown)="preventInitialSpace($event)"
               formControlName="country"
               required
@@ -590,6 +596,7 @@
               type="text"
               class="form-control"
               (keydown)="preventInitialSpace($event)"
+              autocomplete="off"
               formControlName="zipCode"
               required
               (input)="onInput('zipCode')"
@@ -637,6 +644,7 @@
               class="form-control"
               (keydown)="preventInitialSpace($event)"
               formControlName="email"
+              autocomplete="off"
               required
               (input)="onInput('email')"
             />

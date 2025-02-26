@@ -6,6 +6,7 @@ import { ProjectDashboardComponent } from './component/project-dashboard/project
 import { NotAuthorizedComponent } from './component/not-authorized/not-authorized.component';
 import { LoginGuard } from './guard/login.guard';
 import { ProjectPageComponent } from './component/project-page/project-page.component';
+import { AdminDashboardComponent } from './component/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,12 @@ export const routes: Routes = [
   {
     path: 'not-authorized',
     component: NotAuthorizedComponent,
+  },
+  {
+    path: 'admin/dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ADMIN'] },
   },
   {
     path: '**',

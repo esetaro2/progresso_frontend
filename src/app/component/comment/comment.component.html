@@ -66,6 +66,7 @@
             style="resize: none; height: 100px"
             placeholder="Edit your comment..."
             (keydown)="preventInitialSpace($event)"
+            autocomplete="off"
           ></textarea>
           <button
             type="submit"
@@ -164,6 +165,7 @@
         style="resize: none; height: 100px"
         (keydown)="preventInitialSpace($event)"
         placeholder="Write your reply..."
+        autocomplete="off"
       ></textarea>
       <button
         type="submit"

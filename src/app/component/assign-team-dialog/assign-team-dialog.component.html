@@ -1,4 +1,4 @@
-<div class="d-flex flex-column align-items-center justify-content-center p-5">
+<div matDialogContent class="p-5">
   <div
     *ngIf="errorStates.assignTeamToProject && !isLoading"
     class="alert alert-danger text-center mt-5"
@@ -8,23 +8,22 @@
 
   <div
     *ngIf="!existingTeam"
-    class="d-flex flex-column align-items-center justify-content-center"
+    class="d-flex align-items-center justify-content-center"
   >
     <button mat-raised-button (click)="existingTeam = true">
       Assign Existing Team
     </button>
-    <span>or</span>
+    <span class="mx-5">or</span>
     <button mat-raised-button (click)="openCreateTeamDialog()">
       Create New Team
     </button>
   </div>
   <div
-    mat-dialog-content
-    class="d-flex flex-column align-items-center justify-content-center p-2 gap-2"
+    class="d-flex flex-column align-items-center justify-content-center app-available-team-table-container"
     *ngIf="existingTeam"
   >
-    <h3>Select a Team</h3>
     <app-available-team-table
+      class="app-available-team-table"
       (teamSelected)="onTeamSelected($event)"
     ></app-available-team-table>
     <button
@@ -35,16 +34,16 @@
       Cancel
     </button>
   </div>
-</div>
-<div matDialogActions>
-  <button mat-button matDialogClose>Close</button>
-  <button
-    mat-button
-    matDialogClose
-    (click)="assignTeamToProject()"
-    *ngIf="existingTeam"
-    [disabled]="!selectedTeamId"
-  >
-    Complete
-  </button>
+  <div matDialogActions>
+    <button mat-button matDialogClose>Close</button>
+    <button
+      mat-button
+      matDialogClose
+      (click)="assignTeamToProject()"
+      *ngIf="existingTeam"
+      [disabled]="!selectedTeamId"
+    >
+      Complete
+    </button>
+  </div>
 </div>
