@@ -143,7 +143,6 @@ export class ProjectPageComponent implements OnInit {
           Validators.required,
           Validators.minLength(2),
           Validators.maxLength(500),
-          Validators.pattern(/\S/),
         ],
       ],
     });
@@ -160,6 +159,16 @@ export class ProjectPageComponent implements OnInit {
 
     if (this.projectId !== 0) {
       this.getProjectInfo();
+    }
+  }
+
+  preventInitialSpace(event: KeyboardEvent): void {
+    const inputElement = event.target as HTMLInputElement;
+    if (
+      (event.key === ' ' || event.key === 'Enter') &&
+      inputElement.value.length === 0
+    ) {
+      event.preventDefault();
     }
   }
 

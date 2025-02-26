@@ -209,6 +209,7 @@
         <textarea
           id="content"
           class="form-control"
+          (keydown)="preventInitialSpace($event)"
           formControlName="content"
           (input)="onInput('content')"
           style="resize: none; height: 100px"

@@ -114,7 +114,6 @@ export class CommentComponent
           Validators.required,
           Validators.minLength(2),
           Validators.maxLength(500),
-          Validators.pattern(/\S/),
         ],
       ],
     });
