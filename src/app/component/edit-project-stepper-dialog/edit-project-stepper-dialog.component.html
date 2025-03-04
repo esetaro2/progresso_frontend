@@ -401,10 +401,20 @@
       <button
         mat-button
         matStepperNext
-        *ngIf="updateProjectManager"
+        *ngIf="updateProjectManager && data.team"
         [disabled]="(updateProjectManager && !selectedPmId) || isLoading"
       >
         Next
+      </button>
+
+      <button
+        mat-button
+        matStepperNext
+        *ngIf="updateProjectManager && !data.team"
+        [disabled]="(updateProjectManager && !selectedPmId) || isLoading"
+        (click)="onSubmit()"
+      >
+        Complete
       </button>
     </div>
   </mat-step>
