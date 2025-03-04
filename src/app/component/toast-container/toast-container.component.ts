@@ -17,7 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         [delay]="toast.delay || 5000"
         (hide)="toastService.remove(toast)"
       >
-        {{ toast.text }}
+        <div [innerHTML]="toast.text"></div>
       </ngb-toast>
     </div>
   `,
