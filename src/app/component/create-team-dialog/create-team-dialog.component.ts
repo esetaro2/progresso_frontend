@@ -88,10 +88,6 @@ export class CreateTeamDialogComponent {
 
   onSelectedTeamMembers(selectedTeamMembersIdsEvent: number[]): void {
     this.selectedTeamMemberIds = selectedTeamMembersIdsEvent;
-    console.log(
-      'Team Members selezionati dal figlio: ',
-      this.selectedTeamMemberIds
-    );
   }
 
   createTeam(): void {
