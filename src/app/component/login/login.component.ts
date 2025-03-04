@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserLoginDto } from '../../dto/user-login.dto';
 import { CommonModule } from '@angular/common';
-import { UserResponseDto } from '../../dto/user-response.dto';
 import { ToastService } from '../../service/toast.service';
 
 @Component({
@@ -69,8 +68,7 @@ export class LoginComponent {
     };
 
     this.authService.login(userLoginDto).subscribe({
-      next: (response: { userResponseDto: UserResponseDto }) => {
-        console.log(response.userResponseDto);
+      next: () => {
         this.setErrorState('login', null);
         this.router.navigate(['']);
       },
