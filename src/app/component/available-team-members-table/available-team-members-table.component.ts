@@ -104,7 +104,6 @@ export class AvailableTeamMembersTableComponent implements OnInit {
       .subscribe({
         next: (pageData: Page<UserResponseDto>) => {
           this.dataSource.data = pageData.content;
-          console.log('Available Tms', this.dataSource.data);
           this.totalElements = pageData.page.totalElements;
           this.totalPages = pageData.page.totalPages;
           this.dataSource.sort = this.sort;

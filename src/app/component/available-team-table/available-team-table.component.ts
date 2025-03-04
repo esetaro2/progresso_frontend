@@ -122,8 +122,6 @@ export class AvailableTeamTableComponent implements OnInit {
   }
 
   onViewTeam(team: TeamDto): void {
-    console.log('Team info', team);
-
     this.dialog.open(TeamInfoDialogComponent, {
       width: '100%',
       maxWidth: '750px',
@@ -153,7 +151,6 @@ export class AvailableTeamTableComponent implements OnInit {
   onRowClicked(row: TeamDto): void {
     this.selectedRow = row;
     this.selectedTeamId = row.id !== undefined ? row.id : null;
-    console.log('Team selezionato:', this.selectedRow);
     this.teamSelected.emit(this.selectedTeamId!);
   }
 

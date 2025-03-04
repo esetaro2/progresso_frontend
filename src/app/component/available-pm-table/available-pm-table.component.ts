@@ -143,7 +143,6 @@ export class AvailablePmTableComponent implements OnInit {
   onRowClicked(row: ProjectManager): void {
     this.selectedRow = row;
     this.selectedPmId = row.id;
-    console.log('PM selezionato:', this.selectedRow);
     this.pmSelected.emit(this.selectedPmId);
   }
 
