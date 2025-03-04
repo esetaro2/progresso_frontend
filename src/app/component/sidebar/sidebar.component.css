@@ -1,0 +1,23 @@
+.nav-link {
+  transition: background-color 0.3s, color 0.3s;
+  padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+  color: #0000006f;
+}
+
+.nav-link.active-link {
+  color: #007bff;
+  font-weight: 550;
+  pointer-events: none;
+  cursor: default;
+}
+
+.menu-button {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-button:hover {
+  color: #0000006f;
+}
