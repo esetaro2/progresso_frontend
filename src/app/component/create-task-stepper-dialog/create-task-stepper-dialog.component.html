@@ -9,7 +9,6 @@
       </div>
 
       <form [formGroup]="taskForm">
-        <!-- Name Field -->
         <div class="mb-3">
           <label for="name">Name</label>
           <input
@@ -52,7 +51,6 @@
           </small>
         </div>
 
-        <!-- Description Field -->
         <div class="mb-5 d-flex flex-column">
           <label for="description">Description</label>
           <textarea
@@ -97,7 +95,6 @@
           </small>
         </div>
 
-        <!-- Priority Field -->
         <div class="mb-3">
           <label for="priorityDropdown">Priority</label>
           <div ngbDropdown>
@@ -145,12 +142,10 @@
           </small>
         </div>
 
-        <!-- Start Date -->
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="startMonthDropdown">Start Date</label>
             <div class="d-flex">
-              <!-- Order: YYYY, MM, DD -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -259,11 +254,9 @@
             </small>
           </div>
 
-          <!-- Due Date -->
           <div class="col-md-6 mb-3">
             <label for="dueMonthDropdown">Due Date</label>
             <div class="d-flex">
-              <!-- Order: YYYY, MM, DD -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"

@@ -183,12 +183,10 @@ export class CreateTaskStepperDialogComponent implements OnInit {
       projectId: this.data.projectId,
     };
 
-    console.log('First part task', this.taskDto);
   }
 
   onTeamMemberSelected(teamMemberIds: number[]): void {
     this.selectedTeamMemberIds = teamMemberIds;
-    console.log(this.selectedTeamMemberIds);
   }
 
   onSubmit(): void {
@@ -200,9 +198,7 @@ export class CreateTaskStepperDialogComponent implements OnInit {
         this.selectedTeamMemberIds.at(0)!
       )
       .subscribe({
-        next: (task: TaskDto) => {
-          console.log('Task creato con successo', task);
-
+        next: () => {
           this.toastService.show('Task created successfully!', {
             classname: 'bg-success text-light',
             delay: 5000,
