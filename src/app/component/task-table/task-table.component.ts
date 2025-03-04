@@ -51,6 +51,7 @@ function compare(
   styleUrl: './task-table.component.css',
 })
 export class TaskTableComponent implements OnInit {
+  @Input() userRole?: string;
   @Input() projectId?: number;
   @Input() teamId?: number;
   @Input() startDate?: string;
@@ -85,7 +86,6 @@ export class TaskTableComponent implements OnInit {
     'status',
     'owner',
     'description',
-    'actions',
   ];
   dataSource = new MatTableDataSource<Task>();
 
@@ -123,6 +123,9 @@ export class TaskTableComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.userRole !== 'TEAMMEMBER') {
+      this.displayedColumns.push('actions');
+    }
     this.loadTasks();
   }
 
@@ -222,7 +225,6 @@ export class TaskTableComponent implements OnInit {
 
     this.selectedRow = row;
     this.selectedTaskId = row.id!;
-    console.log('Task selezionata per completamento', row);
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
@@ -272,7 +274,6 @@ export class TaskTableComponent implements OnInit {
 
     this.selectedRow = row;
     this.selectedTaskId = row.id!;
-    console.log('Task selezionata per eliminazione', row);
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
@@ -304,15 +305,11 @@ export class TaskTableComponent implements OnInit {
               });
             },
           });
-      } else {
-        console.log('Azione annullata.');
       }
     });
   }
 
   openEditDialog(row: TaskDto): void {
-    console.log('Task selezionata per modifica', row);
-
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
       width: '100%',
       maxWidth: '750px',
@@ -410,18 +407,22 @@ export class TaskTableComponent implements OnInit {
     action: 'complete' | 'edit' | 'delete'
   ): string | null {
     if (action === 'complete') {
-      if (this.isBeforeStart(task) && task.ownerUsername === 'Unassigned') {
+      if (
+        this.isBeforeStart(task) &&
+        task.ownerUsername === 'Unassigned' &&
+        task.status === 'IN_PROGRESS'
+      ) {
         return 'The task has not started and is unassigned.';
       }
 
-      if (task.ownerUsername === 'Unassigned') {
-        return 'The task is not assigned to any user';
-      } else if (task.status === 'COMPLETED') {
+      if (task.status === 'COMPLETED') {
         return 'The task is already completed';
       } else if (task.status === 'CANCELLED') {
         return `Cannot ${action} a cancelled task`;
       } else if (this.isBeforeStart(task)) {
         return 'The task has not started yet';
+      } else if (task.ownerUsername === 'Unassigned') {
+        return 'The task is not assigned to any user';
       }
     } else if (action === 'edit' || action === 'delete') {
       if (task.status === 'COMPLETED') {
