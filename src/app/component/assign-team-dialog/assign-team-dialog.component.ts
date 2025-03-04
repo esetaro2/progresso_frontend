@@ -11,7 +11,6 @@ import {
 import { AvailableTeamTableComponent } from '../available-team-table/available-team-table.component';
 import { CreateTeamDialogComponent } from '../create-team-dialog/create-team-dialog.component';
 import { ProjectService } from '../../service/project.service';
-import { ProjectDto } from '../../dto/project.dto';
 import { ToastService } from '../../service/toast.service';
 
 @Component({
@@ -72,9 +71,7 @@ export class AssignTeamDialogComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Team creato: ', result);
         this.selectedTeamId = result.id;
-        console.log('SELECTED TEAM ID PASSATO DAL DIALOG', this.selectedTeamId);
         this.assignTeamToProject();
       }
     });
@@ -82,7 +79,6 @@ export class AssignTeamDialogComponent {
 
   onTeamSelected(teamId: number): void {
     this.selectedTeamId = teamId;
-    console.log('ID del team selezionato:', this.selectedTeamId);
   }
 
   assignTeamToProject(): void {
@@ -91,8 +87,7 @@ export class AssignTeamDialogComponent {
     this.projectService
       .assignTeamToProject(this.projectId, this.selectedTeamId!)
       .subscribe({
-        next: (project: ProjectDto) => {
-          console.log('Progetto con team assegnato', project);
+        next: () => {
           this.teamAssigned.emit();
           this.toastService.show('Team assigned successfully!', {
             classname: 'bg-success text-light',
