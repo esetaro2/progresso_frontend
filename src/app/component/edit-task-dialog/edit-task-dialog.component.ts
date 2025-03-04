@@ -117,9 +117,7 @@ export class EditTaskDialogComponent implements OnInit {
     const task = this.data.task;
 
     const startDate = new Date(task.startDate);
-    console.log('Start date:', startDate);
     const dueDate = new Date(task.dueDate);
-    console.log('Due date:', dueDate);
 
     this.selectedStartMonthLabel = this.months[startDate.getMonth()];
     this.selectedStartDayLabel = startDate.getDate().toString();
@@ -249,7 +247,6 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   onStepChange(event: { selectedIndex: number }) {
-    console.log('Step cambiato:', event.selectedIndex);
 
     switch (event.selectedIndex) {
       case 0:
@@ -299,12 +296,10 @@ export class EditTaskDialogComponent implements OnInit {
       projectId: this.data.projectId,
     };
 
-    console.log('First part task', this.taskDto);
   }
 
   onTeamMemberSelected(teamMemberIds: number[]): void {
     this.selectedTeamMemberIds = teamMemberIds;
-    console.log(this.selectedTeamMemberIds);
   }
 
   onSubmit() {
@@ -321,8 +316,7 @@ export class EditTaskDialogComponent implements OnInit {
           this.taskService
             .reassignTaskToUser(task.id!, this.selectedTeamMemberIds.at(0)!)
             .subscribe({
-              next: (task) => {
-                console.log('Task with reassigned user', task);
+              next: () => {
                 this.setLoadingState('reassignTask', false);
                 this.setErrorState('reassignTask', null);
 
