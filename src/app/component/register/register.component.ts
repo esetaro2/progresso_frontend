@@ -89,7 +89,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(3),
+          Validators.minLength(2),
           Validators.maxLength(5),
           Validators.pattern(/^\+\d*$/),
         ],
@@ -175,12 +175,6 @@ export class RegisterComponent {
   onSubmit() {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
-      Object.keys(this.registrationForm.controls).forEach((key) => {
-        const control = this.registrationForm.get(key);
-        if (control && control.errors) {
-          console.log(`Errors for ${key}:`, control.errors);
-        }
-      });
       return;
     }
 
@@ -209,6 +203,10 @@ export class RegisterComponent {
       next: () => {
         this.setErrorState('register', null);
         this.registrationForm.reset();
+        this.selectedBirthYearLabel = 'YYYY';
+        this.selectedBirthMonthLabel = 'MM';
+        this.selectedBirthDayLabel = 'DD';
+        this.selectedRoleLabel = 'Select role';
         this.registrationForm.updateValueAndValidity();
 
         this.toastService.show('Registration successful!', {

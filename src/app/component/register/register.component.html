@@ -1,11 +1,9 @@
 <div class="d-flex justify-content-center align-items-center full-height">
-  <div class="card form-container">
+  <div class="card form-container bg-transparent">
     <div class="card-body">
       <h2 class="text-center mb-4">Register</h2>
       <form [formGroup]="registrationForm">
-        <!-- First Name, Last Name, Birthdate -->
         <div class="row mb-3 d-flex justify-content-center">
-          <!-- First Name -->
           <div class="col-md-4">
             <label for="firstName">First Name</label>
             <input
@@ -61,7 +59,6 @@
             </small>
           </div>
 
-          <!-- Last Name -->
           <div class="col-md-4">
             <label for="lastName">Last Name</label>
             <input
@@ -117,11 +114,9 @@
             </small>
           </div>
 
-          <!-- Birthdate -->
           <div class="col-md-4">
             <label for="birthMonthDropdown">Birthdate</label>
             <div class="d-flex">
-              <!-- Dropdown per Birth Year -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -146,7 +141,6 @@
                 </div>
               </div>
 
-              <!-- Dropdown per Birth Month -->
               <div ngbDropdown class="me-2">
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -171,7 +165,6 @@
                 </div>
               </div>
 
-              <!-- Dropdown per Birth Day -->
               <div ngbDropdown>
                 <button
                   class="btn btn-outline-primary fixed-width-dropdown"
@@ -225,12 +218,10 @@
           </div>
         </div>
 
-        <!-- Phone Number, Role  -->
         <div class="row mb-5 d-flex justify-content-center">
           <div class="col">
             <label for="phonePrefix">Phone Number</label>
             <div class="d-flex">
-              <!-- Prefix Input -->
               <div class="col-md-4">
                 <input
                   id="phonePrefix"
@@ -246,7 +237,6 @@
                 />
               </div>
 
-              <!-- Phone Number Input-->
               <div class="col">
                 <input
                   id="phoneNumber"
@@ -329,7 +319,6 @@
             </small>
           </div>
 
-          <!-- Role -->
           <div class="col-md-5">
             <label for="roleDropdown">Role</label>
             <div ngbDropdown class="d-inline-block w-100">
@@ -379,9 +368,7 @@
           </div>
         </div>
 
-        <!-- Street Address, Country, State/Province/Region, City -->
         <div class="row mb-3">
-          <!-- Street Address -->
           <div class="col-md-4">
             <label for="streetAddress">Street Address</label>
             <input
@@ -432,7 +419,6 @@
             </small>
           </div>
 
-          <!-- City -->
           <div class="col-md-3">
             <label for="city">City</label>
             <input
@@ -481,7 +467,6 @@
             </small>
           </div>
 
-          <!-- State/Province/Region -->
           <div class="col-md-5">
             <label for="stateProvinceRegion">State/Province/Region</label>
             <input
@@ -535,9 +520,7 @@
           </div>
         </div>
 
-        <!-- Country, Zip Code, Email -->
         <div class="row mb-4">
-          <!-- Country -->
           <div class="col-md-4">
             <label for="country">Country</label>
             <input
@@ -588,7 +571,6 @@
             </small>
           </div>
 
-          <!-- Zip Code -->
           <div class="col-md-4">
             <label for="zipCode">Zip Code</label>
             <input
@@ -635,7 +617,6 @@
             </small>
           </div>
 
-          <!-- Email -->
           <div class="col-md-4">
             <label for="email">Email</label>
             <input
@@ -683,7 +664,6 @@
         </div>
 
         <div class="d-flex flex-column justify-content-center">
-          <!-- Register button -->
           <button
             (click)="onSubmit()"
             [disabled]="registrationForm.invalid"
