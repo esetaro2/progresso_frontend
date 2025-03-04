@@ -59,12 +59,17 @@ export class CommentComponent
     deleteComment: null as string | null,
   };
 
+  @Input() userUsername?: string;
+  @Input() userRole?: string;
+  @Input() projectStatus?: string;
+
   @Input() comment?: CommentDto;
   @Output() replyComment = new EventEmitter<boolean>();
   @Output() editComment = new EventEmitter<void>();
   @Output() deleteComment = new EventEmitter<void>();
 
-  @ViewChild('contentElement') contentElement!: ElementRef<HTMLDivElement>;
+  @ViewChild('contentElement')
+  contentElement!: ElementRef<HTMLDivElement>;
   @ViewChild('parentContentElement')
   parentContentElement?: ElementRef<HTMLSpanElement>;
 

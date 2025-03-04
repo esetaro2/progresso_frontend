@@ -127,7 +127,11 @@
       <button
         class="btn btn-sm btn-link"
         (click)="showReplyForm = true"
-        *ngIf="!showReplyForm && !editMode"
+        *ngIf="
+          !showReplyForm &&
+          !editMode &&
+          (projectStatus === 'IN_PROGRESS' || projectStatus === 'NOT_STARTED')
+        "
       >
         <mat-icon>reply</mat-icon>
       </button>
@@ -140,14 +144,26 @@
         <mat-icon>close</mat-icon>
       </button>
 
-      <button class="btn btn-sm btn-link" (click)="onEdit()" *ngIf="!editMode">
+      <button
+        class="btn btn-sm btn-link"
+        (click)="onEdit()"
+        *ngIf="
+          !editMode &&
+          comment?.userUsername === userUsername &&
+          (projectStatus === 'IN_PROGRESS' || projectStatus === 'NOT_STARTED')
+        "
+      >
         <mat-icon>edit</mat-icon>
       </button>
 
       <button
         class="btn btn-sm btn-link text-danger"
         (click)="onDelete()"
-        *ngIf="!editMode"
+        *ngIf="
+          (userRole === 'ADMIN' ||
+            (!editMode && comment?.userUsername === userUsername)) &&
+          (projectStatus === 'NOT_STARTED' || projectStatus === 'IN_PROGRESS')
+        "
       >
         <mat-icon>delete</mat-icon>
       </button>
