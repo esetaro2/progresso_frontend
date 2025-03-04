@@ -108,7 +108,7 @@ export class ProjectDashboardComponent implements OnInit {
       if (this.errorStates.activeProjectsTeamMember) {
         this.applyFilters();
       }
-    }, 10000);
+    }, 30000);
   }
 
   loadAllProjectsWithFilters(): void {
