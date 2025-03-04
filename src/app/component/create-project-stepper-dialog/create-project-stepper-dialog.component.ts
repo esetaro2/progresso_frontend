@@ -239,21 +239,15 @@ export class CreateProjectStepperDialogComponent implements OnInit {
       dueDate: dueDate,
       projectManagerId: this.selectedPmId,
     };
-
-    console.log('Dati Iniziali Del Progetto Con Manager 0', this.projectDto);
   }
 
   onPmSelected(pmId: number) {
     this.selectedPmId = pmId;
-    console.log('PM SELEZIONATO DAL FIGLIO', this.selectedPmId);
-
     this.projectDto.projectManagerId = this.selectedPmId;
-    console.log('Progetto con pm settato', this.projectDto);
   }
 
   onTeamSelected(teamId: number): void {
     this.selectedTeamId = teamId;
-    console.log('ID del team selezionato:', this.selectedTeamId);
   }
 
   openCreateTeamDialog(): void {
@@ -264,9 +258,7 @@ export class CreateProjectStepperDialogComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Team creato: ', result);
         this.selectedTeamId = result.id;
-        console.log('SELECTED TEAM ID PASSATO DAL DIALOG', this.selectedTeamId);
         this.onSubmit();
       }
     });
@@ -277,7 +269,6 @@ export class CreateProjectStepperDialogComponent implements OnInit {
 
     this.projectService.createProject(this.projectDto).subscribe({
       next: (project) => {
-        console.log('Progetto creato con PM', project);
         this.setLoadingState('createProject', false);
         this.setErrorState('createProject', null);
 
@@ -287,8 +278,7 @@ export class CreateProjectStepperDialogComponent implements OnInit {
           this.projectService
             .assignTeamToProject(project.id!, this.selectedTeamId!)
             .subscribe({
-              next: (updatedProject) => {
-                console.log('Project con PM e Team', updatedProject);
+              next: () => {
                 this.setLoadingState('assignTeam', false);
                 this.setErrorState('assignTeam', null);
 
