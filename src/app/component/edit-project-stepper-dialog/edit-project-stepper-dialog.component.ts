@@ -90,6 +90,8 @@ export class EditProjectStepperDialogComponent implements OnInit {
   existingTeam = false;
   selectedTeamId: number | null = null;
 
+  userRole?: string;
+
   get isLoading(): boolean {
     return Object.values(this.loadingStates).some((state) => state);
   }
@@ -99,6 +101,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
     public data: {
       project: ProjectDto;
       team: TeamDto;
+      userRole: string;
     },
     public dialogRef: MatDialogRef<EditProjectStepperDialogComponent>,
     private fb: FormBuilder,
@@ -108,10 +111,10 @@ export class EditProjectStepperDialogComponent implements OnInit {
   ) {
     const project = this.data.project;
 
+    this.userRole = this.data.userRole;
+
     const startDate = new Date(project.startDate);
-    console.log('Start date:', startDate);
     const dueDate = new Date(project.dueDate);
-    console.log('Due date:', dueDate);
 
     this.selectedStartMonthLabel = this.months[startDate.getMonth()];
     this.selectedStartDayLabel = startDate.getDate().toString();
@@ -168,7 +171,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Data edit project', this.data);
     this.updateStartDateDays();
     this.updateDueDateDays();
   }
@@ -263,8 +265,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
   };
 
   onStepChange(event: { selectedIndex: number }) {
-    console.log('Step cambiato:', event.selectedIndex);
-
     switch (event.selectedIndex) {
       case 0:
         this.onEditFirstPartProject();
@@ -334,24 +334,16 @@ export class EditProjectStepperDialogComponent implements OnInit {
         ? this.selectedPmId
         : this.data.project.projectManagerId,
     };
-
-    console.log(
-      'Dati Iniziali Del Progetto Con Manager Attuale',
-      this.projectDto
-    );
   }
 
   onPmSelected(pmId: number) {
     this.selectedPmId = pmId;
-    console.log('PM SELEZIONATO DAL FIGLIO', this.selectedPmId);
 
     this.projectDto.projectManagerId = this.selectedPmId;
-    console.log('Progetto con pm settato', this.projectDto);
   }
 
   onTeamSelected(teamId: number): void {
     this.selectedTeamId = teamId;
-    console.log('ID del team selezionato:', this.selectedTeamId);
   }
 
   openCreateTeamDialog(): void {
@@ -362,9 +354,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Team creato: ', result);
         this.selectedTeamId = result.id;
-        console.log('SELECTED TEAM ID PASSATO DAL DIALOG', this.selectedTeamId);
         this.onSubmit();
       }
     });
@@ -380,6 +370,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
     });
 
     dialogRef.componentInstance.teamUpdated.subscribe(() => {
+      this.onSubmit();
       this.projectUpdated.emit();
       dialogRef.close();
     });
@@ -392,8 +383,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
       .updateProject(this.data.project.id!, this.projectDto)
       .subscribe({
         next: (updatedProject) => {
-          console.log('Progetto modificato con successo', updatedProject);
-
           this.setLoadingState('updateProject', false);
           this.setErrorState('updateProject', null);
 
@@ -402,19 +391,13 @@ export class EditProjectStepperDialogComponent implements OnInit {
             delay: 3000,
           });
 
-          // Se c'è un Project Manager selezionato
           if (this.selectedPmId) {
             this.setLoadingState('updateProjectManager', true);
 
             this.projectService
               .updateProjectManager(updatedProject.id!, this.selectedPmId)
               .subscribe({
-                next: (updatedProjectManager) => {
-                  console.log(
-                    'Progetto modificato con PM modificato',
-                    updatedProjectManager
-                  );
-
+                next: () => {
                   this.setLoadingState('updateProjectManager', false);
                   this.setErrorState('updateProjectManager', null);
 
@@ -426,7 +409,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
                     }
                   );
 
-                  // Se il team è stato selezionato, aggiorniamo anche il team
                   if (this.selectedTeamId) {
                     this.setLoadingState('reassignTeam', true);
 
@@ -436,12 +418,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
                         this.selectedTeamId
                       )
                       .subscribe({
-                        next: (updatedProjectTeam) => {
-                          console.log(
-                            'Progetto modificato con team modificato',
-                            updatedProjectTeam
-                          );
-
+                        next: () => {
                           this.setLoadingState('reassignTeam', false);
                           this.setErrorState('reassignTeam', null);
 
@@ -453,7 +430,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
                             }
                           );
 
-                          // Emissione dell'evento dopo che tutte le operazioni sono state completate
                           this.projectUpdated.emit();
                           this.dialogRef.close();
                         },
@@ -463,7 +439,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
                         },
                       });
                   } else {
-                    // Se non c'è nessun team da aggiornare, emettiamo l'evento direttamente
                     this.projectUpdated.emit();
                     this.dialogRef.close();
                   }
@@ -473,20 +448,13 @@ export class EditProjectStepperDialogComponent implements OnInit {
                   this.setErrorState('updateProjectManager', error.message);
                 },
               });
-          }
-          // Se solo il team è stato selezionato
-          else if (this.selectedTeamId) {
+          } else if (this.selectedTeamId) {
             this.setLoadingState('reassignTeam', true);
 
             this.projectService
               .reassignTeamToProject(updatedProject.id!, this.selectedTeamId)
               .subscribe({
-                next: (updatedProjectTeam) => {
-                  console.log(
-                    'Progetto modificato con team modificato',
-                    updatedProjectTeam
-                  );
-
+                next: () => {
                   this.setLoadingState('reassignTeam', false);
                   this.setErrorState('reassignTeam', null);
 
@@ -495,7 +463,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
                     delay: 3000,
                   });
 
-                  // Emissione dell'evento dopo che il team è stato modificato
                   this.projectUpdated.emit();
                   this.dialogRef.close();
                 },
@@ -504,9 +471,7 @@ export class EditProjectStepperDialogComponent implements OnInit {
                   this.setErrorState('reassignTeam', error.message);
                 },
               });
-          }
-          // Se nessun PM e team è selezionato, emettiamo solo l'evento
-          else {
+          } else {
             this.projectUpdated.emit();
             this.dialogRef.close();
           }
