@@ -367,7 +367,11 @@
 
         <span class="mx-2">or</span>
 
-        <button mat-raised-button matStepperNext>
+        <button mat-raised-button matStepperNext *ngIf="data.team">
+          Keep Current Project Manager
+        </button>
+
+        <button mat-raised-button *ngIf="!data.team" (click)="onSubmit()">
           Keep Current Project Manager
         </button>
       </div>
