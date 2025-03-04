@@ -99,6 +99,20 @@ export class ProjectService {
     );
   }
 
+  getActiveProjectsByTeamMember(
+    teamMemberUsername: string,
+    page: number,
+    size: number,
+    sort?: string
+  ): Observable<Page<ProjectDto>> {
+    const params = this.createPageableParams(page, size, sort);
+
+    return this.http.get<Page<ProjectDto>>(
+      `${this.apiUrl}/active/teamMember/${teamMemberUsername}`,
+      { params }
+    );
+  }
+
   createProject(projectDto: ProjectDto): Observable<ProjectDto> {
     return this.http.post<ProjectDto>(this.apiUrl, projectDto);
   }

@@ -12,6 +12,9 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectStepperDialogComponent } from '../create-project-stepper-dialog/create-project-stepper-dialog.component';
 import { AuthService } from '../../service/auth.service';
+import { Router } from '@angular/router';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { ToastService } from '../../service/toast.service';
 
 @Component({
   selector: 'app-project-dashboard',
@@ -23,6 +26,7 @@ import { AuthService } from '../../service/auth.service';
     NgbModule,
     FilterSectionComponent,
     PaginationComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './project-dashboard.component.html',
   styleUrls: ['./project-dashboard.component.css'],
@@ -30,10 +34,14 @@ import { AuthService } from '../../service/auth.service';
 export class ProjectDashboardComponent implements OnInit {
   loadingStates = {
     projects: false,
+    activeProjectsTeamMember: false,
+    logout: false,
   };
 
   errorStates = {
     projects: null as string | null,
+    activeProjectsTeamMember: null as string | null,
+    logout: null as string | null,
   };
 
   setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
@@ -80,13 +88,27 @@ export class ProjectDashboardComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.username = this.authService.getUserUsername();
     this.role = this.authService.getUserRole();
     this.applyFilters();
+
+    if (this.role === 'TEAMMEMBER') {
+      this.checkForProjectUpdates();
+    }
+  }
+
+  checkForProjectUpdates(): void {
+    setInterval(() => {
+      if (this.errorStates.activeProjectsTeamMember) {
+        this.applyFilters();
+      }
+    }, 10000);
   }
 
   loadAllProjectsWithFilters(): void {
@@ -173,13 +195,43 @@ export class ProjectDashboardComponent implements OnInit {
       });
   }
 
+  loadTeamMemberActiveProjects(): void {
+    this.setLoadingState('activeProjectsTeamMember', true);
+
+    this.projectService
+      .getActiveProjectsByTeamMember(
+        this.username!,
+        this.currentPage,
+        this.pageSize
+      )
+      .subscribe({
+        next: (response) => {
+          this.projects = response.content;
+          this.totalElements = response.page.totalElements;
+          this.totalPages = response.page.totalPages;
+
+          const project = this.projects[0];
+
+          this.router.navigate(['project', project.id, project.name]);
+
+          this.setLoadingState('activeProjectsTeamMember', false);
+          this.setErrorState('activeProjectsTeamMember', null);
+        },
+        error: (error) => {
+          this.setLoadingState('activeProjectsTeamMember', false);
+          this.setErrorState('activeProjectsTeamMember', error.message);
+          this.projects = [];
+        },
+      });
+  }
+
   applyFilters(): void {
     if (this.role === 'ADMIN') {
       this.loadAllProjectsWithFilters();
     } else if (this.role === 'PROJECTMANAGER') {
       this.loadManagerProjectsWithFilters();
     } else if (this.role === 'TEAMMEMBER') {
-      this.loadTeamMemberProjectsWithFilters();
+      this.loadTeamMemberActiveProjects();
     }
   }
 

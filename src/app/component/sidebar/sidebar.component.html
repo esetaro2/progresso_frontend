@@ -53,8 +53,18 @@
 </ng-template>
 
 <button
+  *ngIf="role !== 'TEAMMEMBER'"
   class="btn btn-no-border menu-button"
   (click)="openSidebar(offcanvasContent)"
 >
   <mat-icon>menu</mat-icon>
+</button>
+
+<button
+  *ngIf="role === 'TEAMMEMBER'"
+  class="btn btn-outline-danger d-flex gap-2 logout-button mt-3 ms-3"
+  (click)="logout()"
+>
+  <mat-icon>logout</mat-icon>
+  <span>Logout</span>
 </button>

@@ -1,4 +1,23 @@
-<div class="container-fluid p-4 d-flex flex-column min-vh-100">
+<app-loading-spinner
+  *ngIf="role === 'TEAMMEMBER' && !errorStates.activeProjectsTeamMember"
+></app-loading-spinner>
+
+<div
+  class="team-member-waiting-container"
+  *ngIf="role === 'TEAMMEMBER' && errorStates.activeProjectsTeamMember"
+>
+  <div class="spinner-container">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  <div class="message">
+    <p>Waiting for projects...<br />Check periodically for updates.</p>
+  </div>
+</div>
+
+<div
+  class="container-fluid p-4 d-flex flex-column min-vh-100"
+  *ngIf="role !== 'TEAMMEMBER'"
+>
   <h2 class="text-center mb-5">Projects</h2>
 
   <app-filter-section
