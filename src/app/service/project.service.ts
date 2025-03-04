@@ -99,59 +99,6 @@ export class ProjectService {
     );
   }
 
-  findByTeamId(
-    teamId: number,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(`${this.apiUrl}/team/${teamId}`, {
-      params,
-    });
-  }
-
-  findByTeamIdAndStatus(
-    teamId: number,
-    status: string,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(
-      `${this.apiUrl}/team/${teamId}/status/${status}`,
-      { params }
-    );
-  }
-
-  findByTeamIdAndDueDateBefore(
-    teamId: number,
-    dueDate: string,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(
-      `${this.apiUrl}/team/${teamId}/due-date-before/${dueDate}`,
-      { params }
-    );
-  }
-
-  findActiveByTeamId(
-    teamId: number,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<ProjectDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<ProjectDto>>(
-      `${this.apiUrl}/team/${teamId}/active`,
-      { params }
-    );
-  }
-
   createProject(projectDto: ProjectDto): Observable<ProjectDto> {
     return this.http.post<ProjectDto>(this.apiUrl, projectDto);
   }

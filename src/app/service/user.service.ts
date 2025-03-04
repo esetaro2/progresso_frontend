@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { Page } from '../dto/page.dto';
+import { UserUpdateDtoAdmin } from '../dto/user-update-dto-admin';
 
 @Injectable({
   providedIn: 'root',
@@ -30,12 +31,29 @@ export class UserService {
     return this.http.get<UserResponseDto>(`${this.apiUrl}/${userId}`);
   }
 
+  getUserDetailsAdmin(userId: number): Observable<UserUpdateDtoAdmin> {
+    return this.http.get<UserUpdateDtoAdmin>(
+      `${this.apiUrl}/${userId}/details/admin`
+    );
+  }
+
   getAllUsers(
     page: number,
     size: number,
+    searchTerm?: string,
+    role?: string,
+    active?: boolean,
     sort?: string
   ): Observable<Page<UserResponseDto>> {
-    const params = this.createPageableParams(page, size, sort);
+    let params = this.createPageableParams(page, size, sort);
+
+    if (searchTerm != null && searchTerm.length != 0)
+      params = params.set('searchTerm', searchTerm);
+
+    if (role != null && role.length != 0) params = params.set('role', role);
+
+    if (active != null) params = params.set('active', active);
+
     return this.http.get<Page<UserResponseDto>>(this.apiUrl, { params });
   }
 

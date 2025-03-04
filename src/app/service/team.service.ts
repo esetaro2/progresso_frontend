@@ -47,89 +47,24 @@ export class TeamService {
   getAllTeams(
     page: number,
     size: number,
+    active?: boolean,
+    searchQuery?: string,
     sort?: string
   ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
+    let params = this.createPageableParams(page, size, sort);
+
+    if (active != null) {
+      params = params.set('active', active);
+    }
+
+    if (searchQuery != null && searchQuery.length != 0)
+      params = params.set('searchTerm', searchQuery);
+
     return this.http.get<Page<TeamDto>>(this.apiUrl, { params });
   }
 
   getTeamById(teamId: number): Observable<TeamDto> {
     return this.http.get<TeamDto>(`${this.apiUrl}/${teamId}`);
-  }
-
-  getTeamByName(name: string): Observable<TeamDto> {
-    return this.http.get<TeamDto>(`${this.apiUrl}/search/by-name/${name}`);
-  }
-
-  getTeamsByActive(
-    active: boolean,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort).set(
-      'active',
-      active.toString()
-    );
-    return this.http.get<Page<TeamDto>>(`${this.apiUrl}/active`, { params });
-  }
-
-  getTeamsByMemberId(
-    userId: number,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<TeamDto>>(`${this.apiUrl}/user/${userId}`, {
-      params,
-    });
-  }
-
-  getTeamsWithProjects(
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<TeamDto>>(`${this.apiUrl}/with-projects`, {
-      params,
-    });
-  }
-
-  getTeamsWithMinMembers(
-    size: number,
-    page: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<TeamDto>>(`${this.apiUrl}/min-members/${size}`, {
-      params,
-    });
-  }
-
-  getTeamsWithoutMembers(
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<TeamDto>>(`${this.apiUrl}/without-members`, {
-      params,
-    });
-  }
-
-  getTeamsByProjectId(
-    projectId: number,
-    page: number,
-    size: number,
-    sort?: string
-  ): Observable<Page<TeamDto>> {
-    const params = this.createPageableParams(page, size, sort);
-    return this.http.get<Page<TeamDto>>(
-      `${this.apiUrl}/by-project/${projectId}`,
-      { params }
-    );
   }
 
   createTeam(teamName: string): Observable<TeamDto> {
