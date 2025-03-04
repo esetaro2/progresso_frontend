@@ -102,15 +102,10 @@ export class EditTeamStepperDialogComponent {
 
   onSelectedTeamMembers(selectedTeamMembersIdsEvent: number[]): void {
     this.addSelectedTeamMemberIds = selectedTeamMembersIdsEvent;
-    console.log(
-      'Team Members selezionati dal figlio: ',
-      this.addSelectedTeamMemberIds
-    );
   }
 
   onTeamMemberSelected(teamMemberIds: number[]): void {
     this.removeSelectedTeamMemberIds = teamMemberIds;
-    console.log(this.removeSelectedTeamMemberIds);
   }
 
   updateTeam(): void {
@@ -118,8 +113,7 @@ export class EditTeamStepperDialogComponent {
     this.setLoadingState('updateTeam', true);
 
     this.teamService.updateTeam(this.data.team.id!, teamName).subscribe({
-      next: (updatedTeam) => {
-        console.log('Team updated successfully', updatedTeam);
+      next: () => {
         this.setLoadingState('updateTeam', false);
         this.setErrorState('updateTeam', null);
 
@@ -144,8 +138,7 @@ export class EditTeamStepperDialogComponent {
     this.teamService
       .addMembersToTeam(this.data.team.id!, this.addSelectedTeamMemberIds)
       .subscribe({
-        next: (updatedAddTeamMembers) => {
-          console.log('Team members added successfully', updatedAddTeamMembers);
+        next: () => {
           this.setLoadingState('addTeamMembers', false);
           this.setErrorState('addTeamMembers', null);
 
@@ -173,11 +166,7 @@ export class EditTeamStepperDialogComponent {
         this.removeSelectedTeamMemberIds
       )
       .subscribe({
-        next: (updatedRemoveTeamMembers) => {
-          console.log(
-            'Team members removed successfully',
-            updatedRemoveTeamMembers
-          );
+        next: () => {
           this.setLoadingState('removeTeamMembers', false);
           this.setErrorState('removeTeamMembers', null);
           this.toastService.show('Team members removed successfully!', {
