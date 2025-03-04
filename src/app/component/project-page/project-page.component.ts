@@ -17,7 +17,6 @@ import { UserService } from '../../service/user.service';
 import { TeamService } from '../../service/team.service';
 import { UserResponseDto } from '../../dto/user-response.dto';
 import { TeamDto } from '../../dto/team.dto';
-import { Page } from '../../dto/page.dto';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { TaskTableComponent } from '../task-table/task-table.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -98,6 +97,7 @@ export class ProjectPageComponent implements OnInit {
   userFirstName: string | null = null;
   userLastName: string | null = null;
   userUsername: string | null = null;
+  userRole: string | null = null;
 
   projectIdParam: string | null = null;
   projectId = 0;
@@ -153,6 +153,7 @@ export class ProjectPageComponent implements OnInit {
     this.userFirstName = this.authService.getUserFirstName();
     this.userLastName = this.authService.getUserLastName();
     this.userUsername = this.authService.getUserUsername();
+    this.userRole = this.authService.getUserRole();
 
     this.projectIdParam = this.route.snapshot.paramMap.get('id');
     this.projectId = Number.parseInt(this.projectIdParam || '0');
@@ -274,38 +275,12 @@ export class ProjectPageComponent implements OnInit {
     this.teamService.getTeamById(this.project!.teamId!).subscribe({
       next: (teamDto: TeamDto) => {
         this.team = teamDto;
-        this.findUsersByTeamID(
-          this.currentPageTeamMembers,
-          this.totalElementsTeamMembers
-        );
         this.setLoadingState('team', false);
         this.setErrorState('team', null);
       },
       error: (error) => {
         this.setLoadingState('team', false);
         this.setErrorState('team', error.message);
-      },
-    });
-  }
-
-  findUsersByTeamID(page: number, size: number): void {
-    this.setLoadingState('teamMembers', true);
-
-    this.userService.getUsersByTeamId(this.team!.id!, page, size).subscribe({
-      next: (pageData: Page<UserResponseDto>) => {
-        this.teamMembers = pageData.content;
-        this.teamMembersNames = this.teamMembers.map(
-          (teammember) =>
-            `${teammember.firstName} ${teammember.lastName} (${teammember.username})`
-        );
-        this.totalElementsTeamMembers = pageData.page.totalElements;
-        this.totalPagesTeamMembers = pageData.page.totalPages;
-        this.setLoadingState('teamMembers', false);
-        this.setErrorState('teamMembers', null);
-      },
-      error: (error) => {
-        this.setLoadingState('teamMembers', false);
-        this.setErrorState('teamMembers', error.message);
       },
     });
   }
@@ -336,7 +311,7 @@ export class ProjectPageComponent implements OnInit {
 
     dialogRef.componentInstance.taskCreated.subscribe(() => {
       dialogRef.close();
-      this.getProjectPercentage();
+      this.getProjectInfo();
       this.taskTableComponent.loadTasks();
     });
   }
@@ -348,6 +323,7 @@ export class ProjectPageComponent implements OnInit {
       data: {
         project: this.project,
         team: this.team,
+        userRole: this.userRole,
       },
     });
 
@@ -451,7 +427,6 @@ export class ProjectPageComponent implements OnInit {
       .subscribe({
         next: (pageData) => {
           this.comments = pageData.content;
-          console.log('Comments', this.comments);
           this.totalElementsComment = pageData.page.totalElements;
           this.totalPagesComment = pageData.page.totalPages;
 
@@ -506,7 +481,10 @@ export class ProjectPageComponent implements OnInit {
       },
       error: (error) => {
         this.setLoadingStateComments('createComment', false);
-        this.setErrorStateComments('createComment', error.message);
+        this.setErrorStateComments(
+          'createComment',
+          error.message.replace(/\n/g, '<br>')
+        );
       },
     });
   }
