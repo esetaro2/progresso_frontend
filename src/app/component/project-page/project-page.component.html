@@ -199,6 +199,7 @@
         class="d-flex align-items-center justify-content-center"
       >
         <button
+          id="addTaskButton"
           (click)="onAddTask()"
           [disabled]="!team"
           class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-1 mb-2"
@@ -242,6 +243,7 @@
             autocomplete="off"
           ></textarea>
           <button
+            id="sendButton"
             class="sendButton btn btn-primary rounded-circle"
             [disabled]="commentForm.invalid"
             type="submit"
@@ -256,9 +258,20 @@
               commentForm.get('content')?.invalid
             "
           >
+            <span *ngIf="commentForm.get('content')?.errors?.['minlength']">
+              <i class="fa fa-times"></i>Comment is too short.
+            </span>
             <span *ngIf="commentForm.get('content')?.errors?.['maxlength']">
               <i class="fa fa-times"></i>Comment is too long.
             </span>
+          </span>
+          <span
+            *ngIf="
+              commentForm.get('content')?.touched &&
+              commentForm.get('content')?.valid
+            "
+          >
+            <i class="fa fa-check"></i>Comment is valid.
           </span>
         </small>
       </form>
@@ -286,7 +299,7 @@
     </div>
 
     <div *ngIf="!isLoadingComments && !errorStatesComments.loadComments">
-      <div *ngFor="let comment of comments" class="comment">
+      <div *ngFor="let comment of comments" class="comment" id="comment">
         <app-comment
           [projectStatus]="project?.status"
           [userUsername]="userUsername!"

@@ -8,7 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-toast-container',
   imports: [NgbModule, CommonModule, FormsModule, ReactiveFormsModule],
   template: `
-    <div class="toast-container">
+    <div class="toast-container" id="toast-container">
       <ngb-toast
         *ngFor="let toast of toastService.toasts"
         [header]="toast.header!"

@@ -13,7 +13,7 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from '../../material.module';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../service/auth.service';
 import { ToastService } from '../../service/toast.service';
 import { UserUpdateDtoAdmin } from '../../dto/user-update-dto-admin';
@@ -93,7 +93,6 @@ export class EditUserAdminDialogComponent {
     },
     private authService: AuthService,
     private fb: FormBuilder,
-    private dialog: MatDialog,
     private toastService: ToastService
   ) {
     this.currentUser = data.user;
@@ -128,7 +127,7 @@ export class EditUserAdminDialogComponent {
         [
           Validators.required,
           Validators.minLength(2),
-          Validators.maxLength(5),
+          Validators.maxLength(6),
           Validators.pattern(/^\+\d*$/),
         ],
       ],

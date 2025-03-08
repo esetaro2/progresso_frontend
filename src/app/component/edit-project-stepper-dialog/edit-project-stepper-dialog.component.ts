@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -10,6 +10,7 @@ import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -35,11 +36,12 @@ import { EditTeamStepperDialogComponent } from '../edit-team-stepper-dialog/edit
     MatAutocompleteModule,
     AvailablePmTableComponent,
     AvailableTeamTableComponent,
+    FormsModule,
   ],
   templateUrl: './edit-project-stepper-dialog.component.html',
   styleUrl: './edit-project-stepper-dialog.component.css',
 })
-export class EditProjectStepperDialogComponent implements OnInit {
+export class EditProjectStepperDialogComponent {
   @Output() projectUpdated = new EventEmitter<void>();
 
   loadingStates = {
@@ -157,6 +159,8 @@ export class EditProjectStepperDialogComponent implements OnInit {
       }
     );
 
+    this.daysInStartMonth = this.getStartDaysInMonth();
+    this.daysInDueMonth = this.getDueDaysInMonth();
     this.yearsList = this.getYearsList();
   }
 
@@ -168,11 +172,6 @@ export class EditProjectStepperDialogComponent implements OnInit {
     ) {
       event.preventDefault();
     }
-  }
-
-  ngOnInit(): void {
-    this.updateStartDateDays();
-    this.updateDueDateDays();
   }
 
   setLoadingState(key: keyof typeof this.loadingStates, state: boolean): void {
@@ -491,30 +490,33 @@ export class EditProjectStepperDialogComponent implements OnInit {
     }
   }
 
+  onStartYearSelected(year: number) {
+    this.selectedStartYearLabel = year.toString();
+    this.onDropdownSelect(year.toString(), 'startYear');
+    this.updateStartDaysInMonth();
+  }
+
   onStartMonthSelected(month: string) {
     this.selectedStartMonthLabel = month;
     this.onDropdownSelect(month, 'startMonth');
-    this.updateStartDateDays();
-    this.updateDueDateDays();
+    this.updateStartDaysInMonth();
   }
 
   onStartDaySelected(day: number) {
     this.selectedStartDayLabel = day.toString();
     this.onDropdownSelect(day.toString(), 'startDay');
-    this.updateDueDateDays();
   }
 
-  onStartYearSelected(year: number) {
-    this.selectedStartYearLabel = year.toString();
-    this.onDropdownSelect(year.toString(), 'startYear');
-    this.updateStartDateDays();
-    this.updateDueDateDays();
+  onDueYearSelected(year: number) {
+    this.selectedDueYearLabel = year.toString();
+    this.onDropdownSelect(year.toString(), 'dueYear');
+    this.updateDueDaysInMonth();
   }
 
   onDueMonthSelected(month: string) {
     this.selectedDueMonthLabel = month;
     this.onDropdownSelect(month, 'dueMonth');
-    this.updateDueDateDays();
+    this.updateDueDaysInMonth();
   }
 
   onDueDaySelected(day: number) {
@@ -522,38 +524,50 @@ export class EditProjectStepperDialogComponent implements OnInit {
     this.onDropdownSelect(day.toString(), 'dueDay');
   }
 
-  onDueYearSelected(year: number) {
-    this.selectedDueYearLabel = year.toString();
-    this.onDropdownSelect(year.toString(), 'dueYear');
-    this.updateDueDateDays();
+  onDropdownSelect(value: string, controlName: string) {
+    const control = this.projectForm.get(controlName);
+    if (control) {
+      control.setValue(value);
+      control.markAsTouched();
+      control.updateValueAndValidity();
+    }
   }
 
-  private onDropdownSelect(value: string, controlName: string) {
-    this.projectForm.get(controlName)?.setValue(value);
-    this.projectForm.get(controlName)?.markAsTouched();
+  updateStartDaysInMonth() {
+    this.daysInStartMonth = this.getStartDaysInMonth();
+    if (
+      !this.daysInStartMonth.includes(parseInt(this.selectedStartDayLabel)) &&
+      this.selectedStartDayLabel !== 'DD'
+    ) {
+      this.onStartDaySelected(this.daysInStartMonth[0]);
+    }
   }
 
-  private updateStartDateDays() {
-    this.daysInStartMonth = this.getDaysInMonth(
-      this.selectedStartMonthLabel,
-      parseInt(this.selectedStartYearLabel) || this.currentYear
-    );
+  updateDueDaysInMonth() {
+    this.daysInDueMonth = this.getDueDaysInMonth();
+    if (
+      !this.daysInDueMonth.includes(parseInt(this.selectedDueDayLabel)) &&
+      this.selectedDueDayLabel !== 'DD'
+    ) {
+      this.onDueDaySelected(this.daysInStartMonth[0]);
+    }
   }
 
-  private updateDueDateDays() {
-    this.daysInDueMonth = this.getDaysInMonth(
-      this.selectedDueMonthLabel,
-      parseInt(this.selectedDueYearLabel) || this.currentYear
-    );
+  getStartDaysInMonth(): number[] {
+    const monthIndex =
+      this.months.indexOf(this.selectedStartMonthLabel) + 1 || 1;
+    const year =
+      parseInt(this.selectedStartYearLabel) || new Date().getFullYear();
+    const daysInMonth = new Date(year, monthIndex, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
   }
 
-  private getDaysInMonth(monthLabel: string, year: number): number[] {
-    const monthIndex = this.months.indexOf(monthLabel) + 1;
-    if (monthIndex <= 0) return [];
-    return Array.from(
-      { length: new Date(year, monthIndex, 0).getDate() },
-      (_, i) => i + 1
-    );
+  getDueDaysInMonth(): number[] {
+    const monthIndex = this.months.indexOf(this.selectedDueMonthLabel) + 1 || 1;
+    const year =
+      parseInt(this.selectedDueYearLabel) || new Date().getFullYear();
+    const daysInMonth = new Date(year, monthIndex, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
   }
 
   private getYearsList(): number[] {

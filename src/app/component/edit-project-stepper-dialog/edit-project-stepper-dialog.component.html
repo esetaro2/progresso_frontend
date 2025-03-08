@@ -106,85 +106,73 @@
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="startMonthDropdown">Start Date</label>
+            <label for="startYearDropdown">Start Date</label>
             <div class="d-flex">
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="startYearDropdown"
-                  ngbDropdownToggle
+                  [placeholder]="selectedStartYearLabel"
+                  (selectionChange)="onStartYearSelected($event.value)"
+                  (click)="onInput('startYear')"
                   style="font-size: small"
                   [disabled]="projectForm.hasError('startDateLocked')"
+                  [value]="selectedStartYearLabel"
                 >
-                  {{ selectedStartYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let year of yearsList"
-                    (click)="onStartYearSelected(year)"
-                    [disabled]="projectForm.hasError('startDateLocked')"
+                    [value]="year"
+                    id="startYearDropdownOption"
                   >
                     {{ year }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="startMonthDropdown"
-                  ngbDropdownToggle
+                  [placeholder]="selectedStartMonthLabel"
+                  [value]="selectedStartMonthLabel"
+                  (selectionChange)="onStartMonthSelected($event.value)"
+                  (click)="onInput('startMonth')"
                   style="font-size: small"
                   [disabled]="projectForm.hasError('startDateLocked')"
                 >
-                  {{ selectedStartMonthLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startMonthDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let month of months"
-                    (click)="onStartMonthSelected(month)"
-                    [disabled]="projectForm.hasError('startDateLocked')"
+                    [value]="month"
+                    id="startMonthDropdownOption"
                   >
                     {{ month }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
                   id="startDayDropdown"
-                  ngbDropdownToggle
+                  [placeholder]="selectedStartDayLabel"
+                  [value]="selectedStartDayLabel"
+                  (selectionChange)="onStartDaySelected($event.value)"
+                  (click)="onInput('startDay')"
                   style="font-size: small"
                   [disabled]="projectForm.hasError('startDateLocked')"
                 >
-                  {{ selectedStartDayLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startDayDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let day of daysInStartMonth"
-                    (click)="onStartDaySelected(day)"
-                    [disabled]="projectForm.hasError('startDateLocked')"
+                    [value]="day"
+                    id="startDayDropdownOption"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
             <small>
               <span *ngIf="projectForm.hasError('startDateLocked')">
@@ -211,89 +199,80 @@
           <div class="col-md-6 mb-3">
             <label for="dueMonthDropdown">Due Date</label>
             <div class="d-flex">
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="dueYearDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  [placeholder]="selectedDueYearLabel"
+                  [value]="selectedDueYearLabel"
+                  (selectionChange)="onDueYearSelected($event.value)"
+                  (click)="onInput('dueYear')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueYearDropdownOption"
                     *ngFor="let year of yearsList"
-                    (click)="onDueYearSelected(year)"
+                    [value]="year"
                   >
                     {{ year }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="dueMonthDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  [placeholder]="selectedDueMonthLabel"
+                  [value]="selectedDueMonthLabel"
+                  (selectionChange)="onDueMonthSelected($event.value)"
+                  (click)="onInput('dueMonth')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueMonthLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueMonthDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueMonthDropdownOption"
                     *ngFor="let month of months"
-                    (click)="onDueMonthSelected(month)"
+                    [value]="month"
                   >
                     {{ month }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
                   id="dueDayDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  [placeholder]="selectedDueDayLabel"
+                  [value]="selectedDueDayLabel"
+                  (selectionChange)="onDueDaySelected($event.value)"
+                  (click)="onInput('dueDay')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueDayLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueDayDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueDayDropdownOption"
                     *ngFor="let day of daysInDueMonth"
-                    (click)="onDueDaySelected(day)"
+                    [value]="day"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
 
             <small>

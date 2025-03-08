@@ -125,6 +125,7 @@
   >
     <div *ngIf="!comment?.deleted">
       <button
+        id="showReplyForm"
         class="btn btn-sm btn-link"
         (click)="showReplyForm = true"
         *ngIf="
@@ -184,6 +185,7 @@
         autocomplete="off"
       ></textarea>
       <button
+        id="sendReplyButton"
         type="submit"
         class="sendButton btn btn-primary rounded-circle"
         [disabled]="replyForm.invalid"
@@ -192,8 +194,14 @@
       </button>
     </div>
     <small style="height: 20px">
+      <span *ngIf="replyForm.get('content')?.errors?.['minlength']">
+        <i class="fa fa-times"></i>Reply is too short.
+      </span>
       <span *ngIf="replyForm.get('content')?.errors?.['maxlength']">
         <i class="fa fa-times"></i>Reply is too long.
+      </span>
+      <span *ngIf="replyForm.get('content')?.valid">
+        <i class="fa fa-check"></i>Reply is valid.
       </span>
     </small>
   </form>

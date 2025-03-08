@@ -123,6 +123,7 @@
                   id="birthYearDropdown"
                   ngbDropdownToggle
                   style="font-size: smaller"
+                  (click)="onInput('birthYear')"
                 >
                   {{ selectedBirthYearLabel }}
                 </button>
@@ -132,6 +133,7 @@
                   class="custom-dropdown-menu"
                 >
                   <button
+                    id="birthYearDropdownOption"
                     class="dropdown-item"
                     *ngFor="let year of yearsList"
                     (click)="onBirthYearSelected(year)"
@@ -147,6 +149,7 @@
                   style="font-size: smaller"
                   id="birthMonthDropdown"
                   ngbDropdownToggle
+                  (click)="onInput('birthMonth')"
                 >
                   {{ selectedBirthMonthLabel }}
                 </button>
@@ -156,6 +159,7 @@
                   class="custom-dropdown-menu"
                 >
                   <button
+                    id="birthMonthDropdownOption"
                     class="dropdown-item"
                     *ngFor="let month of birthMonths"
                     (click)="onBirthMonthSelected(month)"
@@ -171,6 +175,7 @@
                   id="birthDayDropdown"
                   ngbDropdownToggle
                   style="font-size: smaller"
+                  (click)="onInput('birthDay')"
                 >
                   {{ selectedBirthDayLabel }}
                 </button>
@@ -180,6 +185,7 @@
                   class="custom-dropdown-menu"
                 >
                   <button
+                    id="birthDayDropdownOption"
                     class="dropdown-item"
                     *ngFor="let day of daysInMonth"
                     (click)="onBirthDaySelected(day)"
@@ -192,23 +198,32 @@
             <small>
               <span
                 *ngIf="
-                  !registrationForm.get('birthMonth')?.touched ||
-                  !registrationForm.get('birthDay')?.touched ||
-                  !registrationForm.get('birthYear')?.touched ||
-                  registrationForm.get('birthMonth')?.invalid ||
-                  registrationForm.get('birthDay')?.invalid ||
-                  registrationForm.get('birthYear')?.invalid
+                  !registrationForm.get('birthMonth')?.touched &&
+                  !registrationForm.get('birthDay')?.touched &&
+                  !registrationForm.get('birthYear')?.touched
                 "
               >
                 Please select a birthdate.
               </span>
               <span
                 *ngIf="
+                  (registrationForm.get('birthMonth')?.touched ||
+                    registrationForm.get('birthDay')?.touched ||
+                    registrationForm.get('birthYear')?.touched) &&
+                  (registrationForm.get('birthMonth')?.invalid ||
+                    registrationForm.get('birthDay')?.invalid ||
+                    registrationForm.get('birthYear')?.invalid)
+                "
+              >
+                <i class="fa fa-times"></i>Birthdate is required.
+              </span>
+              <span
+                *ngIf="
                   registrationForm.get('birthMonth')?.touched &&
-                  registrationForm.get('birthMonth')?.valid &&
                   registrationForm.get('birthDay')?.touched &&
-                  registrationForm.get('birthDay')?.valid &&
                   registrationForm.get('birthYear')?.touched &&
+                  registrationForm.get('birthMonth')?.valid &&
+                  registrationForm.get('birthDay')?.valid &&
                   registrationForm.get('birthYear')?.valid
                 "
               >
@@ -232,8 +247,8 @@
                   aria-label="Phone Prefix"
                   formControlName="phonePrefix"
                   style="text-align: center"
+                  (input)="onInput('phonePrefix')"
                   autocomplete="off"
-                  onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 43"
                 />
               </div>
 
@@ -245,9 +260,8 @@
                   (keydown)="preventInitialSpace($event)"
                   formControlName="phoneNumber"
                   required
-                  (input)="formatPhoneNumber($event)"
+                  (input)="onInput('phoneNumber'); formatPhoneNumber($event)"
                   autocomplete="off"
-                  onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                 />
               </div>
             </div>
@@ -273,7 +287,8 @@
                 <span
                   *ngIf="registrationForm.get('phonePrefix')?.errors?.['pattern']"
                 >
-                  The phone prefix must start with a '+'.
+                  The phone prefix must start with a '+' and must contains only
+                  digits.
                 </span>
               </span>
               <span
@@ -300,7 +315,12 @@
                   Phone number is required.
                 </span>
                 <span
-                  *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern'] || registrationForm.get('phoneNumber')?.errors?.['minlength'] || registrationForm.get('phoneNumber')?.errors?.['maxlength']"
+                  *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern']"
+                >
+                  Invalid phone number.
+                </span>
+                <span
+                  *ngIf="registrationForm.get('phoneNumber')?.errors?.['maxlength']"
                 >
                   Invalid phone number.
                 </span>
@@ -327,6 +347,7 @@
                 id="roleDropdown"
                 ngbDropdownToggle
                 style="text-align: center; cursor: pointer"
+                (click)="onInput('role')"
               >
                 {{ selectedRoleLabel }}
               </button>
@@ -336,6 +357,7 @@
                 class="custom-dropdown-menu w-100"
               >
                 <button
+                  id="roleDropdownOption"
                   class="dropdown-item"
                   *ngFor="let role of roles"
                   (click)="onRoleSelected(role)"
@@ -395,6 +417,11 @@
                   Street address is required.
                 </span>
                 <span
+                  *ngIf="registrationForm.get('streetAddress')?.errors?.['minlength']"
+                >
+                  Street address is too short.
+                </span>
+                <span
                   *ngIf="registrationForm.get('streetAddress')?.errors?.['maxlength']"
                 >
                   Street address is too long.
@@ -445,6 +472,11 @@
                   City is required.
                 </span>
                 <span
+                  *ngIf="registrationForm.get('city')?.errors?.['minlength']"
+                >
+                  City is too short.
+                </span>
+                <span
                   *ngIf="registrationForm.get('city')?.errors?.['maxlength']"
                 >
                   City is too long.
@@ -491,6 +523,11 @@
                   *ngIf="registrationForm.get('stateProvinceRegion')?.errors?.['required']"
                 >
                   State/Province/Region is required.
+                </span>
+                <span
+                  *ngIf="registrationForm.get('stateProvinceRegion')?.errors?.['minlength']"
+                >
+                  State/Province/Region is too short.
                 </span>
                 <span
                   *ngIf="registrationForm.get('stateProvinceRegion')?.errors?.['maxlength']"
@@ -547,6 +584,11 @@
                   Country is required.
                 </span>
                 <span
+                  *ngIf="registrationForm.get('country')?.errors?.['minlength']"
+                >
+                  Country is too long.
+                </span>
+                <span
                   *ngIf="registrationForm.get('country')?.errors?.['maxlength']"
                 >
                   Country is too long.
@@ -582,7 +624,6 @@
               formControlName="zipCode"
               required
               (input)="onInput('zipCode')"
-              onkeypress="return event.charCode >= 48 && event.charCode <= 57"
             />
             <small>
               <span
@@ -665,6 +706,7 @@
 
         <div class="d-flex flex-column justify-content-center">
           <button
+            id="registerButton"
             (click)="onSubmit()"
             [disabled]="registrationForm.invalid"
             class="btn btn-primary btn-block"

@@ -93,7 +93,7 @@
               <span
                 *ngIf="projectForm.get('description')?.errors?.['maxlength']"
               >
-                Description is too long (max 255 characters).
+                Description is too long.
               </span>
             </span>
             <span
@@ -112,85 +112,73 @@
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="startMonthDropdown">Start Date</label>
+            <label for="startYearDropdown">Start Date</label>
             <div class="d-flex">
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="startYearDropdown"
-                  ngbDropdownToggle
+                  placeholder="YYYY"
+                  (selectionChange)="onStartYearSelected($event.value)"
+                  (click)="onInput('startYear')"
                   style="font-size: small"
                 >
-                  {{ selectedStartYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let year of yearsList"
-                    (click)="onStartYearSelected(year)"
+                    [value]="year"
+                    id="startYearDropdownOption"
                   >
                     {{ year }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="startMonthDropdown"
-                  ngbDropdownToggle
+                  placeholder="MM"
+                  (selectionChange)="onStartMonthSelected($event.value)"
+                  (click)="onInput('startMonth')"
                   style="font-size: small"
                 >
-                  {{ selectedStartMonthLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startMonthDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let month of months"
-                    (click)="onStartMonthSelected(month)"
+                    [value]="month"
+                    id="startMonthDropdownOption"
                   >
                     {{ month }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
                   id="startDayDropdown"
-                  ngbDropdownToggle
+                  placeholder="DD"
+                  (selectionChange)="onStartDaySelected($event.value)"
+                  (click)="onInput('startDay')"
                   style="font-size: small"
                 >
-                  {{ selectedStartDayLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="startDayDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
                     *ngFor="let day of daysInStartMonth"
-                    (click)="onStartDaySelected(day)"
+                    [value]="day"
+                    id="startDayDropdownOption"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
             <small>
               <span
                 *ngIf="
-                  !projectForm.get('startMonth')?.touched ||
-                  !projectForm.get('startDay')?.touched ||
+                  !projectForm.get('startMonth')?.touched &&
+                  !projectForm.get('startDay')?.touched &&
                   !projectForm.get('startYear')?.touched
                 "
               >
@@ -206,6 +194,18 @@
               >
                 <i class="fa fa-check"></i>Start date is valid.
               </span>
+              <span
+                *ngIf="
+                  (projectForm.get('startMonth')?.touched ||
+                    projectForm.get('startDay')?.touched ||
+                    projectForm.get('startYear')?.touched) &&
+                  (projectForm.get('startMonth')?.invalid ||
+                    projectForm.get('startDay')?.invalid ||
+                    projectForm.get('startYear')?.invalid)
+                "
+              >
+                <i class="fa fa-times"></i>Start date is required.
+              </span>
               <span *ngIf="projectForm.hasError('startBeforeToday')">
                 <i class="fa fa-times"></i>Start date must not be in the past.
               </span>
@@ -213,104 +213,103 @@
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="dueMonthDropdown">Due Date</label>
+            <label for="dueYearDropdown">Due Date</label>
             <div class="d-flex">
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="dueYearDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  placeholder="YYYY"
+                  (selectionChange)="onDueYearSelected($event.value)"
+                  (click)="onInput('dueYear')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueYearLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueYearDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueYearDropdownOption"
                     *ngFor="let year of yearsList"
-                    (click)="onDueYearSelected(year)"
+                    [value]="year"
                   >
                     {{ year }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown class="me-2">
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
                   id="dueMonthDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  placeholder="MM"
+                  (selectionChange)="onDueMonthSelected($event.value)"
+                  (click)="onInput('dueMonth')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueMonthLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueMonthDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueMonthDropdownOption"
                     *ngFor="let month of months"
-                    (click)="onDueMonthSelected(month)"
+                    [value]="month"
                   >
                     {{ month }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-              <div ngbDropdown>
-                <button
-                  class="btn btn-outline-primary fixed-width-dropdown"
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
                   id="dueDayDropdown"
-                  ngbDropdownToggle
-                  style="font-size: small"
+                  placeholder="DD"
+                  (selectionChange)="onDueDaySelected($event.value)"
+                  (click)="onInput('dueDay')"
                   [disabled]="
                     projectForm.hasError('startBeforeToday') ||
                     !isStartDateValid()
                   "
+                  style="font-size: small"
                 >
-                  {{ selectedDueDayLabel }}
-                </button>
-                <div
-                  ngbDropdownMenu
-                  aria-labelledby="dueDayDropdown"
-                  class="custom-dropdown-menu"
-                >
-                  <button
-                    class="dropdown-item"
+                  <mat-option
+                    id="dueDayDropdownOption"
                     *ngFor="let day of daysInDueMonth"
-                    (click)="onDueDaySelected(day)"
+                    [value]="day"
                   >
                     {{ day }}
-                  </button>
-                </div>
-              </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
 
             <small>
               <span
                 *ngIf="
-                  !projectForm.get('dueMonth')?.touched ||
-                  !projectForm.get('dueDay')?.touched ||
+                  !projectForm.get('dueMonth')?.touched &&
+                  !projectForm.get('dueDay')?.touched &&
                   !projectForm.get('dueYear')?.touched
                 "
               >
                 Please select a due date.
               </span>
-
+              <span
+                *ngIf="
+                  (projectForm.get('dueMonth')?.touched ||
+                    projectForm.get('dueDay')?.touched ||
+                    projectForm.get('dueYear')?.touched) &&
+                  (projectForm.get('dueMonth')?.invalid ||
+                    projectForm.get('dueDay')?.invalid ||
+                    projectForm.get('dueYear')?.invalid)
+                "
+              >
+                <i class="fa fa-times"></i>Due date is required.
+              </span>
               <span
                 *ngIf="
                   projectForm.get('dueMonth')?.valid &&
@@ -334,6 +333,7 @@
     <div matDialogActions>
       <button mat-button matDialogClose [disabled]="isLoading">Close</button>
       <button
+        id="firstNext"
         mat-button
         matStepperNext
         [disabled]="!projectForm.valid || isLoading"
@@ -368,7 +368,7 @@
     <div matDialogActions>
       <button mat-button matDialogClose [disabled]="isLoading">Close</button>
       <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
-      <button mat-button matStepperNext [disabled]="!selectedPmId || isLoading">
+      <button id="secondNext" mat-button matStepperNext [disabled]="!selectedPmId || isLoading">
         Next
       </button>
     </div>
@@ -406,7 +406,7 @@
 
         <span class="mx-2">or</span>
 
-        <button mat-raised-button (click)="onSubmit()">
+        <button mat-raised-button (click)="onSubmit()" id="assignTeamLater">
           Assign Team Later
         </button>
       </div>

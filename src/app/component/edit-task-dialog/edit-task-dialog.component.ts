@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -39,7 +39,7 @@ interface TeamMember {
   templateUrl: './edit-task-dialog.component.html',
   styleUrl: './edit-task-dialog.component.css',
 })
-export class EditTaskDialogComponent implements OnInit {
+export class EditTaskDialogComponent {
   @Output() taskUpdated = new EventEmitter<void>();
 
   loadingStates = {
@@ -163,6 +163,8 @@ export class EditTaskDialogComponent implements OnInit {
       }
     );
 
+    this.daysInStartMonth = this.getStartDaysInMonth();
+    this.daysInDueMonth = this.getDueDaysInMonth();
     this.taskForm.markAllAsTouched();
     this.yearsList = this.getYearsList();
   }
@@ -220,11 +222,6 @@ export class EditTaskDialogComponent implements OnInit {
     return null;
   };
 
-  ngOnInit(): void {
-    this.updateStartDateDays();
-    this.updateDueDateDays();
-  }
-
   preventInitialSpace(event: KeyboardEvent): void {
     const inputElement = event.target as HTMLInputElement;
     if (
@@ -247,7 +244,6 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   onStepChange(event: { selectedIndex: number }) {
-
     switch (event.selectedIndex) {
       case 0:
         this.onEditFirstPartTask();
@@ -295,7 +291,6 @@ export class EditTaskDialogComponent implements OnInit {
       dueDate: dueDate,
       projectId: this.data.projectId,
     };
-
   }
 
   onTeamMemberSelected(teamMemberIds: number[]): void {
@@ -353,27 +348,41 @@ export class EditTaskDialogComponent implements OnInit {
     });
   }
 
-  private updateStartDateDays() {
-    this.daysInStartMonth = this.getDaysInMonth(
-      this.selectedStartMonthLabel,
-      parseInt(this.selectedStartYearLabel) || this.currentYear
-    );
+  updateStartDaysInMonth() {
+    this.daysInStartMonth = this.getStartDaysInMonth();
+    if (
+      !this.daysInStartMonth.includes(parseInt(this.selectedStartDayLabel)) &&
+      this.selectedStartDayLabel !== 'DD'
+    ) {
+      this.onStartDaySelected(this.daysInStartMonth[0]);
+    }
   }
 
-  private updateDueDateDays() {
-    this.daysInDueMonth = this.getDaysInMonth(
-      this.selectedDueMonthLabel,
-      parseInt(this.selectedDueYearLabel) || this.currentYear
-    );
+  updateDueDaysInMonth() {
+    this.daysInDueMonth = this.getDueDaysInMonth();
+    if (
+      !this.daysInDueMonth.includes(parseInt(this.selectedDueDayLabel)) &&
+      this.selectedDueDayLabel !== 'DD'
+    ) {
+      this.onDueDaySelected(this.daysInStartMonth[0]);
+    }
   }
 
-  private getDaysInMonth(monthLabel: string, year: number): number[] {
-    const monthIndex = this.months.indexOf(monthLabel) + 1;
-    if (monthIndex <= 0) return [];
-    return Array.from(
-      { length: new Date(year, monthIndex, 0).getDate() },
-      (_, i) => i + 1
-    );
+  getStartDaysInMonth(): number[] {
+    const monthIndex =
+      this.months.indexOf(this.selectedStartMonthLabel) + 1 || 1;
+    const year =
+      parseInt(this.selectedStartYearLabel) || new Date().getFullYear();
+    const daysInMonth = new Date(year, monthIndex, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  }
+
+  getDueDaysInMonth(): number[] {
+    const monthIndex = this.months.indexOf(this.selectedDueMonthLabel) + 1 || 1;
+    const year =
+      parseInt(this.selectedDueYearLabel) || new Date().getFullYear();
+    const daysInMonth = new Date(year, monthIndex, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
   }
 
   private getYearsList(): number[] {
@@ -393,30 +402,33 @@ export class EditTaskDialogComponent implements OnInit {
     }
   }
 
+  onStartYearSelected(year: number) {
+    this.selectedStartYearLabel = year.toString();
+    this.onDropdownSelect(year.toString(), 'startYear');
+    this.updateStartDaysInMonth();
+  }
+
   onStartMonthSelected(month: string) {
     this.selectedStartMonthLabel = month;
     this.onDropdownSelect(month, 'startMonth');
-    this.updateStartDateDays();
-    this.updateDueDateDays();
+    this.updateStartDaysInMonth();
   }
 
   onStartDaySelected(day: number) {
     this.selectedStartDayLabel = day.toString();
     this.onDropdownSelect(day.toString(), 'startDay');
-    this.updateDueDateDays();
   }
 
-  onStartYearSelected(year: number) {
-    this.selectedStartYearLabel = year.toString();
-    this.onDropdownSelect(year.toString(), 'startYear');
-    this.updateStartDateDays();
-    this.updateDueDateDays();
+  onDueYearSelected(year: number) {
+    this.selectedDueYearLabel = year.toString();
+    this.onDropdownSelect(year.toString(), 'dueYear');
+    this.updateDueDaysInMonth();
   }
 
   onDueMonthSelected(month: string) {
     this.selectedDueMonthLabel = month;
     this.onDropdownSelect(month, 'dueMonth');
-    this.updateDueDateDays();
+    this.updateDueDaysInMonth();
   }
 
   onDueDaySelected(day: number) {
@@ -424,15 +436,13 @@ export class EditTaskDialogComponent implements OnInit {
     this.onDropdownSelect(day.toString(), 'dueDay');
   }
 
-  onDueYearSelected(year: number) {
-    this.selectedDueYearLabel = year.toString();
-    this.onDropdownSelect(year.toString(), 'dueYear');
-    this.updateDueDateDays();
-  }
-
-  private onDropdownSelect(value: string, controlName: string) {
-    this.taskForm.get(controlName)?.setValue(value);
-    this.taskForm.get(controlName)?.markAsTouched();
+  onDropdownSelect(value: string, controlName: string) {
+    const control = this.taskForm.get(controlName);
+    if (control) {
+      control.setValue(value);
+      control.markAsTouched();
+      control.updateValueAndValidity();
+    }
   }
 
   onPrioritySelected(priority: string): void {

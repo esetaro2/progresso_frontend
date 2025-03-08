@@ -56,6 +56,7 @@
     <div matDialogActions>
       <button mat-button matDialogClose>Close</button>
       <button
+        id="firstNext"
         mat-button
         matStepperNext
         [disabled]="teamForm.invalid || isLoading"
@@ -86,6 +87,7 @@
       <button mat-button matDialogClose [disabled]="isLoading">Close</button>
       <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
       <button
+        id="completeButton"
         mat-button
         [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
         (click)="createTeam()"

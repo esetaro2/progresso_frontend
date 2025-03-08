@@ -90,7 +90,7 @@ export class RegisterComponent {
         [
           Validators.required,
           Validators.minLength(2),
-          Validators.maxLength(5),
+          Validators.maxLength(6),
           Validators.pattern(/^\+\d*$/),
         ],
       ],
@@ -99,7 +99,6 @@ export class RegisterComponent {
         [
           Validators.required,
           Validators.pattern(/^\d{3} \d{3} \d{4,}$/),
-          Validators.minLength(10),
           Validators.maxLength(15),
         ],
       ],
@@ -107,6 +106,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
+          Validators.minLength(2),
           Validators.maxLength(100),
           Validators.pattern('^[a-zA-Z0-9\\s,.-]+$'),
         ],
@@ -115,6 +115,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
+          Validators.minLength(2),
           Validators.maxLength(50),
           Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),
         ],
@@ -123,6 +124,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
+          Validators.minLength(2),
           Validators.maxLength(50),
           Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),
         ],
@@ -131,6 +133,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
+          Validators.minLength(2),
           Validators.maxLength(50),
           Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),
         ],
@@ -243,6 +246,12 @@ export class RegisterComponent {
     }
   }
 
+  onBirthYearSelected(year: number) {
+    this.selectedBirthYearLabel = year.toString();
+    this.onDropdownSelect(year.toString(), 'birthYear');
+    this.getDaysInMonth();
+  }
+
   onBirthMonthSelected(month: string) {
     this.selectedBirthMonthLabel = month;
     this.onDropdownSelect(month, 'birthMonth');
@@ -252,11 +261,6 @@ export class RegisterComponent {
   onBirthDaySelected(day: number) {
     this.selectedBirthDayLabel = day.toString();
     this.onDropdownSelect(day.toString(), 'birthDay');
-  }
-
-  onBirthYearSelected(year: number) {
-    this.selectedBirthYearLabel = year.toString();
-    this.onDropdownSelect(year.toString(), 'birthYear');
   }
 
   onRoleSelected(role: { value: string; label: string }) {
@@ -281,7 +285,10 @@ export class RegisterComponent {
 
   updateDaysInMonth() {
     this.daysInMonth = this.getDaysInMonth();
-    if (!this.daysInMonth.includes(parseInt(this.selectedBirthDayLabel))) {
+    if (
+      !this.daysInMonth.includes(parseInt(this.selectedBirthDayLabel)) &&
+      this.selectedBirthDayLabel !== 'DD'
+    ) {
       this.onBirthDaySelected(this.daysInMonth[0]);
     }
   }
