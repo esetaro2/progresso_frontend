@@ -288,7 +288,7 @@ export class ProjectPageComponent implements OnInit {
   onAssignTeam() {
     const dialogRef = this.dialog.open(AssignTeamDialogComponent, {
       width: '100%',
-      maxWidth: '750px',
+      maxWidth: '550px',
       data: this.projectId,
     });
 

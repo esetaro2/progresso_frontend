@@ -1,4 +1,4 @@
-<div matDialogContent class="p-5">
+<div matDialogContent>
   <div
     *ngIf="errorStates.assignTeamToProject && !isLoading"
     class="alert alert-danger text-center mt-5"
@@ -8,12 +8,12 @@
 
   <div
     *ngIf="!existingTeam"
-    class="d-flex align-items-center justify-content-center"
+    class="d-flex flex-column align-items-center justify-content-center"
   >
     <button mat-raised-button (click)="existingTeam = true">
       Assign Existing Team
     </button>
-    <span class="mx-5">or</span>
+    <span class="my-3">or</span>
     <button id="createTeamButton" mat-raised-button (click)="openCreateTeamDialog()">
       Create New Team
     </button>
