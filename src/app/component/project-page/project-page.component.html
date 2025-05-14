@@ -1,0 +1,323 @@
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+<div
+  *ngIf="errorStates.project && !isLoading"
+  class="alert alert-danger text-center mt-3"
+>
+  {{ errorStates.project }}
+</div>
+
+<div
+  *ngIf="errorStates.completeProject && !isLoading"
+  class="alert alert-danger text-center mt-3"
+>
+  {{ errorStates.completeProject }}
+</div>
+
+<div
+  *ngIf="errorStates.deleteProject && !isLoading"
+  class="alert alert-danger text-center mt-3"
+>
+  {{ errorStates.deleteProject }}
+</div>
+
+<div
+  *ngIf="!loadingStates.project && !errorStates.project"
+  class="container-fluid p-4 d-flex flex-column min-vh-100"
+>
+  <div class="d-flex align-items-center justify-content-end">
+    <button
+      *ngIf="
+        userRole !== 'TEAMMEMBER' &&
+        (project?.status === 'IN_PROGRESS' || project?.status === 'NOT_STARTED')
+      "
+      class="btn btn-outline-danger"
+      ngbTooltip="Delete Project"
+      [openDelay]="500"
+      (click)="onDeleteProject()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <div class="d-flex flex-column align-items-center">
+      <h2 class="text-center mb-2">{{ project?.name }}</h2>
+      <h5 class="text-center mb-5" style="color: gray">
+        <i>{{ project?.description }}</i>
+      </h5>
+    </div>
+
+    <button
+      *ngIf="
+        userRole !== 'TEAMMEMBER' &&
+        (project?.status === 'IN_PROGRESS' || project?.status === 'NOT_STARTED')
+      "
+      class="btn btn-outline-primary align-self-center ms-3 mb-5"
+      ngbTooltip="Edit project"
+      [openDelay]="500"
+      (click)="onEditProject()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button
+      *ngIf="
+        completedPercentage === 100 &&
+        project?.status === 'IN_PROGRESS' &&
+        userRole !== 'TEAMMEMBER'
+      "
+      class="btn btn-outline-success align-self-center ms-3 mb-5"
+      ngbTooltip="Complete project"
+      [openDelay]="500"
+      (click)="onCompleteProject()"
+    >
+      <mat-icon>check</mat-icon>
+    </button>
+  </div>
+
+  <div class="row p-5 align-items-center">
+    <div class="col me-2 mb-5 d-flex flex-column">
+      <div class="d-flex gap-5 mb-2">
+        <h5>Start Date: {{ project?.startDate }}</h5>
+        <h5>Due Date: {{ project?.dueDate }}</h5>
+        <h5>
+          Priority:
+          <span [ngClass]="getPriorityClass()">{{ project?.priority }}</span>
+        </h5>
+      </div>
+
+      <div class="d-flex mb-4 flex-column">
+        <div
+          *ngIf="errorStates.manager && !isLoading"
+          class="alert alert-danger text-center"
+        >
+          {{ errorStates.manager }}
+        </div>
+
+        <h5 *ngIf="!loadingStates.manager && !errorStates.manager">
+          Project Manager: {{ projectManager?.firstName }}
+          {{ projectManager?.lastName }} ({{ projectManager?.username }})
+        </h5>
+
+        <div
+          *ngIf="errorStates.team && !isLoading"
+          class="alert alert-danger text-center"
+        >
+          {{ errorStates.team }}
+        </div>
+
+        <div *ngIf="!loadingStates.team && !errorStates.team && team">
+          <h5>Team: {{ team!.name }}</h5>
+
+          <div
+            *ngIf="errorStates.teamMembers && !isLoading"
+            class="alert alert-danger text-center"
+          >
+            {{ errorStates.teamMembers }}
+          </div>
+
+          <div *ngIf="!loadingStates.teamMembers && !errorStates.teamMembers">
+            <app-team-members-table
+              [teamId]="team!.id"
+              [readOnly]="true"
+            ></app-team-members-table>
+          </div>
+        </div>
+
+        <h5 *ngIf="!team">
+          No team has been assigned to this project. Click
+          <a
+            role="button"
+            tabindex="0"
+            class="span-link"
+            (click)="onAssignTeam()"
+            (keyup.enter)="onAssignTeam()"
+            (keyup.space)="onAssignTeam()"
+            aria-label="Assign team"
+          >
+            here
+          </a>
+          to assign a team.
+        </h5>
+      </div>
+    </div>
+
+    <div
+      class="col d-flex flex-column align-items-center justify-content-center"
+    >
+      <div
+        *ngIf="errorStates.percentage && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.percentage }}
+      </div>
+
+      <div
+        class="d-flex mb-3"
+        *ngIf="!loadingStates.percentage && !errorStates.percentage"
+      >
+        <ngx-charts-pie-chart
+          [results]="chartData"
+          [view]="[270, 270]"
+          [doughnut]="false"
+          [scheme]="'cool'"
+          [margins]="[0, 0, 0, 0]"
+        >
+        </ngx-charts-pie-chart>
+
+        <mat-icon
+          style="cursor: pointer"
+          [ngbTooltip]="getTooltipText()"
+          [ngClass]="getStatusClass()"
+          >circle</mat-icon
+        >
+      </div>
+
+      <div
+        class="d-flex"
+        *ngIf="!loadingStates.percentage && !errorStates.percentage"
+      >
+        <h5>{{ completedPercentage }}% complete</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column">
+    <div class="d-flex gap-3 align-items-center justify-content-center">
+      <h4 class="text-center">Task List</h4>
+
+      <div
+        *ngIf="
+          userRole !== 'TEAMMEMBER' &&
+          (project?.status === 'IN_PROGRESS' ||
+            project?.status === 'NOT_STARTED')
+        "
+        [ngbTooltip]="
+          !team ? 'Please assign a team to this project first.' : ''
+        "
+        class="d-flex align-items-center justify-content-center"
+      >
+        <button
+          id="addTaskButton"
+          (click)="onAddTask()"
+          [disabled]="!team"
+          class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-1 mb-2"
+        >
+          <i class="fa fa-plus"></i>Add Task
+        </button>
+      </div>
+    </div>
+
+    <app-task-table
+      [userRole]="userRole!"
+      [projectId]="projectId"
+      [teamId]="team?.id"
+      [startDate]="project?.startDate"
+      [dueDate]="project?.dueDate"
+      (updateProjectPercentage)="onUpdateProjectPercentage()"
+    ></app-task-table>
+  </div>
+
+  <div class="d-flex flex-column mt-5 comment-section">
+    <h4>Comments</h4>
+    <div
+      *ngIf="
+        project?.status === 'IN_PROGRESS' || project?.status === 'NOT_STARTED'
+      "
+    >
+      <div class="d-flex">
+        <h6>{{ userFirstName }} {{ userLastName }} ({{ userUsername }})</h6>
+      </div>
+
+      <form [formGroup]="commentForm" (ngSubmit)="onCreateComment()">
+        <div class="position-relative d-flex">
+          <textarea
+            id="content"
+            class="form-control"
+            (keydown)="preventInitialSpace($event)"
+            formControlName="content"
+            (input)="onInput('content')"
+            style="resize: none; height: 100px"
+            placeholder="Write a comment..."
+            autocomplete="off"
+          ></textarea>
+          <button
+            id="sendButton"
+            class="sendButton btn btn-primary rounded-circle"
+            [disabled]="commentForm.invalid"
+            type="submit"
+          >
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+        <small style="height: 20px">
+          <span
+            *ngIf="
+              commentForm.get('content')?.touched &&
+              commentForm.get('content')?.invalid
+            "
+          >
+            <span *ngIf="commentForm.get('content')?.errors?.['minlength']">
+              <i class="fa fa-times"></i>Comment is too short.
+            </span>
+            <span *ngIf="commentForm.get('content')?.errors?.['maxlength']">
+              <i class="fa fa-times"></i>Comment is too long.
+            </span>
+          </span>
+          <span
+            *ngIf="
+              commentForm.get('content')?.touched &&
+              commentForm.get('content')?.valid
+            "
+          >
+            <i class="fa fa-check"></i>Comment is valid.
+          </span>
+        </small>
+      </form>
+    </div>
+
+    <div
+      *ngIf="errorStatesComments.loadComments && !isLoadingComments"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStatesComments.loadComments }}
+    </div>
+
+    <div
+      *ngIf="errorStatesComments.createComment && !isLoadingComments"
+      class="alert alert-danger text-center"
+    >
+      {{ errorStatesComments.createComment }}
+    </div>
+
+    <div
+      class="d-flex align-items-center justify-content-center mt-5 mb-5"
+      *ngIf="isLoadingComments"
+    >
+      <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoadingComments && !errorStatesComments.loadComments">
+      <div *ngFor="let comment of comments" class="comment" id="comment">
+        <app-comment
+          [projectStatus]="project?.status"
+          [userUsername]="userUsername!"
+          [userRole]="userRole!"
+          [comment]="comment"
+          (replyComment)="onReplyComment($event)"
+          (editComment)="onEditComment()"
+          (deleteComment)="onDeleteComment()"
+        ></app-comment>
+      </div>
+
+      <mat-paginator
+        [length]="totalElementsComment"
+        [pageIndex]="currentPageComment"
+        [hidePageSize]="true"
+        [pageSize]="pageSizeComment"
+        (page)="onPageChange($event)"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

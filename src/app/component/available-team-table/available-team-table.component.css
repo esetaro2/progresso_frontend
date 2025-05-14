@@ -1,0 +1,45 @@
+.form-control {
+  border-radius: 4px;
+  border: 2px solid #ced4da;
+  background-color: #ffffff;
+}
+
+.search-icon {
+  color: #8f98a2;
+}
+
+.form-control:hover {
+  border-color: #007bff;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-control:hover + .search-icon,
+.form-control:focus + .search-icon {
+  color: #007bff;
+}
+
+.tableRow {
+  cursor: pointer;
+}
+
+.tableRow:hover:not(:has(.btn-outline-secondary:hover)) {
+  background-color: rgba(104, 104, 255, 0.1);
+}
+
+tr.selected {
+  background-color: rgba(0, 0, 255, 0.1);
+}
+
+tr.mat-row {
+  cursor: pointer;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  display: block;
+}

@@ -1,0 +1,426 @@
+<mat-horizontal-stepper [linear]="true">
+  <mat-step label="Task Info" [stepControl]="taskForm">
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.createTask && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createTask }}
+      </div>
+
+      <form [formGroup]="taskForm">
+        <div class="mb-3">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            (keydown)="preventInitialSpace($event)"
+            formControlName="name"
+            required
+            (input)="onInput('name')"
+            autocomplete="off"
+          />
+          <small>
+            <span
+              *ngIf="
+                taskForm.get('name')?.touched && taskForm.get('name')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span *ngIf="taskForm.get('name')?.errors?.['required']">
+                Task name is required.
+              </span>
+              <span *ngIf="taskForm.get('name')?.errors?.['minlength']">
+                Task name is too short.
+              </span>
+              <span *ngIf="taskForm.get('name')?.errors?.['maxlength']">
+                Task name is too long.
+              </span>
+            </span>
+            <span
+              *ngIf="
+                taskForm.get('name')?.touched && taskForm.get('name')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Task name is valid.
+            </span>
+            <span *ngIf="!taskForm.get('name')?.touched">
+              Please enter the task name.
+            </span>
+          </small>
+        </div>
+
+        <div class="mb-5 d-flex flex-column">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            class="form-control"
+            (keydown)="preventInitialSpace($event)"
+            formControlName="description"
+            required
+            (input)="onInput('description')"
+            style="resize: none; height: 100px"
+            autocomplete="off"
+          ></textarea>
+          <small>
+            <span
+              *ngIf="
+                taskForm.get('description')?.touched &&
+                taskForm.get('description')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span *ngIf="taskForm.get('description')?.errors?.['required']">
+                Description is required.
+              </span>
+              <span *ngIf="taskForm.get('description')?.errors?.['minlength']">
+                Description is too short.
+              </span>
+              <span *ngIf="taskForm.get('description')?.errors?.['maxlength']">
+                Description is too long.
+              </span>
+            </span>
+            <span
+              *ngIf="
+                taskForm.get('description')?.touched &&
+                taskForm.get('description')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Description is valid.
+            </span>
+            <span *ngIf="!taskForm.get('description')?.touched">
+              Please enter the task description.
+            </span>
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <label for="priorityDropdown">Priority</label>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-select
+              id="prioritySelect"
+              placeholder="Select priority"
+              (click)="onInput('priority')"
+              (selectionChange)="onPrioritySelected($event.value)"
+              style="text-align: center"
+            >
+              <mat-option
+                id="prioritySelectOption"
+                class="text-center"
+                *ngFor="let p of priorities"
+                [value]="p"
+              >
+                {{ p }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <small>
+            <span
+              *ngIf="
+                taskForm.get('priority')?.touched &&
+                taskForm.get('priority')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i> Priority is required.
+            </span>
+            <span
+              *ngIf="
+                taskForm.get('priority')?.touched &&
+                taskForm.get('priority')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Priority is valid.
+            </span>
+            <span *ngIf="!taskForm.get('priority')?.touched">
+              Please select the task priority.
+            </span>
+          </small>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="startMonthDropdown">Start Date</label>
+            <div class="d-flex">
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
+                  id="startYearDropdown"
+                  placeholder="YYYY"
+                  (selectionChange)="onStartYearSelected($event.value)"
+                  (click)="onInput('startYear')"
+                  style="font-size: small"
+                >
+                  <mat-option
+                    *ngFor="let year of yearsList"
+                    [value]="year"
+                    id="startYearDropdownOption"
+                  >
+                    {{ year }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
+                  id="startMonthDropdown"
+                  placeholder="MM"
+                  (selectionChange)="onStartMonthSelected($event.value)"
+                  (click)="onInput('startMonth')"
+                  style="font-size: small"
+                >
+                  <mat-option
+                    *ngFor="let month of months"
+                    [value]="month"
+                    id="startMonthDropdownOption"
+                  >
+                    {{ month }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
+                  id="startDayDropdown"
+                  placeholder="DD"
+                  (selectionChange)="onStartDaySelected($event.value)"
+                  (click)="onInput('startDay')"
+                  style="font-size: small"
+                >
+                  <mat-option
+                    *ngFor="let day of daysInStartMonth"
+                    [value]="day"
+                    id="startDayDropdownOption"
+                  >
+                    {{ day }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <small class="d-flex flex-column">
+              <span
+                *ngIf="
+                  !taskForm.get('startYear')?.touched &&
+                  !taskForm.get('startMonth')?.touched &&
+                  !taskForm.get('startDay')?.touched
+                "
+              >
+                Please select a start date.
+              </span>
+              <span
+                *ngIf="
+                  taskForm.get('startYear')?.valid &&
+                  taskForm.get('startMonth')?.valid &&
+                  taskForm.get('startDay')?.valid &&
+                  !taskForm.hasError('startBeforeToday') &&
+                  !taskForm.hasError('startBeforeProjectStartDate') &&
+                  !taskForm.hasError('startAfterProjectDueDate')
+                "
+              >
+                <i class="fa fa-check"></i> Start date is valid.
+              </span>
+              <span
+                *ngIf="
+                  (taskForm.get('startMonth')?.touched ||
+                    taskForm.get('startDay')?.touched ||
+                    taskForm.get('startYear')?.touched) &&
+                  (taskForm.get('startMonth')?.invalid ||
+                    taskForm.get('startDay')?.invalid ||
+                    taskForm.get('startYear')?.invalid)
+                "
+              >
+                <i class="fa fa-times"></i>Start date is required.
+              </span>
+              <span *ngIf="taskForm.hasError('startBeforeToday')">
+                <i class="fa fa-times"></i> Start date must not be in the past.
+              </span>
+              <span *ngIf="taskForm.hasError('startBeforeProjectStartDate')">
+                <i class="fa fa-times"></i> Start date must be after the project
+                start date.
+              </span>
+              <span *ngIf="taskForm.hasError('startAfterProjectDueDate')">
+                <i class="fa fa-times"></i> Start date must be before the
+                project due date.
+              </span>
+            </small>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="dueMonthDropdown">Due Date</label>
+            <div class="d-flex">
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
+                  id="dueYearDropdown"
+                  placeholder="YYYY"
+                  (selectionChange)="onDueYearSelected($event.value)"
+                  (click)="onInput('dueYear')"
+                  [disabled]="
+                    taskForm.hasError('startBeforeProjectStartDate') ||
+                    taskForm.hasError('startAfterProjectDueDate') ||
+                    !isStartDateValid()
+                  "
+                  style="font-size: smaller"
+                >
+                  <mat-option
+                    *ngFor="let year of yearsList"
+                    [value]="year"
+                    id="dueYearDropdownOption"
+                  >
+                    {{ year }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field
+                appearance="outline"
+                class="me-2 fixed-width-dropdown"
+              >
+                <mat-select
+                  id="dueMonthDropdown"
+                  placeholder="MM"
+                  (selectionChange)="onDueMonthSelected($event.value)"
+                  (click)="onInput('dueMonth')"
+                  [disabled]="
+                    taskForm.hasError('startBeforeProjectStartDate') ||
+                    taskForm.hasError('startAfterProjectDueDate') ||
+                    !isStartDateValid()
+                  "
+                  style="font-size: smaller"
+                >
+                  <mat-option
+                    id="dueMonthDropdownOption"
+                    *ngFor="let month of months"
+                    [value]="month"
+                  >
+                    {{ month }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="fixed-width-dropdown">
+                <mat-select
+                  id="dueDayDropdown"
+                  placeholder="DD"
+                  (selectionChange)="onDueDaySelected($event.value)"
+                  (click)="onInput('dueDay')"
+                  [disabled]="
+                    taskForm.hasError('startBeforeProjectStartDate') ||
+                    taskForm.hasError('startAfterProjectDueDate') ||
+                    !isStartDateValid()
+                  "
+                  style="font-size: smaller"
+                >
+                  <mat-option
+                    id="dueDayDropdownOption"
+                    *ngFor="let day of daysInDueMonth"
+                    [value]="day"
+                  >
+                    {{ day }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <small>
+              <span
+                *ngIf="
+                  !taskForm.get('dueYear')?.touched &&
+                  !taskForm.get('dueMonth')?.touched &&
+                  !taskForm.get('dueDay')?.touched
+                "
+              >
+                Please select a due date.
+              </span>
+              <span
+                *ngIf="
+                  (taskForm.get('dueMonth')?.touched ||
+                    taskForm.get('dueDay')?.touched ||
+                    taskForm.get('dueYear')?.touched) &&
+                  (taskForm.get('dueMonth')?.invalid ||
+                    taskForm.get('dueDay')?.invalid ||
+                    taskForm.get('dueYear')?.invalid)
+                "
+              >
+                <i class="fa fa-times"></i>Due date is required.
+              </span>
+              <span
+                *ngIf="
+                  taskForm.get('dueYear')?.valid &&
+                  taskForm.get('dueMonth')?.valid &&
+                  taskForm.get('dueDay')?.valid &&
+                  !taskForm.hasError('dueBeforeStart') &&
+                  !taskForm.hasError('dueAfterProjectDueDate')
+                "
+              >
+                <i class="fa fa-check"></i> Due date is valid.
+              </span>
+              <span *ngIf="taskForm.hasError('dueBeforeStart')">
+                <i class="fa fa-times"></i> Due date must be after the start
+                date.
+              </span>
+              <span *ngIf="taskForm.hasError('dueAfterProjectDueDate')">
+                <i class="fa fa-times"></i> Due date must be before the project
+                due date.
+              </span>
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button
+        id="firstNext"
+        mat-button
+        matStepperNext
+        [disabled]="!taskForm.valid || isLoading"
+        (click)="onCreateFirstPartTask()"
+      >
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step label="Assign User">
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.createTask && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createTask }}
+      </div>
+
+      <app-team-members-table
+        [teamId]="this.data.teamId"
+        [multiSelect]="false"
+        (teamMembersSelected)="onTeamMemberSelected($event)"
+      ></app-team-members-table>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button
+        id="completeButton"
+        mat-button
+        [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
+        (click)="onSubmit()"
+      >
+        <span *ngIf="!isLoading">Complete</span>
+        <span *ngIf="isLoading">
+          <mat-spinner [diameter]="24"></mat-spinner>
+        </span>
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

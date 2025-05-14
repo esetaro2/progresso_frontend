@@ -1,0 +1,54 @@
+.card {
+  width: 100%;
+  cursor: pointer;
+  border: 5px solid #d7e3ff;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+}
+
+h4 {
+  color: #343a40;
+}
+
+.card:hover {
+  border-color: #479df3;
+  opacity: 1;
+}
+
+.high-priority {
+  color: #f44336;
+}
+
+.medium-priority {
+  color: #ff9800;
+}
+
+.low-priority {
+  color: #8bc34a;
+}
+
+.high-priority,
+.medium-priority,
+.low-priority {
+  font-weight: bold;
+}
+
+.not-started-circle {
+  font-size: 24px;
+  color: #9e9e9e;
+}
+
+.in-progress-circle {
+  font-size: 24px;
+  color: #ffc107;
+}
+
+.completed-circle {
+  font-size: 24px;
+  color: #4caf50;
+}
+
+.cancelled-circle {
+  font-size: 24px;
+  color: #f44336;
+}

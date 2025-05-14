@@ -1,0 +1,72 @@
+<app-loading-spinner
+  *ngIf="role === 'TEAMMEMBER' && !errorStates.activeProjectsTeamMember"
+></app-loading-spinner>
+
+<div
+  class="team-member-waiting-container"
+  *ngIf="role === 'TEAMMEMBER' && errorStates.activeProjectsTeamMember"
+>
+  <div class="spinner-container">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  <div class="message">
+    <p>Waiting for projects...<br />Check periodically for updates.</p>
+  </div>
+</div>
+
+<div
+  class="container-fluid p-4 d-flex flex-column min-vh-100"
+  *ngIf="role !== 'TEAMMEMBER'"
+>
+  <h2 class="text-center mb-5">Projects</h2>
+
+  <app-filter-section
+    [role]="role"
+    [selectedStatus]="selectedStatus"
+    [selectedPriority]="selectedPriority"
+    [searchQuery]="searchQuery"
+    [statuses]="statuses"
+    [priorities]="priorities"
+    [statusLabels]="statusLabels"
+    [priorityLabels]="priorityLabels"
+    (statusChange)="selectStatus($event)"
+    (priorityChange)="selectPriority($event)"
+    (searchQueryChange)="searchByQuery($event)"
+    (resetFilters)="resetAllFilters()"
+    (createProjectEmitter)="createProject()"
+  ></app-filter-section>
+
+  <div
+    class="d-flex align-items-center justify-content-center flex-grow-1"
+    *ngIf="loadingStates.projects"
+  >
+    <mat-spinner mode="indeterminate"></mat-spinner>
+  </div>
+
+  <div
+    *ngIf="errorStates.projects && !loadingStates.projects"
+    class="d-flex align-items-center justify-content-center alert alert-danger text-center"
+  >
+    {{ errorStates.projects }}
+  </div>
+
+  <div
+    *ngIf="
+      !loadingStates.projects && !errorStates.projects && projects.length > 0
+    "
+    class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 justify-content-center flex-wrap mb-5 flex-grow-1"
+  >
+    <div class="mb-3 justify-content-center" *ngFor="let project of projects">
+      <app-project-card [project]="project"></app-project-card>
+    </div>
+  </div>
+
+  <app-pagination
+    *ngIf="
+      projects.length !== 0 && !loadingStates.projects && !errorStates.projects
+    "
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    (pageChange)="goToPage($event)"
+  ></app-pagination>
+</div>

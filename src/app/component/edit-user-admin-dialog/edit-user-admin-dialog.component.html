@@ -1,0 +1,783 @@
+<div matDialogContent>
+  <div class="d-flex full-height">
+    <div class="card form-container">
+      <div class="card-body">
+        <form [formGroup]="updateForm">
+          <div class="row mb-3 d-flex justify-content-center">
+            <div class="col-md-4">
+              <label for="firstName">First Name</label>
+              <input
+                id="firstName"
+                type="text"
+                class="form-control"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="firstName"
+                required
+                (input)="onInput('firstName')"
+                autocomplete="off"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('firstName')?.touched &&
+                    updateForm.get('firstName')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('firstName')?.errors?.['required']"
+                  >
+                    First name is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('firstName')?.errors?.['minlength']"
+                  >
+                    First name is too short.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('firstName')?.errors?.['pattern']"
+                  >
+                    Invalid first name.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('firstName')?.errors?.['maxlength']"
+                  >
+                    First name is too long.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('firstName')?.touched &&
+                    updateForm.get('firstName')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>First name is valid.
+                </span>
+                <span *ngIf="!updateForm.get('firstName')?.touched">
+                  Please enter a first name.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-4">
+              <label for="lastName">Last Name</label>
+              <input
+                id="lastName"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="lastName"
+                required
+                (input)="onInput('lastName')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('lastName')?.touched &&
+                    updateForm.get('lastName')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('lastName')?.errors?.['required']"
+                  >
+                    Last name is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('lastName')?.errors?.['minlength']"
+                  >
+                    Last name is too short.
+                  </span>
+                  <span *ngIf="updateForm.get('lastName')?.errors?.['pattern']">
+                    Invalid last name.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('lastName')?.errors?.['maxlength']"
+                  >
+                    Last name is too long.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('lastName')?.touched &&
+                    updateForm.get('lastName')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Last name is valid.
+                </span>
+                <span *ngIf="!updateForm.get('lastName')?.touched">
+                  Please enter a last name.
+                </span>
+              </small>
+            </div>
+          </div>
+
+          <div class="row mb-5 d-flex justify-content-center">
+            <div class="col">
+              <label for="phonePrefix">Phone Number</label>
+              <div class="d-flex">
+                <div class="col-md-4">
+                  <input
+                    id="phonePrefix"
+                    type="text"
+                    class="form-control"
+                    (keydown)="preventInitialSpace($event)"
+                    placeholder="+1"
+                    aria-label="Phone Prefix"
+                    formControlName="phonePrefix"
+                    style="text-align: center"
+                    autocomplete="off"
+                    onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 43"
+                  />
+                </div>
+
+                <div class="col">
+                  <input
+                    id="phoneNumber"
+                    type="tel"
+                    class="form-control"
+                    (keydown)="preventInitialSpace($event)"
+                    formControlName="phoneNumber"
+                    required
+                    (input)="formatPhoneNumber($event)"
+                    autocomplete="off"
+                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                  />
+                </div>
+              </div>
+
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('phonePrefix')?.touched &&
+                    updateForm.get('phonePrefix')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('phonePrefix')?.errors?.['required']"
+                  >
+                    Phone prefix is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('phonePrefix')?.errors?.['minlength'] || updateForm.get('phonePrefix')?.errors?.['maxlength']"
+                  >
+                    Invalid phone prefix.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('phonePrefix')?.errors?.['pattern']"
+                  >
+                    The phone prefix must start with a '+'.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('phonePrefix')?.touched &&
+                    updateForm.get('phonePrefix')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i> Phone prefix is valid.
+                </span>
+              </small>
+
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('phoneNumber')?.touched &&
+                    updateForm.get('phoneNumber')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('phoneNumber')?.errors?.['required']"
+                  >
+                    Phone number is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('phoneNumber')?.errors?.['pattern'] || updateForm.get('phoneNumber')?.errors?.['minlength'] || updateForm.get('phoneNumber')?.errors?.['maxlength']"
+                  >
+                    Invalid phone number.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('phoneNumber')?.touched &&
+                    updateForm.get('phoneNumber')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i> Phone number is valid.
+                </span>
+                <span *ngIf="!updateForm.get('phoneNumber')?.touched">
+                  Please enter a phone number.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-5">
+              <label for="roleDropdown">Role</label>
+              <div ngbDropdown class="d-inline-block w-100">
+                <button
+                  class="btn btn-outline-primary dropdown-toggle w-100"
+                  id="roleDropdown"
+                  ngbDropdownToggle
+                  style="text-align: center; cursor: pointer"
+                >
+                  {{ selectedRoleLabel }}
+                </button>
+                <div
+                  ngbDropdownMenu
+                  aria-labelledby="roleDropdown"
+                  class="custom-dropdown-menu w-100"
+                >
+                  <button
+                    class="dropdown-item"
+                    *ngFor="let role of roles"
+                    (click)="onRoleSelected(role)"
+                  >
+                    {{ role.label }}
+                  </button>
+                </div>
+              </div>
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('role')?.touched &&
+                    updateForm.get('role')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>Role is required.
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('role')?.touched &&
+                    updateForm.get('role')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Role is valid.
+                </span>
+                <span *ngIf="!updateForm.get('role')?.touched">
+                  Please select a role.
+                </span>
+              </small>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label for="streetAddress">Street Address</label>
+              <input
+                id="streetAddress"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="streetAddress"
+                required
+                (input)="onInput('streetAddress')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('streetAddress')?.touched &&
+                    updateForm.get('streetAddress')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('streetAddress')?.errors?.['required']"
+                  >
+                    Street address is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('streetAddress')?.errors?.['maxlength']"
+                  >
+                    Street address is too long.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('streetAddress')?.errors?.['pattern']"
+                  >
+                    Invalid street address format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('streetAddress')?.touched &&
+                    updateForm.get('streetAddress')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Street address is valid.
+                </span>
+                <span *ngIf="!updateForm.get('streetAddress')?.touched">
+                  Please enter a street address.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-3">
+              <label for="city">City</label>
+              <input
+                id="city"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="city"
+                required
+                (input)="onInput('city')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('city')?.touched &&
+                    updateForm.get('city')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span *ngIf="updateForm.get('city')?.errors?.['required']">
+                    City is required.
+                  </span>
+                  <span *ngIf="updateForm.get('city')?.errors?.['maxlength']">
+                    City is too long.
+                  </span>
+                  <span *ngIf="updateForm.get('city')?.errors?.['pattern']">
+                    Invalid city format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('city')?.touched &&
+                    updateForm.get('city')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>City is valid.
+                </span>
+                <span *ngIf="!updateForm.get('city')?.touched">
+                  Please enter a city.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-5">
+              <label for="stateProvinceRegion">State/Province/Region</label>
+              <input
+                id="stateProvinceRegion"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="stateProvinceRegion"
+                required
+                (input)="onInput('stateProvinceRegion')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('stateProvinceRegion')?.touched &&
+                    updateForm.get('stateProvinceRegion')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updateForm.get('stateProvinceRegion')?.errors?.['required']"
+                  >
+                    State/Province/Region is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('stateProvinceRegion')?.errors?.['maxlength']"
+                  >
+                    State/Province/Region is too long.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('stateProvinceRegion')?.errors?.['pattern']"
+                  >
+                    Invalid state/province/region format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('stateProvinceRegion')?.touched &&
+                    updateForm.get('stateProvinceRegion')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>State/Province/Region is valid.
+                </span>
+                <span *ngIf="!updateForm.get('stateProvinceRegion')?.touched">
+                  Please enter a state/province/region.
+                </span>
+              </small>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <label for="country">Country</label>
+              <input
+                id="country"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="country"
+                required
+                (input)="onInput('country')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('country')?.touched &&
+                    updateForm.get('country')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span *ngIf="updateForm.get('country')?.errors?.['required']">
+                    Country is required.
+                  </span>
+                  <span
+                    *ngIf="updateForm.get('country')?.errors?.['maxlength']"
+                  >
+                    Country is too long.
+                  </span>
+                  <span *ngIf="updateForm.get('country')?.errors?.['pattern']">
+                    Invalid country format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('country')?.touched &&
+                    updateForm.get('country')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Country is valid.
+                </span>
+                <span *ngIf="!updateForm.get('country')?.touched">
+                  Please enter a country.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-4">
+              <label for="zipCode">Zip Code</label>
+              <input
+                id="zipCode"
+                type="text"
+                class="form-control"
+                (keydown)="preventInitialSpace($event)"
+                autocomplete="off"
+                formControlName="zipCode"
+                required
+                (input)="onInput('zipCode')"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('zipCode')?.touched &&
+                    updateForm.get('zipCode')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span *ngIf="updateForm.get('zipCode')?.errors?.['required']">
+                    Zip Code is required.
+                  </span>
+                  <span *ngIf="updateForm.get('zipCode')?.errors?.['pattern']">
+                    Invalid Zip Code format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('zipCode')?.touched &&
+                    updateForm.get('zipCode')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Zip Code is valid.
+                </span>
+                <span *ngIf="!updateForm.get('zipCode')?.touched">
+                  Please enter a zip code.
+                </span>
+              </small>
+            </div>
+
+            <div class="col-md-4">
+              <label for="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                class="form-control"
+                (keydown)="preventInitialSpace($event)"
+                formControlName="email"
+                autocomplete="off"
+                required
+                (input)="onInput('email')"
+              />
+              <small>
+                <span
+                  *ngIf="
+                    updateForm.get('email')?.touched &&
+                    updateForm.get('email')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span *ngIf="updateForm.get('email')?.errors?.['required']">
+                    Email is required.
+                  </span>
+                  <span *ngIf="updateForm.get('email')?.errors?.['pattern']">
+                    Invalid email format.
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updateForm.get('email')?.touched &&
+                    updateForm.get('email')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i>Email is valid.
+                </span>
+                <span *ngIf="!updateForm.get('email')?.touched">
+                  Please enter an email.
+                </span>
+              </small>
+            </div>
+          </div>
+        </form>
+
+        <button
+          *ngIf="!showPasswordForm"
+          class="btn btn-danger btn-sm"
+          (click)="showPasswordForm = true"
+        >
+          Change Password
+        </button>
+
+        <div
+          *ngIf="showPasswordForm"
+          style="
+            border: 2px solid rgba(0, 98, 255, 0.276);
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 450px;
+          "
+          class="ms-auto me-auto"
+        >
+          <form [formGroup]="updatePasswordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <div class="input-group">
+                <input
+                  id="currentPassword"
+                  [type]="currentPasswordFieldType"
+                  class="form-control"
+                  formControlName="currentPassword"
+                  required
+                  (input)="onInput('currentPassword')"
+                  style="
+                    border-top-right-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                  "
+                  autocomplete="off"
+                />
+                <div class="input-group-append">
+                  <button
+                    type="button"
+                    class="btn no-border toggle-visibility"
+                    (click)="togglePasswordVisibility('current')"
+                  >
+                    <i
+                      [class]="
+                        currentPasswordFieldType === 'password'
+                          ? 'fa fa-eye'
+                          : 'fa fa-eye-slash'
+                      "
+                    ></i>
+                  </button>
+                </div>
+              </div>
+              <small>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('currentPassword')?.touched &&
+                    updatePasswordForm.get('currentPassword')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updatePasswordForm.get('currentPassword')?.errors?.['required']"
+                    >Current password is required.</span
+                  >
+                </span>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('currentPassword')?.touched &&
+                    updatePasswordForm.get('currentPassword')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i> Current password is valid.
+                </span>
+                <span
+                  *ngIf="!updatePasswordForm.get('currentPassword')?.touched"
+                  >Please enter your current password.</span
+                >
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <div class="input-group">
+                <input
+                  id="newPassword"
+                  [type]="newPasswordFieldType"
+                  class="form-control"
+                  formControlName="newPassword"
+                  required
+                  (input)="onInput('newPassword')"
+                  style="
+                    border-top-right-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                  "
+                  autocomplete="off"
+                />
+                <div class="input-group-append">
+                  <button
+                    type="button"
+                    class="btn no-border toggle-visibility"
+                    (click)="togglePasswordVisibility('new')"
+                  >
+                    <i
+                      [class]="
+                        newPasswordFieldType === 'password'
+                          ? 'fa fa-eye'
+                          : 'fa fa-eye-slash'
+                      "
+                    ></i>
+                  </button>
+                </div>
+              </div>
+              <small>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('newPassword')?.touched &&
+                    updatePasswordForm.get('newPassword')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updatePasswordForm.get('newPassword')?.errors?.['required']"
+                  >
+                    New password is required.
+                  </span>
+                  <span
+                    *ngIf="updatePasswordForm.get('newPassword')?.errors?.['securePassword']"
+                  >
+                    {{ updatePasswordForm.get('newPassword')?.errors?.['securePassword'] }}
+                  </span>
+                </span>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('newPassword')?.touched &&
+                    updatePasswordForm.get('newPassword')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i> New password is valid.
+                </span>
+                <span *ngIf="!updatePasswordForm.get('newPassword')?.touched">
+                  Please enter your new password.
+                </span>
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-group">
+                <input
+                  id="confirmPassword"
+                  [type]="confirmPasswordFieldType"
+                  class="form-control"
+                  formControlName="confirmPassword"
+                  required
+                  (input)="onInput('confirmPassword')"
+                  style="
+                    border-top-right-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                  "
+                  autocomplete="off"
+                />
+                <div class="input-group-append">
+                  <button
+                    type="button"
+                    class="btn no-border toggle-visibility"
+                    (click)="togglePasswordVisibility('confirm')"
+                  >
+                    <i
+                      [class]="
+                        confirmPasswordFieldType === 'password'
+                          ? 'fa fa-eye'
+                          : 'fa fa-eye-slash'
+                      "
+                    ></i>
+                  </button>
+                </div>
+              </div>
+              <small>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('confirmPassword')?.touched &&
+                    updatePasswordForm.get('confirmPassword')?.invalid
+                  "
+                >
+                  <i class="fa fa-times"></i>
+                  <span
+                    *ngIf="updatePasswordForm.get('confirmPassword')?.errors?.['required']"
+                    >Password confirmation is required.</span
+                  >
+                  <span
+                    *ngIf="
+                      updatePasswordForm
+                        .get('confirmPassword')
+                        ?.hasError('mismatch')
+                    "
+                    >Passwords do not match.</span
+                  >
+                </span>
+                <span
+                  *ngIf="
+                    updatePasswordForm.get('confirmPassword')?.touched &&
+                    updatePasswordForm.get('confirmPassword')?.valid
+                  "
+                >
+                  <i class="fa fa-check"></i> Password confirmation is valid.
+                </span>
+                <span
+                  *ngIf="!updatePasswordForm.get('confirmPassword')?.touched"
+                  >Please confirm your new password.</span
+                >
+              </small>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-5">
+              <button
+                class="btn btn-outline-danger"
+                (click)="showPasswordForm = false; updatePasswordForm.reset()"
+              >
+                Cancel
+              </button>
+
+              <button
+                class="btn btn-outline-primary"
+                [disabled]="updatePasswordForm.invalid"
+                (click)="onChangePassword()"
+              >
+                Confirm
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div matDialogActions>
+  <button mat-button matDialogClose>Close</button>
+  <button mat-button (click)="onSubmit()" [disabled]="updateForm.invalid">
+    Complete
+  </button>
+</div>

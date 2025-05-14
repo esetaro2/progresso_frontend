@@ -1,0 +1,215 @@
+<div class="card mt-3 mb-3">
+  <div
+    class="card-header d-flex justify-content-between"
+    style="background-color: #faf9fd"
+  >
+    <span class="user-info fw-bold">
+      {{ comment?.userFirstName }} {{ comment?.userLastName }} ({{
+        comment?.userUsername
+      }})
+    </span>
+
+    <div class="d-flex" *ngIf="!comment?.deleted">
+      <span class="text-muted">
+        {{ comment?.creationDate | date : "yyyy-MM-dd HH:mm" }}
+      </span>
+
+      <span *ngIf="comment?.modified" class="text-primary ms-3">
+        (Modified at {{ comment?.modifiedDate | date : "yyyy-MM-dd HH:mm" }})
+      </span>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div *ngIf="comment?.parentId" class="parent-comment-box mb-2 p-2">
+      <strong>
+        Reply to: {{ comment?.parentUserFirstName }}
+        {{ comment?.parentUserLastName }} ({{ comment?.parentUserUsername }})
+      </strong>
+      <span
+        *ngIf="comment?.parentModified && !comment?.parentDeleted"
+        class="me-3"
+        style="color: rgb(0, 199, 169)"
+      >
+        (Modified at
+        {{ comment?.parentModifiedDate | date : "yyyy-MM-dd HH:mm" }})
+      </span>
+      <span
+        #parentContentElement
+        [ngClass]="{
+          'text-truncate': !showFullParentContent,
+          'd-inline-block': true,
+          'w-100': true
+        }"
+      >
+        {{ comment?.parentContent }}
+      </span>
+      <button
+        *ngIf="isParentContentTruncated"
+        class="btn btn-link p-0"
+        (click)="toggleFullParentContent()"
+        (keyup.enter)="toggleFullParentContent()"
+        tabindex="0"
+        style="cursor: pointer"
+      >
+        ({{ showFullParentContent ? "Show less" : "Show more" }})
+      </button>
+    </div>
+
+    <div *ngIf="editMode; else displayContent">
+      <form [formGroup]="editForm" (ngSubmit)="submitEdit()">
+        <div class="position-relative d-flex">
+          <textarea
+            id="editContent"
+            class="form-control"
+            formControlName="content"
+            style="resize: none; height: 100px"
+            placeholder="Edit your comment..."
+            (keydown)="preventInitialSpace($event)"
+            autocomplete="off"
+          ></textarea>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm rounded-circle sendButton"
+            [disabled]="editForm.invalid"
+          >
+            <mat-icon>check</mat-icon>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-danger rounded-circle cancelEditButton"
+            (click)="cancelEdit()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </form>
+
+      <div
+        *ngIf="errorStatesComments.editComment && !isLoadingComments"
+        class="alert alert-danger text-center mt-3"
+      >
+        {{ errorStatesComments.editComment }}
+      </div>
+    </div>
+
+    <ng-template #displayContent>
+      <div
+        #contentElement
+        [ngClass]="{
+          'text-truncate': !showFullContent,
+          'd-inline-block': true,
+          'w-100': true
+        }"
+      >
+        {{ comment?.content }}
+      </div>
+
+      <div *ngIf="isContentTruncated" class="mt-2">
+        <button
+          class="btn btn-link p-0"
+          (click)="toggleFullContent()"
+          (keyup.enter)="toggleFullContent()"
+          tabindex="0"
+        >
+          {{ showFullContent ? "Show less" : "Show more" }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div
+    class="card-footer d-flex flex-row align-items-center justify-content-end"
+    style="background-color: #faf9fd; height: 50px"
+  >
+    <div *ngIf="!comment?.deleted">
+      <button
+        id="showReplyForm"
+        class="btn btn-sm btn-link"
+        (click)="showReplyForm = true"
+        *ngIf="
+          !showReplyForm &&
+          !editMode &&
+          (projectStatus === 'IN_PROGRESS' || projectStatus === 'NOT_STARTED')
+        "
+      >
+        <mat-icon>reply</mat-icon>
+      </button>
+
+      <button
+        *ngIf="showReplyForm && !editMode"
+        class="btn btn-sm btn-link"
+        (click)="showReplyForm = false; replyForm.reset()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <button
+        class="btn btn-sm btn-link"
+        (click)="onEdit()"
+        *ngIf="
+          !editMode &&
+          comment?.userUsername === userUsername &&
+          (projectStatus === 'IN_PROGRESS' || projectStatus === 'NOT_STARTED')
+        "
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button
+        class="btn btn-sm btn-link text-danger"
+        (click)="onDelete()"
+        *ngIf="
+          (userRole === 'ADMIN' ||
+            (!editMode && comment?.userUsername === userUsername)) &&
+          (projectStatus === 'NOT_STARTED' || projectStatus === 'IN_PROGRESS')
+        "
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showReplyForm" class="mt-2">
+  <form [formGroup]="replyForm" (ngSubmit)="submitReply()">
+    <div class="position-relative d-flex">
+      <textarea
+        id="replyContent"
+        class="form-control"
+        formControlName="content"
+        style="resize: none; height: 100px"
+        (keydown)="preventInitialSpace($event)"
+        placeholder="Write your reply..."
+        autocomplete="off"
+      ></textarea>
+      <button
+        id="sendReplyButton"
+        type="submit"
+        class="sendButton btn btn-primary rounded-circle"
+        [disabled]="replyForm.invalid"
+      >
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+    <small style="height: 20px">
+      <span *ngIf="replyForm.get('content')?.errors?.['minlength']">
+        <i class="fa fa-times"></i>Reply is too short.
+      </span>
+      <span *ngIf="replyForm.get('content')?.errors?.['maxlength']">
+        <i class="fa fa-times"></i>Reply is too long.
+      </span>
+      <span *ngIf="replyForm.get('content')?.valid">
+        <i class="fa fa-check"></i>Reply is valid.
+      </span>
+    </small>
+  </form>
+
+  <div
+    *ngIf="errorStatesComments.replyComment && !isLoadingComments"
+    class="alert alert-danger text-center"
+  >
+    {{ errorStatesComments.replyComment }}
+  </div>
+</div>

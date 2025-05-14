@@ -1,0 +1,102 @@
+<mat-horizontal-stepper [linear]="true">
+  <mat-step label="Enter Team Name" [stepControl]="teamForm">
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.createTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createTeam }}
+      </div>
+
+      <form [formGroup]="teamForm">
+        <div class="mb-3">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            (keydown)="preventInitialSpace($event)"
+            formControlName="name"
+            required
+            (input)="onInput('name')"
+            autocomplete="off"
+          />
+          <small>
+            <span
+              *ngIf="
+                teamForm.get('name')?.touched && teamForm.get('name')?.invalid
+              "
+            >
+              <i class="fa fa-times"></i>
+              <span *ngIf="teamForm.get('name')?.errors?.['required']">
+                Team name is required.
+              </span>
+              <span *ngIf="teamForm.get('name')?.errors?.['minlength']">
+                Team name is too short.
+              </span>
+              <span *ngIf="teamForm.get('name')?.errors?.['maxlength']">
+                Team name is too long.
+              </span>
+            </span>
+            <span
+              *ngIf="
+                teamForm.get('name')?.touched && teamForm.get('name')?.valid
+              "
+            >
+              <i class="fa fa-check"></i> Team name is valid.
+            </span>
+            <span *ngIf="!teamForm.get('name')?.touched">
+              Please enter the team name.
+            </span>
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose>Close</button>
+      <button
+        id="firstNext"
+        mat-button
+        matStepperNext
+        [disabled]="teamForm.invalid || isLoading"
+      >
+        Next
+      </button>
+    </div>
+  </mat-step>
+
+  <mat-step
+    label="Select Team Members"
+    [completed]="selectedTeamMemberIds.length > 0"
+  >
+    <div matDialogContent>
+      <div
+        *ngIf="errorStates.createTeam && !isLoading"
+        class="alert alert-danger text-center"
+      >
+        {{ errorStates.createTeam }}
+      </div>
+
+      <app-available-team-members-table
+        (selectedTeamMembers)="onSelectedTeamMembers($event)"
+      ></app-available-team-members-table>
+    </div>
+
+    <div matDialogActions>
+      <button mat-button matDialogClose [disabled]="isLoading">Close</button>
+      <button mat-button matStepperPrevious [disabled]="isLoading">Back</button>
+      <button
+        id="completeButton"
+        mat-button
+        [disabled]="selectedTeamMemberIds.length === 0 || isLoading"
+        (click)="createTeam()"
+      >
+        <span *ngIf="!isLoading">Complete</span>
+        <span *ngIf="isLoading">
+          <mat-spinner [diameter]="24"></mat-spinner>
+        </span>
+      </button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

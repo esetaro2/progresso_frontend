@@ -1,0 +1,70 @@
+<ng-template #offcanvasContent>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Hello, {{ firstName }} {{ lastName }}</h5>
+    <button
+      type="button"
+      class="btn-close text-reset"
+      aria-label="Close"
+      (click)="offCanvasService.dismiss()"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          routerLink="/"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="offCanvasService.dismiss()"
+          >Projects</a
+        >
+      </li>
+      <li class="nav-item" *ngIf="role === 'ADMIN'">
+        <a
+          class="nav-link"
+          routerLink="/register"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="offCanvasService.dismiss()"
+          >Register User</a
+        >
+      </li>
+      <li class="nav-item" *ngIf="role === 'ADMIN'">
+        <a
+          class="nav-link"
+          routerLink="/admin/dashboard"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="offCanvasService.dismiss()"
+          >Admin Dashboard</a
+        >
+      </li>
+      <li class="nav-item">
+        <button
+          class="btn btn-danger mt-3"
+          (click)="logout(); offCanvasService.dismiss()"
+        >
+          Logout
+        </button>
+      </li>
+    </ul>
+  </div>
+</ng-template>
+
+<button
+  *ngIf="role !== 'TEAMMEMBER'"
+  class="btn btn-no-border menu-button"
+  (click)="openSidebar(offcanvasContent)"
+>
+  <mat-icon>menu</mat-icon>
+</button>
+
+<button
+  *ngIf="role === 'TEAMMEMBER'"
+  class="btn btn-outline-danger d-flex gap-2 logout-button mt-3 ms-3"
+  (click)="logout()"
+>
+  <mat-icon>logout</mat-icon>
+  <span>Logout</span>
+</button>

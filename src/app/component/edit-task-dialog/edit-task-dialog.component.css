@@ -1,0 +1,58 @@
+h2.text-center {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.form-control {
+  border-radius: 4px;
+  border: 2px solid #ced4da;
+  background-color: #ffffff;
+}
+
+.form-control:hover {
+  border-color: #007bff;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  color: #6c757d;
+}
+
+small .fa {
+  margin-right: 0.25rem;
+}
+
+small .fa-times {
+  color: #dc3545;
+}
+
+small .fa-check {
+  color: #28a745;
+}
+
+small .fa-info {
+  color: orange;
+}
+
+.custom-dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.fixed-width-dropdown {
+  width: 100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
